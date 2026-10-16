@@ -293,6 +293,82 @@
       100% { transform: translateX(-50%); }
     }
 
+    /* Custom Cyber Magnetic Cursor & Sparks */
+    #cursor-dot {
+      position: fixed;
+      top: 0; left: 0;
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 10px var(--accent);
+      transition: opacity 0.2s ease;
+    }
+    #cursor-ring {
+      position: fixed;
+      top: 0; left: 0;
+      width: 30px; height: 30px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 18px rgba(0, 229, 240, 0.35);
+      transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1), height 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, background 0.2s ease;
+    }
+    #cursor-ring.active-hover {
+      width: 46px;
+      height: 46px;
+      background: rgba(0, 229, 240, 0.12);
+      border-color: #ffffff;
+      box-shadow: 0 0 24px rgba(0, 229, 240, 0.6);
+    }
+    #cursor-sparks-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9997;
+    }
+
+    /* Full-Screen Matrix Digital Rain Overlay */
+    #matrix-canvas-overlay {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9990;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    #matrix-canvas-overlay.active {
+      opacity: 0.88;
+    }
+
+    /* Benchmark Cockpit Chips & Dial */
+    .benchmark-chip {
+      transition: all 0.2s ease;
+    }
+    .benchmark-chip.active {
+      background: rgba(0, 229, 240, 0.16) !important;
+      border-color: var(--accent) !important;
+      color: var(--accent) !important;
+      box-shadow: 0 0 16px rgba(0, 229, 240, 0.25);
+    }
+
+    /* Terminal Prompt Caret Animation */
+    @keyframes terminal-blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    .terminal-caret {
+      animation: terminal-blink 1s infinite;
+    }
+
     /* Reduced Motion Safeguards */
     @media (prefers-reduced-motion: reduce) {
       *, ::before, ::after {
@@ -382,9 +458,22 @@
         </a>
       </nav>
 
-      <!-- Right Controls: Active Status & Let's Connect CTA -->
-      <div class="flex items-center gap-3">
-        <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 border border-cyan-400/20 text-xs font-mono-tech text-gray-300">
+      <!-- Right Controls: SFX Toggle, ⌘K Terminal, Active Status & Let's Connect CTA -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- SFX Synthesizer Mute/Unmute Toggle -->
+        <button id="sfx-toggle-btn" onclick="toggleAudioSFX()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-black/60 border border-cyan-400/30 text-[11px] font-mono-tech text-cyan-400 hover:border-accent hover:text-white transition-all" aria-label="Toggle Sci-Fi Audio Synthesizer">
+          <span id="sfx-icon">🔊</span>
+          <span id="sfx-label" class="hidden sm:inline">SFX: ON</span>
+        </button>
+
+        <!-- Command Palette / Terminal Launcher Button -->
+        <button onclick="openTerminalModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full studio-glass border border-cyan-400/40 text-[11px] font-mono-tech text-white hover:text-accent hover:border-accent transition-all group" aria-label="Open Cyberdeck Command Palette (Ctrl+K)">
+          <span class="w-1.5 h-1.5 rounded-full bg-accent animate-ping" aria-hidden="true"></span>
+          <span>⌘K</span>
+          <span class="hidden md:inline text-cyan-400 font-semibold">TERMINAL</span>
+        </button>
+
+        <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 border border-cyan-400/20 text-xs font-mono-tech text-gray-300">
           <span class="w-2 h-2 rounded-full bg-accent animate-pulse" aria-hidden="true"></span>
           <span class="text-[11px] text-accent tracking-wider">AVAILABLE FOR ENG ROLES</span>
         </div>
@@ -410,6 +499,14 @@
         <a href="#skills" onclick="toggleMobileMenu()" class="p-2.5 rounded-lg bg-white/5 hover:text-accent">• Skills</a>
         <a href="#experience" onclick="toggleMobileMenu()" class="p-2.5 rounded-lg bg-white/5 hover:text-accent">• Experience</a>
         <a href="#contact" onclick="toggleMobileMenu()" class="p-2.5 rounded-lg bg-white/5 hover:text-accent">• Contact</a>
+      </div>
+      <div class="grid grid-cols-2 gap-2 pt-1 border-t border-cyan-400/20">
+        <button onclick="openTerminalModal(); toggleMobileMenu();" class="p-2.5 rounded-lg bg-cyan-950/40 border border-cyan-400/30 text-accent font-mono-tech text-xs text-left flex items-center gap-2">
+          <span>⚡</span><span>⌘K Terminal</span>
+        </button>
+        <a href="#benchmark" onclick="toggleMobileMenu()" class="p-2.5 rounded-lg bg-cyan-950/40 border border-cyan-400/30 text-accent font-mono-tech text-xs text-left flex items-center gap-2">
+          <span>📊</span><span>AI Benchmark</span>
+        </a>
       </div>
       <button onclick="openCVModal(); toggleMobileMenu();" class="w-full py-2.5 rounded-xl btn-portal font-mono-tech text-xs">
         ↓ DOWNLOAD VERIFIED CV (PDF)
@@ -778,6 +875,193 @@
             </div>
           </article>
 
+        <!-- =====================================================================
+             INTERACTIVE EDGE AI BENCHMARK COCKPIT (PROFILER & JITTER OSCILLOSCOPE)
+             ===================================================================== -->
+        <div id="benchmark" class="studio-glass rounded-3xl p-6 sm:p-8 space-y-6 border border-cyan-400/30 relative overflow-hidden gsap-fade-up">
+          <!-- Background Ambient Glow Grid -->
+          <div class="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-cyan-400/10 blur-[90px] pointer-events-none" aria-hidden="true"></div>
+
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-cyan-400/20 pb-5">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2 font-mono-tech text-[11px] text-accent tracking-[0.22em] uppercase">
+                <span class="w-2 h-2 rounded-full bg-accent animate-ping"></span>
+                <span>INTERACTIVE PROFILER // TENSORRT 8.6</span>
+              </div>
+              <h3 class="font-display font-bold text-2xl sm:text-3xl text-white">
+                Edge AI Hardware &amp; Inference Cockpit
+              </h3>
+              <p class="text-xs text-gray-400 max-w-xl">
+                Test simulated throughput, latency, and power budgets across Jetson edge fleets and Raspberry Pi NPUs.
+              </p>
+            </div>
+
+            <!-- Cockpit Quick Trigger Stress Button -->
+            <button onclick="runBenchmarkStressTest()" id="stress-test-btn" class="magnetic-btn px-5 py-2.5 rounded-full text-xs font-mono-tech font-semibold text-[#04080a] bg-accent hover:bg-cyan-300 shadow-[0_0_20px_rgba(0,229,240,0.4)] inline-flex items-center gap-2 transition-all shrink-0">
+              <span id="stress-btn-icon">⚡</span>
+              <span id="stress-btn-text">RUN 2-SEC INFERENCE STRESS TEST</span>
+            </button>
+          </div>
+
+          <!-- Controls Matrix: Hardware + Model + Precision -->
+          <div class="grid lg:grid-cols-3 gap-6">
+
+            <!-- 1. Target Hardware Selector -->
+            <div class="space-y-2">
+              <label class="block font-mono-tech text-[11px] text-gray-300 uppercase tracking-wider">
+                1. Target Compute Platform:
+              </label>
+              <div class="grid grid-cols-2 gap-2 font-mono-tech text-xs" id="hw-selector-group">
+                <button type="button" onclick="selectBenchmarkHw('orin-nano')" data-hw="orin-nano" class="benchmark-chip active p-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-200 text-left hover:border-cyan-400/50">
+                  <div class="font-semibold text-white">Jetson Orin Nano</div>
+                  <div class="text-[10px] text-gray-400">8GB · 40 TOPS · 15W</div>
+                </button>
+                <button type="button" onclick="selectBenchmarkHw('agx-orin')" data-hw="agx-orin" class="benchmark-chip p-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-200 text-left hover:border-cyan-400/50">
+                  <div class="font-semibold text-white">Jetson AGX Orin</div>
+                  <div class="text-[10px] text-gray-400">64GB · 275 TOPS · 60W</div>
+                </button>
+                <button type="button" onclick="selectBenchmarkHw('nano-4gb')" data-hw="nano-4gb" class="benchmark-chip p-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-200 text-left hover:border-cyan-400/50">
+                  <div class="font-semibold text-white">Jetson Nano 4GB</div>
+                  <div class="text-[10px] text-gray-400">Maxwell · 0.5 TFLOPS</div>
+                </button>
+                <button type="button" onclick="selectBenchmarkHw('rpi5-hailo')" data-hw="rpi5-hailo" class="benchmark-chip p-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-200 text-left hover:border-cyan-400/50">
+                  <div class="font-semibold text-white">RPi 5 + Hailo-8</div>
+                  <div class="text-[10px] text-gray-400">PCIe NPU · 26 TOPS</div>
+                </button>
+              </div>
+            </div>
+
+            <!-- 2. AI Model Architecture Selector -->
+            <div class="space-y-2">
+              <label class="block font-mono-tech text-[11px] text-gray-300 uppercase tracking-wider">
+                2. AI Model Architecture:
+              </label>
+              <div class="grid grid-cols-2 gap-2 font-mono-tech text-xs" id="model-selector-group">
+                <button type="button" onclick="selectBenchmarkModel('yolov8n')" data-model="yolov8n" class="benchmark-chip active p-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-200 text-left hover:border-cyan-400/50">
+                  <div class="font-semibold text-white">YOLOv8n (Vision)</div>
+                  <div class="text-[10px] text-gray-400">3.2M params · 640x640</div>
+                </button>
+                <button type="button" onclick="selectBenchmarkModel('bytetrack')" data-model="bytetrack" class="benchmark-chip p-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-200 text-left hover:border-cyan-400/50">
+                  <div class="font-semibold text-white">ByteTrack (MOT)</div>
+                  <div class="text-[10px] text-gray-400">Kalman + Association</div>
+                </button>
+                <button type="button" onclick="selectBenchmarkModel('facenet')" data-model="facenet" class="benchmark-chip p-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-200 text-left hover:border-cyan-400/50">
+                  <div class="font-semibold text-white">FaceNet 128-D</div>
+                  <div class="text-[10px] text-gray-400">dlib / Metric Embedding</div>
+                </button>
+                <button type="button" onclick="selectBenchmarkModel('whisper')" data-model="whisper" class="benchmark-chip p-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-200 text-left hover:border-cyan-400/50">
+                  <div class="font-semibold text-white">Whisper-Base</div>
+                  <div class="text-[10px] text-gray-400">74M params · Encoder/Dec</div>
+                </button>
+              </div>
+            </div>
+
+            <!-- 3. Quantization / Precision Mode -->
+            <div class="space-y-2">
+              <label class="block font-mono-tech text-[11px] text-gray-300 uppercase tracking-wider">
+                3. Precision &amp; Runtime:
+              </label>
+              <div class="grid grid-cols-3 gap-2 font-mono-tech text-xs" id="precision-selector-group">
+                <button type="button" onclick="selectBenchmarkPrecision('int8')" data-prec="int8" class="benchmark-chip active p-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-200 text-center hover:border-cyan-400/50">
+                  <div class="font-semibold text-accent">INT8</div>
+                  <div class="text-[9px] text-gray-400">TensorRT PTQ</div>
+                </button>
+                <button type="button" onclick="selectBenchmarkPrecision('fp16')" data-prec="fp16" class="benchmark-chip p-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-200 text-center hover:border-cyan-400/50">
+                  <div class="font-semibold text-white">FP16</div>
+                  <div class="text-[9px] text-gray-400">Half Float</div>
+                </button>
+                <button type="button" onclick="selectBenchmarkPrecision('fp32')" data-prec="fp32" class="benchmark-chip p-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-200 text-center hover:border-cyan-400/50">
+                  <div class="font-semibold text-white">FP32</div>
+                  <div class="text-[9px] text-gray-400">Standard CPU</div>
+                </button>
+              </div>
+
+              <!-- Pipeline Status Pill -->
+              <div class="p-2.5 rounded-xl bg-black/60 border border-cyan-400/20 font-mono-tech text-[11px] space-y-1">
+                <div class="flex justify-between text-gray-300">
+                  <span>Engine:</span>
+                  <span id="bm-engine-status" class="text-accent font-semibold">TensorRT 8.6 CUDA 12.2</span>
+                </div>
+                <div class="flex justify-between text-gray-400 text-[10px]">
+                  <span>Optimization:</span>
+                  <span id="bm-opt-status">Zero-Copy Unified Memory</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Live Dynamic Metric Cards + Real-Time Oscilloscope Waveform -->
+          <div class="grid lg:grid-cols-12 gap-5 pt-2">
+
+            <!-- 4 Telemetry HUD Metric Readouts -->
+            <div class="lg:col-span-5 grid grid-cols-2 gap-3">
+              <!-- Latency Card -->
+              <div class="p-4 rounded-2xl bg-black/60 border border-cyan-400/20 space-y-1">
+                <div class="font-mono-tech text-[10px] text-gray-400 uppercase tracking-wider">Inference Latency</div>
+                <div class="font-display font-bold text-3xl text-accent flex items-baseline gap-1">
+                  <span id="bm-metric-latency">12.4</span>
+                  <span class="text-xs font-mono-tech text-gray-400 font-normal">ms</span>
+                </div>
+                <div id="bm-latency-badge" class="text-[10px] font-mono-tech text-emerald-400 font-medium">● SUB-50MS REAL-TIME</div>
+              </div>
+
+              <!-- FPS Throughput Card -->
+              <div class="p-4 rounded-2xl bg-black/60 border border-cyan-400/20 space-y-1">
+                <div class="font-mono-tech text-[10px] text-gray-400 uppercase tracking-wider">Throughput</div>
+                <div class="font-display font-bold text-3xl text-white flex items-baseline gap-1">
+                  <span id="bm-metric-fps">80.6</span>
+                  <span class="text-xs font-mono-tech text-gray-400 font-normal">FPS</span>
+                </div>
+                <div class="text-[10px] font-mono-tech text-cyan-400">CCTV STREAM READY</div>
+              </div>
+
+              <!-- Power Draw Card -->
+              <div class="p-4 rounded-2xl bg-black/60 border border-cyan-400/20 space-y-1">
+                <div class="font-mono-tech text-[10px] text-gray-400 uppercase tracking-wider">Power Envelope</div>
+                <div class="font-display font-bold text-2xl text-white flex items-baseline gap-1">
+                  <span id="bm-metric-power">8.2</span>
+                  <span class="text-xs font-mono-tech text-gray-400 font-normal">W</span>
+                </div>
+                <div id="bm-efficiency-badge" class="text-[10px] font-mono-tech text-gray-400">9.8 FPS / Watt</div>
+              </div>
+
+              <!-- Memory Footprint Card -->
+              <div class="p-4 rounded-2xl bg-black/60 border border-cyan-400/20 space-y-1">
+                <div class="font-mono-tech text-[10px] text-gray-400 uppercase tracking-wider">Unified VRAM</div>
+                <div class="font-display font-bold text-2xl text-white flex items-baseline gap-1">
+                  <span id="bm-metric-vram">1.1</span>
+                  <span class="text-xs font-mono-tech text-gray-400 font-normal">GB</span>
+                </div>
+                <div class="text-[10px] font-mono-tech text-gray-400">Headroom: 86% Available</div>
+              </div>
+            </div>
+
+            <!-- Real-Time Jitter & Oscilloscope Canvas (Cols 6-12) -->
+            <div class="lg:col-span-7 p-4 rounded-2xl bg-black/60 border border-cyan-400/20 flex flex-col justify-between space-y-2">
+              <div class="flex items-center justify-between font-mono-tech text-[11px]">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+                  <span class="text-white font-semibold">REAL-TIME INFERENCE JITTER OSCILLOSCOPE</span>
+                </div>
+                <span class="text-gray-400 text-[10px]">WINDOW: 120 FRAMES · 60Hz</span>
+              </div>
+
+              <div class="relative w-full h-32 rounded-xl bg-[#030708] border border-cyan-400/20 overflow-hidden">
+                <canvas id="benchmark-jitter-canvas" width="600" height="128" class="w-full h-full object-cover" aria-label="Real-time Latency Jitter Graph" role="img"></canvas>
+                <div class="absolute top-2 right-2 font-mono-tech text-[9px] px-2 py-0.5 rounded bg-black/80 border border-cyan-400/30 text-accent">
+                  TARGET: &lt;50ms THRESHOLD
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between font-mono-tech text-[10px] text-gray-400 pt-1">
+                <span>0 ms</span>
+                <span class="text-cyan-400/70">--- Steady-State Inference ---</span>
+                <span>100 ms</span>
+              </div>
+            </div>
+
+          </div>
         </div>
 
         <!-- Honest Recruiter Footnote & GitHub Link -->
@@ -1257,6 +1541,70 @@
     </div>
   </div>
 
+  <!-- =====================================================================
+       HACKER COMMAND PALETTE / CYBERDECK TERMINAL MODAL (CTRL+K)
+       ===================================================================== -->
+  <div id="terminal-modal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-xl p-4 sm:p-8 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="terminal-heading">
+    <div class="w-full max-w-2xl bg-[#030708] border border-cyan-400/40 rounded-2xl shadow-[0_0_60px_rgba(0,229,240,0.2)] overflow-hidden font-mono-tech text-xs flex flex-col max-h-[85vh]">
+
+      <!-- Terminal Top Header Bar -->
+      <div class="px-4 py-3 bg-[#061215] border-b border-cyan-400/30 flex items-center justify-between select-none">
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-red-500/80 cursor-pointer" onclick="closeTerminalModal()" title="Close Terminal"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
+          </div>
+          <span id="terminal-heading" class="text-gray-300 text-[11px] ml-2 font-semibold">
+            nishant@edge-gateway: ~ (Jetson Linux 35.4.1)
+          </span>
+        </div>
+        <div class="flex items-center gap-2 text-gray-400 text-[10px]">
+          <span class="text-accent">TLS 1.3 [OK]</span>
+          <button onclick="closeTerminalModal()" class="px-2 py-0.5 rounded hover:bg-white/10 text-gray-300">[ESC]</button>
+        </div>
+      </div>
+
+      <!-- Terminal Body / History Log -->
+      <div id="terminal-output" class="p-4 overflow-y-auto space-y-2 flex-1 text-gray-300 text-xs min-h-[240px] max-h-[420px]">
+        <div class="text-cyan-400 font-semibold">
+          ✦ NISHANT JAIN — CYBERDECK TERMINAL v4.2 [INITIALIZED]
+        </div>
+        <div class="text-gray-400 text-[11px]">
+          Connected to Edge-Gateway Fleet. Type <span class="text-accent underline cursor-pointer" onclick="runQuickCmd('help')">help</span> to view commands, or click any quick command below.
+        </div>
+        <div class="flex flex-wrap gap-1.5 pt-1 text-[10px]">
+          <button onclick="runQuickCmd('skills')" class="px-2 py-0.5 rounded bg-white/5 border border-cyan-400/30 text-accent hover:bg-cyan-950/50">skills</button>
+          <button onclick="runQuickCmd('projects')" class="px-2 py-0.5 rounded bg-white/5 border border-cyan-400/30 text-accent hover:bg-cyan-950/50">projects</button>
+          <button onclick="runQuickCmd('benchmark')" class="px-2 py-0.5 rounded bg-white/5 border border-cyan-400/30 text-accent hover:bg-cyan-950/50">benchmark</button>
+          <button onclick="runQuickCmd('patent')" class="px-2 py-0.5 rounded bg-white/5 border border-cyan-400/30 text-accent hover:bg-cyan-950/50">patent</button>
+          <button onclick="runQuickCmd('fleet')" class="px-2 py-0.5 rounded bg-white/5 border border-cyan-400/30 text-accent hover:bg-cyan-950/50">fleet</button>
+          <button onclick="runQuickCmd('overdrive')" class="px-2 py-0.5 rounded bg-white/5 border border-cyan-400/30 text-accent hover:bg-cyan-950/50">overdrive</button>
+          <button onclick="runQuickCmd('matrix')" class="px-2 py-0.5 rounded bg-white/5 border border-cyan-400/30 text-accent hover:bg-cyan-950/50">matrix</button>
+          <button onclick="runQuickCmd('clear')" class="px-2 py-0.5 rounded bg-white/5 border border-white/20 text-gray-400 hover:bg-white/10">clear</button>
+        </div>
+        <div class="border-b border-cyan-400/20 my-2"></div>
+      </div>
+
+      <!-- Terminal Interactive Input Line -->
+      <div class="px-4 py-3 bg-[#04090b] border-t border-cyan-400/20 flex items-center gap-2">
+        <span class="text-accent font-bold select-none">nishant@edge-jetson:~$</span>
+        <input id="terminal-input" type="text" autocomplete="off" spellcheck="false"
+          class="flex-1 bg-transparent border-none outline-none text-white font-mono-tech text-xs placeholder-gray-500"
+          placeholder="type 'help', 'fleet', 'overdrive', or 'matrix'..." />
+        <span class="terminal-caret text-accent font-bold select-none">█</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full-Screen Matrix Digital Rain Overlay -->
+  <canvas id="matrix-canvas-overlay" aria-hidden="true"></canvas>
+
+  <!-- Custom Cyber Magnetic Cursor & Sparks Canvas -->
+  <div id="cursor-dot" aria-hidden="true"></div>
+  <div id="cursor-ring" aria-hidden="true"></div>
+  <canvas id="cursor-sparks-canvas" aria-hidden="true"></canvas>
+
   <!-- Toast Notification -->
   <div id="toast" class="fixed bottom-6 right-6 z-50 hidden studio-glass px-4 py-3 rounded-xl border border-cyan-400 text-accent font-mono-tech text-xs shadow-2xl" role="status" aria-live="polite">
     Copied!
@@ -1277,24 +1625,149 @@
     function getAccentRgbArray() { return ACCENT_RGB_ARRAY; }
 
     let soundOn = true;
+    try {
+      const savedSound = localStorage.getItem('nj_sound_on');
+      if (savedSound !== null) soundOn = savedSound === 'true';
+    } catch (e) {}
+
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     let audioCtx = null;
+
+    function getAudioContext() {
+      if (!audioCtx && AudioCtx) {
+        audioCtx = new AudioCtx();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function toggleAudioSFX() {
+      soundOn = !soundOn;
+      try { localStorage.setItem('nj_sound_on', String(soundOn)); } catch (e) {}
+      const icon = document.getElementById('sfx-icon');
+      const label = document.getElementById('sfx-label');
+      if (icon) icon.textContent = soundOn ? '🔊' : '🔇';
+      if (label) label.textContent = soundOn ? 'SFX: ON' : 'SFX: MUTED';
+      if (soundOn) {
+        playTone(880, 0.08);
+        showToast('🔊 Sci-Fi Synthesizer Sound: ENABLED');
+      } else {
+        showToast('🔇 Sci-Fi Synthesizer Sound: MUTED');
+      }
+    }
 
     function playTone(freq = 640, dur = 0.05) {
       if (!soundOn) return;
       try {
-        if (!audioCtx) audioCtx = new AudioCtx();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(0.025, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
         osc.connect(gain);
-        gain.connect(audioCtx.destination);
+        gain.connect(ctx.destination);
         osc.start();
-        osc.stop(audioCtx.currentTime + dur);
+        osc.stop(ctx.currentTime + dur);
+      } catch (e) {}
+    }
+
+    function playHoverPip() {
+      if (!soundOn) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1400, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1800, ctx.currentTime + 0.015);
+        gain.gain.setValueAtTime(0.012, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.018);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.018);
+      } catch (e) {}
+    }
+
+    function playClickPip() {
+      if (!soundOn) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(840, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(260, ctx.currentTime + 0.035);
+        gain.gain.setValueAtTime(0.03, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.035);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.035);
+      } catch (e) {}
+    }
+
+    function playWarpSound() {
+      if (!soundOn) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(180, ctx.currentTime);
+        filter.frequency.exponentialRampToValueAtTime(1600, ctx.currentTime + 0.45);
+        filter.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 1.1);
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(60, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(340, ctx.currentTime + 0.4);
+        osc.frequency.exponentialRampToValueAtTime(45, ctx.currentTime + 1.1);
+        gain.gain.setValueAtTime(0.001, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 0.2);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.1);
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 1.1);
+      } catch (e) {}
+    }
+
+    function playHackerKeyTone() {
+      if (!soundOn) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const freqs = [1050, 1180, 1320, 1480, 1650];
+        const f = freqs[Math.floor(Math.random() * freqs.length)];
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, ctx.currentTime);
+        gain.gain.setValueAtTime(0.015, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.022);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.022);
+      } catch (e) {}
+    }
+
+    function playSuccessChime() {
+      if (!soundOn) return;
+      try {
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+        notes.forEach((freq, idx) => {
+          setTimeout(() => playTone(freq, 0.07), idx * 55);
+        });
       } catch (e) {}
     }
 
@@ -1338,6 +1811,7 @@
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let portalOverdrive = 1.0;
     let camera, scene, renderer, worldGroup, monolithGroup, neonStripLight, starField;
+    let warpRings = [], warpStreaks = null, warpSoundPlayed = false;
     let threeRunning = false;
 
     if (window.THREE && stage) {
@@ -1445,6 +1919,48 @@
       floorNeonStreak.rotation.x = -Math.PI / 2;
       floorNeonStreak.position.set(-1.02, -1.96, 1.15);
       monolithGroup.add(floorNeonStreak);
+
+      // 7 Concentric Hyperspace Energy Rings inside Portal
+      warpRings = [];
+      const ringGeo = new THREE.TorusGeometry(1.65, 0.02, 6, 32);
+      for (let i = 0; i < 7; i++) {
+        const ringMat = new THREE.MeshBasicMaterial({
+          color: ACCENT_COLOR_HEX,
+          transparent: true,
+          opacity: 0.12,
+          blending: THREE.AdditiveBlending
+        });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.position.set(0.05, 0.15, -0.25 + i * 0.45);
+        monolithGroup.add(ring);
+        warpRings.push(ring);
+      }
+
+      // 50 Hyperspace Speed Lines
+      const warpStreakCount = 50;
+      const streakGeo = new THREE.BufferGeometry();
+      const streakPos = new Float32Array(warpStreakCount * 6);
+      for (let i = 0; i < warpStreakCount; i++) {
+        const ang = Math.random() * Math.PI * 2;
+        const rad = 0.4 + Math.random() * 2.2;
+        const sx = Math.cos(ang) * rad;
+        const sy = Math.sin(ang) * rad;
+        const sz = (Math.random() - 0.5) * 10;
+        streakPos[i * 6] = sx;
+        streakPos[i * 6 + 1] = sy;
+        streakPos[i * 6 + 2] = sz;
+        streakPos[i * 6 + 3] = sx;
+        streakPos[i * 6 + 4] = sy;
+        streakPos[i * 6 + 5] = sz - (1.0 + Math.random() * 2.5);
+      }
+      streakGeo.setAttribute('position', new THREE.BufferAttribute(streakPos, 3));
+      warpStreaks = new THREE.LineSegments(streakGeo, new THREE.LineBasicMaterial({
+        color: ACCENT_COLOR_HEX,
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending
+      }));
+      monolithGroup.add(warpStreaks);
 
       // Mountain Vista Backdrop inside Archway
       const vistaCanvas = document.createElement('canvas');
@@ -1607,6 +2123,40 @@
           // Ambient cyber-particles drift faster and swirl past camera on scroll
           starField.rotation.y = t * 0.015 + scrollProgress * 0.04;
           starField.position.z = scrollProgress * 3.8;
+
+          // Hyperspace Energy Rings pulsation & expansion
+          if (warpRings && warpRings.length) {
+            warpRings.forEach((ring, idx) => {
+              ring.rotation.z += (idx % 2 === 0 ? 0.008 : -0.008);
+              const pulse = Math.sin(t * 3.5 + idx * 0.7) * 0.12;
+              ring.scale.setScalar(1 + pulse + scrollProgress * 0.45);
+              ring.material.opacity = (0.12 + Math.sin(scrollProgress * Math.PI) * 0.65) * (1 - idx * 0.08);
+            });
+          }
+
+          // Hyperspace Speed Streaks animation
+          if (warpStreaks) {
+            const streakActive = Math.min(1, Math.max(0, (scrollProgress - 0.12) / 0.45));
+            warpStreaks.material.opacity = streakActive * 0.85;
+            const pos = warpStreaks.geometry.attributes.position.array;
+            for (let i = 0; i < 50; i++) {
+              pos[i * 6 + 2] += (0.09 + scrollProgress * 0.45);
+              pos[i * 6 + 5] += (0.09 + scrollProgress * 0.45);
+              if (pos[i * 6 + 2] > 6) {
+                pos[i * 6 + 2] -= 12;
+                pos[i * 6 + 5] -= 12;
+              }
+            }
+            warpStreaks.geometry.attributes.position.needsUpdate = true;
+          }
+
+          // Trigger audio warp whoosh once as user crosses into hyperspace
+          if (scrollProgress > 0.35 && !warpSoundPlayed) {
+            warpSoundPlayed = true;
+            playWarpSound();
+          } else if (scrollProgress < 0.15) {
+            warpSoundPlayed = false;
+          }
         }
 
         const heroWrap = document.getElementById('hero-3d-wrapper');
@@ -1640,21 +2190,21 @@
     }
 
     function playCinematicIntro() {
-      playTone(520, 0.12);
+      playWarpSound();
       const btnText = document.getElementById('intro-btn-text');
-      if (btnText) btnText.textContent = 'Entering Portal...';
-      portalOverdrive = 2.4;
+      if (btnText) btnText.textContent = 'Hyperdrive Warp...';
+      portalOverdrive = 3.2;
 
       const projectsEl = document.getElementById('projects');
       if (projectsEl) {
         projectsEl.scrollIntoView({ behavior: 'smooth' });
       }
 
-      showToast('⚡ Flying through 3D Portal into Featured Systems...');
+      showToast('⚡ HYPERDRIVE ENGAGED // Flying into Featured Systems...');
       setTimeout(() => {
         portalOverdrive = 1.0;
         if (btnText) btnText.textContent = 'Fly-Through 3D Portal';
-      }, 1800);
+      }, 1900);
     }
 
     /* =========================================================================
@@ -2442,6 +2992,623 @@
       window.location.href = `mailto:jainnishant779@gmail.com?subject=${subject}&body=${body}`;
       showToast('⚡ Opening email client for transmission...');
     }
+
+    /* =========================================================================
+       7. INTERACTIVE EDGE AI BENCHMARK COCKPIT & OSCILLOSCOPE
+       ========================================================================= */
+    const BENCHMARK_DATA = {
+      'orin-nano': {
+        name: 'Jetson Orin Nano 8GB',
+        powerBudget: '15W MaxN',
+        engine: 'TensorRT 8.6 · CUDA 12.2',
+        models: {
+          'yolov8n': {
+            'int8': { latency: 12.4, fps: 80.6, power: 8.2, vram: 1.1, badge: '● SUB-50MS REAL-TIME', opt: 'DLA + Unified Memory Zero-Copy' },
+            'fp16': { latency: 19.8, fps: 50.5, power: 10.4, vram: 1.4, badge: '● REAL-TIME (50 FPS)', opt: 'Tensor Core FP16 Optimization' },
+            'fp32': { latency: 42.1, fps: 23.7, power: 13.5, vram: 1.9, badge: '● NEAR REAL-TIME', opt: 'CPU / CUDA Fallback' }
+          },
+          'bytetrack': {
+            'int8': { latency: 6.8, fps: 147.0, power: 6.5, vram: 0.8, badge: '● ULTRA LOW LATENCY', opt: 'Kalman Filter Vectorized C++' },
+            'fp16': { latency: 8.2, fps: 121.9, power: 7.2, vram: 0.9, badge: '● HIGH THROUGHPUT', opt: 'PyTorch / Cython Engine' },
+            'fp32': { latency: 14.5, fps: 68.9, power: 9.1, vram: 1.1, badge: '● REAL-TIME', opt: 'Standard Association' }
+          },
+          'facenet': {
+            'int8': { latency: 16.2, fps: 61.7, power: 9.0, vram: 1.2, badge: '● SUB-50MS VERIFIED', opt: '128-D Euclidean Tensor Core' },
+            'fp16': { latency: 24.5, fps: 40.8, power: 11.2, vram: 1.6, badge: '● REAL-TIME', opt: 'dlib ResNet-34 FP16' },
+            'fp32': { latency: 58.4, fps: 17.1, power: 14.2, vram: 2.2, badge: '▲ >50MS PIPELINE SPIKE', badgeColor: 'text-amber-400', opt: 'Full FP32 Precision' }
+          },
+          'whisper': {
+            'int8': { latency: 44.8, fps: 22.3, power: 11.8, vram: 1.8, badge: '● SUB-50MS STREAM ASR', opt: 'Faster-Whisper INT8 CT2' },
+            'fp16': { latency: 78.5, fps: 12.7, power: 14.6, vram: 2.4, badge: '▲ BUFFERED BATCHING', badgeColor: 'text-amber-400', opt: 'Encoder/Decoder FP16' },
+            'fp32': { latency: 185.0, fps: 5.4, power: 15.0, vram: 3.5, badge: '▲ NON-REALTIME CPU', badgeColor: 'text-red-400', opt: 'Torch Audio FP32' }
+          }
+        }
+      },
+      'agx-orin': {
+        name: 'Jetson AGX Orin 64GB',
+        powerBudget: '60W MAX-Q',
+        engine: 'TensorRT 8.6 · 275 TOPS',
+        models: {
+          'yolov8n': {
+            'int8': { latency: 3.8, fps: 263.1, power: 22.0, vram: 1.4, badge: '● ULTRA LOW LATENCY', opt: 'Dual DLA + 2048 CUDA Cores' },
+            'fp16': { latency: 5.4, fps: 185.1, power: 28.5, vram: 1.8, badge: '● MULTI-STREAM 4K', opt: 'Ampere Tensor Cores' },
+            'fp32': { latency: 12.1, fps: 82.6, power: 36.0, vram: 2.5, badge: '● HIGH THROUGHPUT', opt: 'Native CUDA Cores' }
+          },
+          'bytetrack': {
+            'int8': { latency: 2.1, fps: 476.0, power: 18.0, vram: 0.9, badge: '● 16-STREAM CONCURRENT', opt: 'DeepStream Hardware Pipeline' },
+            'fp16': { latency: 2.8, fps: 357.1, power: 21.0, vram: 1.0, badge: '● ULTRA FAST', opt: 'Vectorized MOT' },
+            'fp32': { latency: 4.5, fps: 222.2, power: 26.0, vram: 1.3, badge: '● HIGH THROUGHPUT', opt: 'Standard C++ MOT' }
+          },
+          'facenet': {
+            'int8': { latency: 5.2, fps: 192.3, power: 24.0, vram: 1.5, badge: '● MASSIVE BATCHING', opt: 'Zero-Latency Euclidean' },
+            'fp16': { latency: 8.1, fps: 123.4, power: 31.0, vram: 2.0, badge: '● REAL-TIME ENTERPRISE', opt: 'High-Res Biometrics' },
+            'fp32': { latency: 18.2, fps: 54.9, power: 42.0, vram: 2.8, badge: '● PRODUCTION READY', opt: 'Full FP32 Pipeline' }
+          },
+          'whisper': {
+            'int8': { latency: 14.2, fps: 70.4, power: 29.0, vram: 2.2, badge: '● LIVE REAL-TIME TRANSCRIBE', opt: 'Batched ASR Engine' },
+            'fp16': { latency: 22.5, fps: 44.4, power: 38.0, vram: 3.1, badge: '● HIGH ACCURACY ASR', opt: 'Whisper Medium FP16' },
+            'fp32': { latency: 52.0, fps: 19.2, power: 50.0, vram: 4.8, badge: '● LARGE MODEL HEADROOM', opt: 'High Compute ASR' }
+          }
+        }
+      },
+      'nano-4gb': {
+        name: 'Jetson Nano 4GB',
+        powerBudget: '10W MAX-N',
+        engine: 'TensorRT 8.2 · Maxwell 128 Cores',
+        models: {
+          'yolov8n': {
+            'int8': { latency: 36.2, fps: 27.6, power: 7.8, vram: 1.6, badge: '● EDGE CONSTRAINED (OK)', opt: 'TensorRT INT8 Calibration' },
+            'fp16': { latency: 48.5, fps: 20.6, power: 9.4, vram: 2.1, badge: '● EDGE PRODUCTION LIMIT', opt: 'Half-Precision GPU' },
+            'fp32': { latency: 114.0, fps: 8.7, power: 9.9, vram: 2.8, badge: '▲ >100MS LATENCY HIGH', badgeColor: 'text-red-400', opt: 'GPU Memory Pressure' }
+          },
+          'bytetrack': {
+            'int8': { latency: 14.5, fps: 68.9, power: 6.2, vram: 0.9, badge: '● LIGHTWEIGHT TRACKER', opt: 'C++ Association' },
+            'fp16': { latency: 18.2, fps: 54.9, power: 7.1, vram: 1.1, badge: '● STEADY-STATE', opt: 'Kalman Track Filter' },
+            'fp32': { latency: 38.0, fps: 26.3, power: 8.8, vram: 1.5, badge: '● NEAR THRESHOLD', opt: 'Python Fallback' }
+          },
+          'facenet': {
+            'int8': { latency: 44.0, fps: 22.7, power: 8.5, vram: 1.8, badge: '● SUB-50MS ON-DEVICE', opt: 'Face Alignment + INT8' },
+            'fp16': { latency: 68.0, fps: 14.7, power: 9.8, vram: 2.3, badge: '▲ MEMORY CONSTRAINED', badgeColor: 'text-amber-400', opt: '128-D FP16 ResNet' },
+            'fp32': { latency: 165.0, fps: 6.0, power: 10.0, vram: 3.2, badge: '▲ MEMORY SWAPPING', badgeColor: 'text-red-400', opt: 'High Swap Thrash' }
+          },
+          'whisper': {
+            'int8': { latency: 120.0, fps: 8.3, power: 9.9, vram: 2.7, badge: '▲ OFFLINE ONLY BATCH', badgeColor: 'text-amber-400', opt: 'Whisper Tiny INT8' },
+            'fp16': { latency: 240.0, fps: 4.1, power: 10.0, vram: 3.4, badge: '▲ HEAVY INFERENCE', badgeColor: 'text-red-400', opt: 'OOM Risk (4GB Limit)' },
+            'fp32': { latency: 580.0, fps: 1.7, power: 10.0, vram: 3.9, badge: '▲ OOM THRESHOLD SPIKE', badgeColor: 'text-red-500', opt: 'Severe Memory Pressure' }
+          }
+        }
+      },
+      'rpi5-hailo': {
+        name: 'Raspberry Pi 5 + Hailo-8 (26 TOPS)',
+        powerBudget: '12W Total System',
+        engine: 'HailoRT 4.16 · PCIe Gen 3',
+        models: {
+          'yolov8n': {
+            'int8': { latency: 9.2, fps: 108.7, power: 6.8, vram: 0.9, badge: '● SUB-10MS NPU HARDWARE', opt: 'Hailo-8 Dataflow Pipeline' },
+            'fp16': { latency: 18.5, fps: 54.0, power: 8.2, vram: 1.2, badge: '● RPi CPU FP16', opt: 'ARM NEON SIMD' },
+            'fp32': { latency: 64.0, fps: 15.6, power: 9.5, vram: 1.6, badge: '▲ CPU BOUND', badgeColor: 'text-amber-400', opt: 'BCM2712 Quad Cortex-A76' }
+          },
+          'bytetrack': {
+            'int8': { latency: 4.8, fps: 208.3, power: 5.5, vram: 0.6, badge: '● HIGH THROUGHPUT', opt: 'CPU Track / NPU Vision' },
+            'fp16': { latency: 7.5, fps: 133.3, power: 6.8, vram: 0.8, badge: '● ULTRA LOW LATENCY', opt: 'NEON Optimized' },
+            'fp32': { latency: 19.0, fps: 52.6, power: 8.0, vram: 1.0, badge: '● REAL-TIME', opt: 'Standard Association' }
+          },
+          'facenet': {
+            'int8': { latency: 11.5, fps: 86.9, power: 7.2, vram: 1.0, badge: '● HARDWARE ACCELERATED', opt: 'Hailo-8 NPU Co-processor' },
+            'fp16': { latency: 28.0, fps: 35.7, power: 8.9, vram: 1.4, badge: '● REAL-TIME', opt: 'ARM NEON FP16' },
+            'fp32': { latency: 72.0, fps: 13.8, power: 9.8, vram: 1.8, badge: '▲ CPU SATURATION', badgeColor: 'text-amber-400', opt: 'Full CPU Inference' }
+          },
+          'whisper': {
+            'int8': { latency: 58.0, fps: 17.2, power: 9.2, vram: 1.5, badge: '● ON-DEVICE STREAM', opt: 'Hailo-8 + GGML' },
+            'fp16': { latency: 115.0, fps: 8.6, power: 10.4, vram: 2.0, badge: '▲ CPU ENCODER', badgeColor: 'text-amber-400', opt: 'ARM NEON Whisper' },
+            'fp32': { latency: 290.0, fps: 3.4, power: 11.2, vram: 2.8, badge: '▲ HIGH CPU THERMAL', badgeColor: 'text-red-400', opt: 'CPU Saturated' }
+          }
+        }
+      }
+    };
+
+    let curHw = 'orin-nano';
+    let curModel = 'yolov8n';
+    let curPrec = 'int8';
+    let stressActive = false;
+
+    function selectBenchmarkHw(hw) {
+      playClickPip();
+      curHw = hw;
+      document.querySelectorAll('#hw-selector-group button').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-hw') === hw);
+      });
+      updateBenchmarkMetrics();
+    }
+
+    function selectBenchmarkModel(model) {
+      playClickPip();
+      curModel = model;
+      document.querySelectorAll('#model-selector-group button').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-model') === model);
+      });
+      updateBenchmarkMetrics();
+    }
+
+    function selectBenchmarkPrecision(prec) {
+      playClickPip();
+      curPrec = prec;
+      document.querySelectorAll('#precision-selector-group button').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-prec') === prec);
+      });
+      updateBenchmarkMetrics();
+    }
+
+    function updateBenchmarkMetrics() {
+      const hwObj = BENCHMARK_DATA[curHw] || BENCHMARK_DATA['orin-nano'];
+      const modelObj = hwObj.models[curModel] || hwObj.models['yolov8n'];
+      const data = modelObj[curPrec] || modelObj['int8'];
+
+      const elLat = document.getElementById('bm-metric-latency');
+      const elFps = document.getElementById('bm-metric-fps');
+      const elPower = document.getElementById('bm-metric-power');
+      const elVram = document.getElementById('bm-metric-vram');
+      const elBadge = document.getElementById('bm-latency-badge');
+      const elEff = document.getElementById('bm-efficiency-badge');
+      const elEngine = document.getElementById('bm-engine-status');
+      const elOpt = document.getElementById('bm-opt-status');
+
+      if (elLat) elLat.textContent = data.latency.toFixed(1);
+      if (elFps) elFps.textContent = data.fps.toFixed(1);
+      if (elPower) elPower.textContent = data.power.toFixed(1);
+      if (elVram) elVram.textContent = data.vram.toFixed(1);
+
+      if (elBadge) {
+        elBadge.innerHTML = data.badge;
+        elBadge.className = 'text-[10px] font-mono-tech font-medium ' + (data.badgeColor || (data.latency < 50 ? 'text-emerald-400' : 'text-amber-400'));
+      }
+      if (elEff) {
+        const fpsPerWatt = (data.fps / data.power).toFixed(1);
+        elEff.textContent = `${fpsPerWatt} FPS / Watt · ${hwObj.powerBudget}`;
+      }
+      if (elEngine) elEngine.textContent = hwObj.engine;
+      if (elOpt) elOpt.textContent = data.opt;
+    }
+
+    function runBenchmarkStressTest() {
+      playWarpSound();
+      stressActive = true;
+      const btnText = document.getElementById('stress-btn-text');
+      const btnIcon = document.getElementById('stress-btn-icon');
+      if (btnText) btnText.textContent = 'STRESS TESTING 100% PIPELINE...';
+      if (btnIcon) btnIcon.textContent = '🔥';
+      showToast('⚡ Running 2-sec Hardware Thermal & Pipeline Stress Test...');
+
+      setTimeout(() => {
+        stressActive = false;
+        playSuccessChime();
+        if (btnText) btnText.textContent = 'RUN 2-SEC INFERENCE STRESS TEST';
+        if (btnIcon) btnIcon.textContent = '⚡';
+        showToast('✓ Stress Test Complete: 0 Frame Drops · Steady-State Maintained');
+      }, 2200);
+    }
+
+    // Benchmark Real-Time Oscilloscope / Jitter Canvas Loop
+    let jitterHistory = Array.from({ length: 120 }, () => 14);
+    function initBenchmarkJitterCanvas() {
+      const canvas = document.getElementById('benchmark-jitter-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      function drawJitter() {
+        requestAnimationFrame(drawJitter);
+        const w = canvas.width || 600;
+        const h = canvas.height || 128;
+
+        const hwObj = BENCHMARK_DATA[curHw] || BENCHMARK_DATA['orin-nano'];
+        const modelObj = hwObj.models[curModel] || hwObj.models['yolov8n'];
+        const data = modelObj[curPrec] || modelObj['int8'];
+        const baseLatency = data.latency;
+
+        // Simulate natural inference jitter noise (+ surge if stressActive)
+        const jitterNoise = (Math.random() - 0.48) * (baseLatency * 0.16) + (Math.random() < 0.04 ? baseLatency * 0.35 : 0);
+        const stressMult = stressActive ? (1.3 + Math.random() * 0.4) : 1.0;
+        const currentSample = Math.min(100, Math.max(2, (baseLatency + jitterNoise) * stressMult));
+
+        jitterHistory.push(currentSample);
+        if (jitterHistory.length > 120) jitterHistory.shift();
+
+        // Clear canvas
+        ctx.fillStyle = '#030708';
+        ctx.fillRect(0, 0, w, h);
+
+        // Draw horizontal grid lines (25ms, 50ms, 75ms)
+        ctx.strokeStyle = 'rgba(0, 229, 240, 0.08)';
+        ctx.lineWidth = 1;
+        [25, 50, 75].forEach(ms => {
+          const y = h - (ms / 100) * h;
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(w, y);
+          ctx.stroke();
+        });
+
+        // 50ms Threshold Red/Amber Line
+        const y50 = h - (50 / 100) * h;
+        ctx.strokeStyle = 'rgba(255, 59, 92, 0.45)';
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(0, y50);
+        ctx.lineTo(w, y50);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Draw Waveform Area Gradient
+        const [ar, ag, ab] = ACCENT_RGB_ARRAY;
+        const grad = ctx.createLinearGradient(0, 0, 0, h);
+        grad.addColorStop(0, stressActive ? 'rgba(255, 59, 92, 0.35)' : `rgba(${ar}, ${ag}, ${ab}, 0.28)`);
+        grad.addColorStop(1, 'rgba(0, 229, 240, 0.0)');
+
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(0, h);
+        const step = w / (jitterHistory.length - 1);
+        jitterHistory.forEach((val, i) => {
+          const x = i * step;
+          const y = h - (val / 100) * h;
+          if (i === 0) ctx.lineTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.lineTo(w, h);
+        ctx.closePath();
+        ctx.fill();
+
+        // Draw Waveform Line
+        ctx.strokeStyle = stressActive ? '#ff3b5c' : ACCENT_CSS_STR;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        jitterHistory.forEach((val, i) => {
+          const x = i * step;
+          const y = h - (val / 100) * h;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+
+        // Draw pulsing live head point
+        const lastX = w;
+        const lastY = h - (currentSample / 100) * h;
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(lastX - 2, lastY, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      drawJitter();
+    }
+
+    /* =========================================================================
+       8. HACKER COMMAND PALETTE & TERMINAL INTERPRETER (CTRL+K)
+       ========================================================================= */
+    const termModal = document.getElementById('terminal-modal');
+    const termInput = document.getElementById('terminal-input');
+    const termOutput = document.getElementById('terminal-output');
+
+    function openTerminalModal() {
+      playTone(740, 0.05);
+      if (termModal) termModal.classList.remove('hidden');
+      if (termInput) {
+        termInput.value = '';
+        setTimeout(() => termInput.focus(), 80);
+      }
+    }
+
+    function closeTerminalModal() {
+      playTone(380, 0.05);
+      if (termModal) termModal.classList.add('hidden');
+    }
+
+    function appendTermLog(html) {
+      if (!termOutput) return;
+      const d = document.createElement('div');
+      d.innerHTML = html;
+      termOutput.appendChild(d);
+      termOutput.scrollTop = termOutput.scrollHeight;
+    }
+
+    function runQuickCmd(cmd) {
+      if (termInput) termInput.value = cmd;
+      executeTerminalCommand(cmd);
+    }
+
+    function executeTerminalCommand(cmdRaw) {
+      const cmd = (cmdRaw || '').trim().toLowerCase();
+      playHackerKeyTone();
+      appendTermLog(`<div class="text-gray-400 mt-2"><span class="text-accent font-bold">nishant@edge-jetson:~$</span> <span class="text-white">${cmdRaw}</span></div>`);
+
+      if (!cmd) return;
+
+      switch (cmd) {
+        case 'help':
+          appendTermLog(`
+            <div class="text-gray-300 space-y-1 pl-2 border-l border-cyan-400/30 text-[11px]">
+              <div><strong class="text-accent">skills</strong> — View full edge AI, computer vision & embedded stack</div>
+              <div><strong class="text-accent">projects</strong> — List 5 production systems & case studies</div>
+              <div><strong class="text-accent">benchmark</strong> — Jump to interactive Jetson Latency Cockpit</div>
+              <div><strong class="text-accent">patent</strong> — View EdgeDesk Patent Application details</div>
+              <div><strong class="text-accent">fleet</strong> — Ping live distributed Jetson edge fleet nodes</div>
+              <div><strong class="text-accent">overdrive</strong> — Overclock 3D portal with max bloom & SFX</div>
+              <div><strong class="text-accent">matrix</strong> — Toggle cyberpunk digital rain overlay</div>
+              <div><strong class="text-accent">contact</strong> — Jump to direct contact email form</div>
+              <div><strong class="text-accent">clear</strong> — Clear terminal screen buffer</div>
+            </div>
+          `);
+          break;
+
+        case 'skills':
+          appendTermLog(`
+            <div class="text-gray-200 space-y-1 text-[11px] bg-black/50 p-2 rounded border border-cyan-400/20">
+              <div class="text-accent font-bold">CORE COMPETENCIES // NISHANT JAIN</div>
+              <div>• Computer Vision: YOLOv8, ByteTrack, OpenCV, dlib, FaceNet, ASR Whisper INT8</div>
+              <div>• Edge Hardware: NVIDIA Jetson (Orin Nano/AGX/Nano), ESP32 LoRa Mesh, PLC iQ-F</div>
+              <div>• Acceleration & Cloud: TensorRT, CUDA, ONNX, Docker, AWS EC2, FastAPI, Flask, MySQL</div>
+              <div>• Education: B.Tech + M.Tech Dual Degree in IoT · DAVV Indore (2021-2026)</div>
+            </div>
+          `);
+          break;
+
+        case 'projects':
+          appendTermLog(`
+            <div class="text-gray-300 text-[11px] space-y-1">
+              <div>1. <span class="text-accent font-semibold">EdgeDesk</span> — Remote Desktop & Edge Telemetry (Patent Application Filed)</div>
+              <div>2. <span class="text-accent font-semibold">Crowd Analytics</span> — Sub-50ms Stampede Detection (MPSEDC Finalist)</div>
+              <div>3. <span class="text-accent font-semibold">Facial Attendance</span> — AWS EC2 + 128-D Vector Verification (~90% Time Cut)</div>
+              <div>4. <span class="text-accent font-semibold">Poultry Health AI</span> — Automated Agri-Vision Mobility & Fecal Screening</div>
+              <div>5. <span class="text-accent font-semibold">On-Device Meeting Summarizer</span> — Quantized Whisper INT8 + Local GGUF</div>
+            </div>
+          `);
+          setTimeout(() => {
+            closeTerminalModal();
+            const p = document.getElementById('projects');
+            if (p) p.scrollIntoView({ behavior: 'smooth' });
+          }, 1000);
+          break;
+
+        case 'benchmark':
+          appendTermLog(`<div class="text-accent font-semibold">Navigating to Edge AI Benchmark Cockpit...</div>`);
+          setTimeout(() => {
+            closeTerminalModal();
+            const b = document.getElementById('benchmark');
+            if (b) b.scrollIntoView({ behavior: 'smooth' });
+          }, 600);
+          break;
+
+        case 'patent':
+          appendTermLog(`
+            <div class="text-gray-200 text-[11px] p-2 bg-cyan-950/30 rounded border border-cyan-400/30 space-y-1">
+              <div class="text-accent font-bold">PATENT APPLICATION // EDGEDESK</div>
+              <div>Title: Secure Remote Desktop Access and Control Platform for Heterogeneous Computing Devices</div>
+              <div>Inventor: Nishant Jain · Synquic Labs Pvt. Ltd.</div>
+              <div>Key Claims: Encrypted TLS 1.3 tunnel, multi-node NAT traversal, sub-30ms hardware frame grab on NVIDIA Jetson & Linux daemons.</div>
+            </div>
+          `);
+          break;
+
+        case 'fleet':
+          playClickPip();
+          appendTermLog(`<div class="text-gray-400">Pinging Edge Fleet Nodes across India...</div>`);
+          setTimeout(() => {
+            appendTermLog(`
+              <div class="text-[11px] space-y-1 font-mono-tech">
+                <div class="text-emerald-400">● JETSON-ORIN-01 [Indore Labs] — 14ms (ONLINE) · FPS: 82.4 · Temp: 44°C</div>
+                <div class="text-emerald-400">● JETSON-NANO-02 [Mahakumbh Gate A] — 38ms (ONLINE) · FPS: 28.1 · Temp: 51°C</div>
+                <div class="text-emerald-400">● AWS-EC2-US-EAST [Attendance DB] — 112ms (ONLINE) · Status: 200 OK</div>
+              </div>
+            `);
+          }, 450);
+          break;
+
+        case 'overdrive':
+          playWarpSound();
+          portalOverdrive = 3.6;
+          appendTermLog(`<div class="text-accent font-bold animate-pulse">⚡ PORTAL OVERDRIVE ENGAGED (360% NEON FLUX)</div>`);
+          showToast('⚡ Portal Overdrive Engaged! 360% Neon Flux active');
+          setTimeout(() => { portalOverdrive = 1.0; }, 3000);
+          break;
+
+        case 'matrix':
+          toggleMatrixRain();
+          break;
+
+        case 'contact':
+          closeTerminalModal();
+          const c = document.getElementById('contact');
+          if (c) c.scrollIntoView({ behavior: 'smooth' });
+          break;
+
+        case 'clear':
+          if (termOutput) {
+            termOutput.innerHTML = `
+              <div class="text-cyan-400 font-semibold">✦ TERMINAL CLEARED // READY</div>
+              <div class="text-gray-400 text-[11px]">Type 'help' to view available commands.</div>
+            `;
+          }
+          break;
+
+        default:
+          appendTermLog(`<div class="text-red-400">bash: command not found: ${cmdRaw}. Type <span class="text-accent underline cursor-pointer" onclick="runQuickCmd('help')">help</span> for available commands.</div>`);
+      }
+
+      if (termInput) termInput.value = '';
+    }
+
+    if (termInput) {
+      termInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          executeTerminalCommand(termInput.value);
+        }
+      });
+    }
+
+    // Keyboard Hotkey Listener: Ctrl+K or Cmd+K or / opens terminal
+    window.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        if (termModal && !termModal.classList.contains('hidden')) {
+          closeTerminalModal();
+        } else {
+          openTerminalModal();
+        }
+      }
+      if (e.key === 'Escape' && termModal && !termModal.classList.contains('hidden')) {
+        closeTerminalModal();
+      }
+    });
+
+    /* =========================================================================
+       9. FULL-SCREEN MATRIX DIGITAL RAIN OVERLAY
+       ========================================================================= */
+    let matrixActive = false;
+    let matrixInterval = null;
+
+    function toggleMatrixRain() {
+      const canvas = document.getElementById('matrix-canvas-overlay');
+      if (!canvas) return;
+      matrixActive = !matrixActive;
+
+      if (matrixActive) {
+        canvas.classList.add('active');
+        playTone(1050, 0.1);
+        appendTermLog(`<div class="text-emerald-400 font-bold">MATRIX DIGITAL RAIN OVERLAY: [ENABLED] (Type 'matrix' to toggle off)</div>`);
+        showToast('⚡ Cyberpunk Matrix Rain: ACTIVATED');
+        startMatrixRain(canvas);
+      } else {
+        canvas.classList.remove('active');
+        appendTermLog(`<div class="text-gray-400">Matrix overlay disabled.</div>`);
+        showToast('Matrix Rain: Disabled');
+        if (matrixInterval) clearInterval(matrixInterval);
+      }
+    }
+
+    function startMatrixRain(canvas) {
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const chars = '01010101XYZABCDEF日ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ';
+      const fontSize = 14;
+      const columns = Math.floor(canvas.width / fontSize);
+      const drops = Array.from({ length: columns }, () => Math.floor(Math.random() * -50));
+
+      if (matrixInterval) clearInterval(matrixInterval);
+      matrixInterval = setInterval(() => {
+        if (!matrixActive) return;
+        ctx.fillStyle = 'rgba(4, 8, 10, 0.1)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = ACCENT_CSS_STR;
+        ctx.font = `${fontSize}px monospace`;
+
+        for (let i = 0; i < drops.length; i++) {
+          const text = chars[Math.floor(Math.random() * chars.length)];
+          const x = i * fontSize;
+          const y = drops[i] * fontSize;
+
+          ctx.fillText(text, x, y);
+          if (y > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
+          drops[i]++;
+        }
+      }, 33);
+    }
+
+    /* =========================================================================
+       10. CUSTOM CYBER MAGNETIC CURSOR & CLICK SPARK BURSTS
+       ========================================================================= */
+    function initCustomCursor() {
+      if (!window.matchMedia('(pointer: fine)').matches || prefersReducedMotion) return;
+
+      const dot = document.getElementById('cursor-dot');
+      const ring = document.getElementById('cursor-ring');
+      const sparksCanvas = document.getElementById('cursor-sparks-canvas');
+      if (!dot || !ring || !sparksCanvas) return;
+
+      const sCtx = sparksCanvas.getContext('2d');
+      sparksCanvas.width = window.innerWidth;
+      sparksCanvas.height = window.innerHeight;
+
+      let mouseX = -100, mouseY = -100;
+      let ringX = -100, ringY = -100;
+      let sparks = [];
+
+      window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
+      });
+
+      function renderCursor() {
+        requestAnimationFrame(renderCursor);
+        ringX += (mouseX - ringX) * 0.18;
+        ringY += (mouseY - ringY) * 0.18;
+        ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
+
+        if (sparks.length > 0) {
+          sCtx.clearRect(0, 0, sparksCanvas.width, sparksCanvas.height);
+          const [ar, ag, ab] = ACCENT_RGB_ARRAY;
+          for (let i = sparks.length - 1; i >= 0; i--) {
+            const p = sparks[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.life -= 0.035;
+            p.size *= 0.96;
+
+            if (p.life <= 0) {
+              sparks.splice(i, 1);
+            } else {
+              sCtx.fillStyle = `rgba(${ar}, ${ag}, ${ab}, ${p.life})`;
+              sCtx.beginPath();
+              sCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+              sCtx.fill();
+            }
+          }
+        }
+      }
+      renderCursor();
+
+      window.addEventListener('click', (e) => {
+        playClickPip();
+        for (let i = 0; i < 12; i++) {
+          const ang = Math.random() * Math.PI * 2;
+          const spd = 2 + Math.random() * 4.5;
+          sparks.push({
+            x: e.clientX,
+            y: e.clientY,
+            vx: Math.cos(ang) * spd,
+            vy: Math.sin(ang) * spd,
+            size: 2.2 + Math.random() * 2,
+            life: 1.0
+          });
+        }
+      });
+
+      const interactiveSelector = 'a, button, input, textarea, .project-card, .tech-grid-btn, .benchmark-chip';
+      document.querySelectorAll(interactiveSelector).forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          ring.classList.add('active-hover');
+          playHoverPip();
+        });
+        el.addEventListener('mouseleave', () => {
+          ring.classList.remove('active-hover');
+        });
+      });
+
+      window.addEventListener('resize', () => {
+        sparksCanvas.width = window.innerWidth;
+        sparksCanvas.height = window.innerHeight;
+      });
+    }
+
+    // Initialize all new crazy systems on load
+    window.addEventListener('DOMContentLoaded', () => {
+      updateBenchmarkMetrics();
+      initBenchmarkJitterCanvas();
+      initCustomCursor();
+    });
   </script>
 </body>
 </html>

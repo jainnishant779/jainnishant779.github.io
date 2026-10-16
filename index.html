@@ -339,7 +339,7 @@
   <!-- =====================================================================
        TOP NAVIGATION BAR
        ===================================================================== -->
-  <header class="fixed top-0 left-0 right-0 z-50 px-5 sm:px-10 py-4 bg-gradient-to-b from-[#04080a]/90 via-[#04080a]/60 to-transparent backdrop-blur-[8px]">
+  <header class="fixed top-0 left-0 right-0 z-50 px-5 sm:px-10 py-3 sm:py-3.5 bg-gradient-to-b from-[#04080a]/90 via-[#04080a]/60 to-transparent backdrop-blur-[8px]">
     <div class="max-w-[1440px] mx-auto flex items-center justify-between gap-4">
 
       <!-- Left Brand Emblem: N Monogram + NISHANT JAIN -->
@@ -425,17 +425,17 @@
     <div class="w-[1px] h-10 bg-gradient-to-b from-cyan-400/70 via-cyan-400/30 to-transparent"></div>
   </div>
 
-  <main id="main" class="relative z-10 max-w-[1440px] mx-auto px-5 sm:px-10 pt-24 pb-20 space-y-28">
+  <main id="main" class="relative z-10 max-w-[1440px] mx-auto px-5 sm:px-10 pt-16 sm:pt-20 pb-20 space-y-20 sm:space-y-28">
 
     <!-- =====================================================================
          SECTION 01: ARCHITECTURAL PORTAL HERO (ACCURATE TIMELINE & CREDENTIALS)
          ===================================================================== -->
-    <section id="home" class="min-h-[85vh] flex flex-col justify-between relative pt-4 sm:pt-8" aria-labelledby="hero-name-heading">
+    <section id="home" class="min-h-[calc(100vh-5.5rem)] flex flex-col justify-center relative pt-2 sm:pt-4 pb-4 sm:pb-6" aria-labelledby="hero-name-heading">
 
-      <div class="grid lg:grid-cols-12 gap-8 items-center my-auto relative">
+      <div class="grid lg:grid-cols-12 gap-8 items-center w-full my-auto relative">
 
         <!-- Left Editorial Hero Column with Vertical Accent Line -->
-        <div class="lg:col-span-6 relative pl-4 sm:pl-6 border-l border-cyan-400/25 space-y-6">
+        <div class="lg:col-span-6 relative pl-4 sm:pl-6 border-l border-cyan-400/25 space-y-4 sm:space-y-5">
           <!-- Top Glowing Triangle Beacon -->
           <span class="w-2 h-2 bg-accent absolute -left-[4.5px] top-1 rotate-45 shadow-[0_0_12px_var(--accent)]" aria-hidden="true"></span>
 
@@ -445,18 +445,18 @@
           </div>
 
           <!-- Giant Stacked Name + Monospace Statement Divider -->
-          <div class="space-y-1">
-            <h1 id="hero-name-heading" class="hero-reveal font-display font-extrabold text-[3.4rem] sm:text-[5.4rem] xl:text-[6.4rem] leading-[0.88] tracking-[-0.03em] text-white uppercase select-none">
+          <div class="space-y-0.5 sm:space-y-1">
+            <h1 id="hero-name-heading" class="hero-reveal font-display font-extrabold text-[3rem] sm:text-[4.6rem] xl:text-[5.6rem] leading-[0.9] tracking-[-0.03em] text-white uppercase select-none">
               NISHANT
             </h1>
-            <div class="hero-reveal flex flex-wrap items-center gap-5 sm:gap-7 pt-1">
-              <span class="font-display font-extrabold text-[3.4rem] sm:text-[5.4rem] xl:text-[6.4rem] leading-[0.88] tracking-[-0.03em] text-accent uppercase select-none drop-shadow-[0_0_35px_rgba(0,229,240,0.25)]">
+            <div class="hero-reveal flex flex-wrap items-center gap-4 sm:gap-6 pt-1">
+              <span class="font-display font-extrabold text-[3rem] sm:text-[4.6rem] xl:text-[5.6rem] leading-[0.9] tracking-[-0.03em] text-accent uppercase select-none drop-shadow-[0_0_35px_rgba(0,229,240,0.25)]">
                 JAIN
               </span>
 
               <!-- Vertical Divider + Monospace Mission Statement -->
               <div class="border-l border-white/20 pl-4 sm:pl-5 py-1">
-                <div class="font-mono-tech text-[11px] sm:text-xs leading-[1.6] tracking-[0.18em] text-gray-300 uppercase">
+                <div class="font-mono-tech text-[10px] sm:text-xs leading-[1.5] sm:leading-[1.6] tracking-[0.16em] sm:tracking-[0.18em] text-gray-300 uppercase">
                   BUILDING<br/>
                   INTELLIGENT SYSTEMS<br/>
                   FOR THE REAL WORLD.
@@ -466,40 +466,41 @@
           </div>
 
           <!-- Hero Description Focused on Real Hardware Constraints -->
-          <p class="hero-reveal text-gray-300 text-base sm:text-[17px] max-w-lg leading-relaxed font-normal">
+          <p class="hero-reveal text-gray-300 text-sm sm:text-base max-w-lg leading-relaxed font-normal">
             I engineer production AI systems across computer vision, NVIDIA Jetson edge fleets, and cloud deployment — optimized for latency, constrained compute, and verified reliability.
           </p>
 
           <!-- Magnetic CTA Buttons Row -->
-          <div class="hero-reveal flex flex-wrap items-center gap-4 pt-1">
-            <a href="#projects" class="magnetic-btn btn-portal px-7 py-3.5 rounded-full text-sm inline-flex items-center gap-3">
+          <div class="hero-reveal flex flex-wrap items-center gap-3 sm:gap-4 pt-1">
+            <a href="#projects" class="magnetic-btn btn-portal px-6 sm:px-7 py-3 sm:py-3.5 rounded-full text-xs sm:text-sm inline-flex items-center gap-2.5">
               <span>Explore 5 Featured Systems</span>
               <span class="text-base leading-none" aria-hidden="true">→</span>
             </a>
 
-            <button onclick="playCinematicIntro()" id="intro-btn" class="magnetic-btn px-5 py-3 rounded-full text-xs sm:text-sm font-medium text-gray-200 hover:text-white bg-black/60 hover:bg-black/80 border border-cyan-400/30 hover:border-accent inline-flex items-center gap-3 transition-all group" aria-label="Play 3D Camera Fly-Through Intro">
+            <button onclick="playCinematicIntro()" id="intro-btn" class="magnetic-btn px-4 sm:px-5 py-3 rounded-full text-xs sm:text-sm font-medium text-gray-200 hover:text-white bg-black/60 hover:bg-black/80 border border-cyan-400/30 hover:border-accent inline-flex items-center gap-2.5 transition-all group" aria-label="Play 3D Camera Fly-Through Intro">
               <span class="w-7 h-7 rounded-full border border-cyan-400/40 group-hover:border-accent group-hover:text-accent flex items-center justify-center text-[10px] transition-colors" aria-hidden="true">▶</span>
               <span id="intro-btn-text">Fly-Through 3D Portal</span>
+              <span class="text-[10px] font-mono-tech text-cyan-400/80 hidden sm:inline">(or Scroll ↓)</span>
             </button>
           </div>
 
           <!-- 4-Column Credible & Verified Metrics Row (Accurate Timeline) -->
-          <div class="hero-reveal grid grid-cols-2 sm:grid-cols-4 gap-6 pt-6 max-w-xl border-t border-white/10 sm:border-t-0">
-            <div class="border-r border-white/15 pr-4">
-              <div class="font-display font-bold text-2xl sm:text-3xl text-white">5</div>
-              <div class="text-xs text-gray-400 mt-1">Featured Systems</div>
+          <div class="hero-reveal grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 pt-4 sm:pt-5 max-w-xl border-t border-white/10">
+            <div class="border-r border-white/15 pr-3 sm:pr-4">
+              <div class="font-display font-bold text-2xl sm:text-[28px] text-white">5</div>
+              <div class="text-xs text-gray-400 mt-0.5 sm:mt-1">Featured Systems</div>
             </div>
-            <div class="sm:border-r border-white/15 pr-4">
-              <div class="font-display font-bold text-2xl sm:text-3xl text-white">1+ Yrs</div>
-              <div class="text-xs text-gray-400 mt-1">Production Track</div>
+            <div class="sm:border-r border-white/15 pr-3 sm:pr-4">
+              <div class="font-display font-bold text-2xl sm:text-[28px] text-white">1+ Yrs</div>
+              <div class="text-xs text-gray-400 mt-0.5 sm:mt-1">Production Track</div>
             </div>
-            <div class="border-r border-white/15 pr-4">
-              <div class="font-display font-bold text-2xl sm:text-3xl text-accent">Top Finalist</div>
-              <div class="text-xs text-gray-400 mt-1">200+ Teams (MPSEDC)</div>
+            <div class="border-r border-white/15 pr-3 sm:pr-4">
+              <div class="font-display font-bold text-2xl sm:text-[28px] text-accent">Top Finalist</div>
+              <div class="text-xs text-gray-400 mt-0.5 sm:mt-1">200+ Teams (MPSEDC)</div>
             </div>
             <div>
-              <div class="font-display font-bold text-2xl sm:text-3xl text-accent">1</div>
-              <div class="text-xs text-gray-400 mt-1">Patent Application</div>
+              <div class="font-display font-bold text-2xl sm:text-[28px] text-accent">1</div>
+              <div class="text-xs text-gray-400 mt-0.5 sm:mt-1">Patent Application</div>
             </div>
           </div>
         </div>
@@ -1397,7 +1398,7 @@
 
       // Brutalist Architectural Gate
       monolithGroup = new THREE.Group();
-      monolithGroup.position.set(1.95, 0.35, 0);
+      monolithGroup.position.set(1.95, 0.15, 0);
       monolithGroup.rotation.y = -0.32;
       worldGroup.add(monolithGroup);
 
@@ -1572,21 +1573,47 @@
         const t = clock.getElapsedTime();
         const scrollY = window.scrollY;
 
-        if (!prefersReducedMotion) {
-          worldGroup.rotation.y += (targetMouseX * 0.07 - worldGroup.rotation.y) * 0.045;
-          worldGroup.rotation.x += (targetMouseY * 0.035 - worldGroup.rotation.x) * 0.045;
-          neonStripLight.intensity = (3.4 + Math.sin(t * 2.5) * 0.5) * portalOverdrive;
-          starField.rotation.y = t * 0.015;
-        }
-
         const isMobile = window.innerWidth < 1024;
-        monolithGroup.position.x = isMobile ? 0.35 : 1.95;
-        monolithGroup.scale.setScalar(isMobile ? 0.8 : 1.0);
+        const targetPortalX = isMobile ? 0.35 : 1.95;
+        monolithGroup.position.x = targetPortalX;
+        monolithGroup.position.y = 0.15;
+        monolithGroup.scale.setScalar(isMobile ? 0.82 : 1.0);
+
+        // Normalize scroll progress through hero section (0 to 1)
+        const heroSection = document.getElementById('home');
+        const heroHeight = heroSection ? heroSection.offsetHeight : (window.innerHeight * 0.85);
+        const scrollProgress = Math.min(1, Math.max(0, scrollY / Math.max(heroHeight * 0.9, 260)));
+
+        if (!prefersReducedMotion) {
+          // Subtle mouse parallax
+          worldGroup.rotation.y += (targetMouseX * 0.06 - worldGroup.rotation.y) * 0.045;
+          worldGroup.rotation.x += (targetMouseY * 0.03 - worldGroup.rotation.x) * 0.045;
+
+          // Scroll-driven camera fly-through:
+          // Establishing overview at scrollY = 0: camera at z = 8.4, x = 0, y = 0.25
+          // As user scrolls mouse wheel down, camera swoops into and through the glowing cyan portal!
+          const targetZ = 8.4 - scrollProgress * 5.8; // Dives from 8.4 down to 2.6
+          const targetCamX = scrollProgress * (targetPortalX * 0.88); // Steers directly into portal archway
+          const targetCamY = 0.25 - scrollProgress * 0.1; // Smooth eye-level alignment
+
+          camera.position.z += (targetZ - camera.position.z) * 0.09;
+          camera.position.x += (targetCamX - camera.position.x) * 0.09;
+          camera.position.y += (targetCamY - camera.position.y) * 0.09;
+
+          // Portal neon strip intensifies as the camera approaches the gate
+          const proximityGlow = Math.sin(scrollProgress * Math.PI) * 2.8;
+          neonStripLight.intensity = (3.4 + proximityGlow + Math.sin(t * 2.5) * 0.5) * portalOverdrive;
+
+          // Ambient cyber-particles drift faster and swirl past camera on scroll
+          starField.rotation.y = t * 0.015 + scrollProgress * 0.04;
+          starField.position.z = scrollProgress * 3.8;
+        }
 
         const heroWrap = document.getElementById('hero-3d-wrapper');
         if (heroWrap) {
-          const fadeThreshold = window.innerHeight * 0.85;
-          const opacity = Math.max(0.08, 1 - (scrollY / fadeThreshold));
+          // Keep portal 3D view crisp during fly-through, then smoothly blend into the projects section
+          const fadeProgress = Math.min(1, Math.max(0, (scrollProgress - 0.45) / 0.55));
+          const opacity = Math.max(0.08, 1 - fadeProgress * 0.92);
           heroWrap.style.opacity = opacity.toFixed(2);
         }
 
@@ -1615,24 +1642,19 @@
     function playCinematicIntro() {
       playTone(520, 0.12);
       const btnText = document.getElementById('intro-btn-text');
-      btnText.textContent = 'Camera Fly-Through...';
+      if (btnText) btnText.textContent = 'Entering Portal...';
       portalOverdrive = 2.4;
-      if (window.gsap && camera) {
-        gsap.to(camera.position, {
-          z: 6.2,
-          x: 0.6,
-          y: 0.35,
-          duration: 1.8,
-          ease: 'power2.inOut',
-          yoyo: true,
-          repeat: 1,
-          onComplete: () => {
-            portalOverdrive = 1.0;
-            btnText.textContent = 'Fly-Through 3D Portal';
-          }
-        });
+
+      const projectsEl = document.getElementById('projects');
+      if (projectsEl) {
+        projectsEl.scrollIntoView({ behavior: 'smooth' });
       }
-      showToast('⚡ Exploring Nishant Jain — Real-World AI & Edge Systems...');
+
+      showToast('⚡ Flying through 3D Portal into Featured Systems...');
+      setTimeout(() => {
+        portalOverdrive = 1.0;
+        if (btnText) btnText.textContent = 'Fly-Through 3D Portal';
+      }, 1800);
     }
 
     /* =========================================================================

@@ -550,9 +550,14 @@
           <span>⌘</span><span>Terminal [K]</span>
         </button>
       </div>
-      <button onclick="openCVModal(); toggleMobileMenu();" class="w-full py-2.5 rounded-xl btn-portal font-mono-tech text-xs">
-        ↓ DOWNLOAD VERIFIED CV (PDF)
-      </button>
+      <div class="grid grid-cols-2 gap-2">
+        <a href="Nishant_Jain_CV_OnePage.pdf" download="Nishant_Jain_CV_OnePage.pdf" target="_blank" onclick="toggleMobileMenu();" class="py-2.5 rounded-xl btn-portal font-mono-tech text-xs flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(0,229,240,0.3)]">
+          <span>📥</span><span>Download PDF</span>
+        </a>
+        <button onclick="openCVModal(); toggleMobileMenu();" class="py-2.5 rounded-xl bg-cyan-950/60 border border-cyan-400/40 text-accent font-mono-tech text-xs">
+          📄 View CV Modal
+        </button>
+      </div>
     </div>
   </header>
 
@@ -1196,9 +1201,12 @@
                 <span>View Career Timeline</span>
                 <span aria-hidden="true">→</span>
               </a>
-              <button onclick="openCVModal()" class="magnetic-btn px-5 py-3 rounded-full text-xs sm:text-sm font-medium text-gray-200 hover:text-accent bg-black/60 border border-cyan-400/30 hover:border-accent inline-flex items-center gap-2 transition-colors">
-                <span aria-hidden="true">↓</span>
+              <a href="Nishant_Jain_CV_OnePage.pdf" download="Nishant_Jain_CV_OnePage.pdf" target="_blank" class="magnetic-btn px-5 py-3 rounded-full text-xs sm:text-sm font-medium text-white hover:text-accent bg-black/60 border border-cyan-400/40 hover:border-accent inline-flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(0,229,240,0.2)]">
+                <span class="text-accent" aria-hidden="true">📥</span>
                 <span>Download Verified CV (PDF)</span>
+              </a>
+              <button onclick="openCVModal()" class="magnetic-btn px-4 py-3 rounded-full text-xs sm:text-sm font-medium text-cyan-400 hover:text-white bg-cyan-950/40 border border-cyan-400/40 hover:border-accent inline-flex items-center gap-1.5 transition-all">
+                <span>📄 Preview</span>
               </button>
             </div>
           </div>
@@ -1516,7 +1524,11 @@
             ⚡ 60-SECOND RECRUITER BRIEF // NISHANT JAIN
           </div>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2">
+          <a href="Nishant_Jain_CV_OnePage.pdf" download="Nishant_Jain_CV_OnePage.pdf" target="_blank" class="px-3.5 py-1.5 rounded-full bg-cyan-950/60 border border-cyan-400/40 hover:border-accent text-accent hover:text-white font-mono-tech text-xs transition-all flex items-center gap-1.5">
+            <span>📥</span>
+            <span>Download PDF</span>
+          </a>
           <button onclick="copyRecruiterBrief()" class="px-3.5 py-1.5 rounded-full bg-cyan-950/60 border border-cyan-400/40 hover:border-accent text-accent hover:text-white font-mono-tech text-xs transition-all flex items-center gap-1.5">
             <span id="copy-brief-icon">📋</span>
             <span id="copy-brief-label">Copy ATS Pitch</span>
@@ -1660,17 +1672,22 @@
        ===================================================================== -->
   <div id="cv-modal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-xl overflow-y-auto p-4 sm:p-8" role="dialog" aria-modal="true" aria-labelledby="cv-modal-heading">
     <div class="max-w-4xl mx-auto space-y-4 my-4">
-      <div class="studio-glass rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 border border-cyan-400/40">
-        <div id="cv-modal-heading" class="font-mono-tech text-xs text-accent font-semibold">
-          📄 NISHANT_JAIN_CV_ONEPAGE.PDF // VERIFIED CANONICAL RESUME
+      <div class="studio-glass rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 border border-cyan-400/40 shadow-[0_0_25px_rgba(0,229,240,0.2)]">
+        <div id="cv-modal-heading" class="font-mono-tech text-xs text-accent font-semibold flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-accent animate-pulse" aria-hidden="true"></span>
+          <span>📄 NISHANT_JAIN_CV_ONEPAGE.PDF // OFFICIAL VERIFIED RESUME</span>
         </div>
-        <div class="flex items-center gap-2 sm:gap-3">
+        <div class="flex flex-wrap items-center gap-2 sm:gap-2.5">
+          <a href="Nishant_Jain_CV_OnePage.pdf" download="Nishant_Jain_CV_OnePage.pdf" target="_blank" class="btn-portal text-xs px-4 py-2 rounded-full font-mono-tech flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,229,240,0.35)]">
+            <span>📥</span>
+            <span>DOWNLOAD PDF</span>
+          </a>
           <button onclick="copyPlaintextCV()" class="px-3.5 py-2 rounded-full bg-cyan-950/60 border border-cyan-400/40 hover:border-accent text-accent hover:text-white font-mono-tech text-xs transition-all flex items-center gap-1.5">
             <span id="copy-cv-icon">📋</span>
             <span id="copy-cv-label">Copy ATS Text</span>
           </button>
-          <button onclick="window.print()" class="btn-portal text-xs px-4 py-2 rounded-full font-mono-tech">
-            🖨️ PRINT / PDF
+          <button onclick="window.print()" class="px-3.5 py-2 rounded-full bg-white/5 border border-white/20 hover:border-cyan-400 text-gray-200 hover:text-white text-xs font-mono-tech">
+            🖨️ PRINT
           </button>
           <button onclick="closeCVModal()" id="cv-close-btn" class="font-mono-tech text-xs px-3.5 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white">
             [CLOSE]
@@ -1678,63 +1695,154 @@
         </div>
       </div>
 
-      <div id="cv-printable-area" class="bg-[#050c0e] text-gray-100 rounded-2xl p-6 sm:p-10 border border-cyan-400/25 space-y-5">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-cyan-400/20 pb-4">
+      <div id="cv-printable-area" class="bg-[#050c0e] text-gray-100 rounded-2xl p-6 sm:p-10 border border-cyan-400/25 space-y-6">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-cyan-400/20 pb-5">
           <div>
-            <h2 class="text-3xl font-extrabold tracking-tight text-white">NISHANT JAIN</h2>
-            <p class="font-mono-tech text-xs text-accent mt-1">
-              AI/ML &amp; IoT Systems Engineer · Computer Vision · NVIDIA Jetson Edge AI
+            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">NISHANT JAIN</h2>
+            <p class="font-mono-tech text-xs sm:text-sm text-accent mt-1">
+              AI/ML &amp; IoT Engineer • Computer Vision • Edge AI • Full Stack
             </p>
           </div>
           <div class="font-mono-tech text-xs text-gray-300 space-y-1 sm:text-right">
-            <div>📍 Indore, Madhya Pradesh, India</div>
-            <div>✉️ jainnishant779@gmail.com</div>
-            <div>🔗 github.com/jainnishant779 | linkedin.com/in/nishujain02</div>
+            <div>📍 Indore, M.P., India</div>
+            <div>📞 +91-9098407353</div>
+            <div>✉️ <a href="mailto:jainnishant779@gmail.com" class="text-accent hover:underline">jainnishant779@gmail.com</a></div>
+            <div>🔗 <a href="https://github.com/jainnishant779" target="_blank" class="text-accent hover:underline">github.com/jainnishant779</a> | <a href="https://linkedin.com/in/nishujain02" target="_blank" class="text-accent hover:underline">LinkedIn</a></div>
           </div>
         </div>
 
+        <!-- Summary -->
         <div>
-          <h3 class="font-mono-tech text-xs text-accent uppercase tracking-wider mb-1 font-semibold">SUMMARY</h3>
-          <p class="text-xs sm:text-sm text-gray-300 leading-relaxed">
-            AI/ML &amp; Edge Systems Engineer building production Computer Vision, NVIDIA Jetson Edge AI, and IoT systems. Patent applicant for EdgeDesk (Secure Multi-Device Remote Access Platform) and Top Finalist among 200+ teams at MPSEDC Mahakumbh Hackathon 2025 for sub-50ms Crowd Analytics &amp; Stampede Detection.
+          <h3 class="font-mono-tech text-xs text-accent uppercase tracking-wider mb-1.5 font-bold">SUMMARY</h3>
+          <p class="text-xs sm:text-[13px] text-gray-300 leading-relaxed">
+            AI/ML &amp; IoT Engineer building production-grade Computer Vision and Edge AI systems with Python, YOLO, OpenCV, Flask, AWS, and NVIDIA Jetson. Patent applicant with experience owning the full delivery cycle — data pipelines, model training and optimization, REST APIs, and cloud/edge deployment — for real-world clients.
           </p>
         </div>
 
-        <div class="space-y-3">
-          <h3 class="font-mono-tech text-xs text-accent uppercase tracking-wider font-semibold">EXPERIENCE</h3>
-          <div>
-            <div class="flex justify-between text-sm font-bold text-white">
-              <span>AI/ML &amp; IoT Systems Engineer — Synquic Labs Pvt. Ltd.</span>
-              <span class="font-mono-tech text-xs text-gray-400">Aug 2026 – Present</span>
+        <!-- Technical Skills -->
+        <div class="space-y-2 pt-1 border-t border-white/10">
+          <h3 class="font-mono-tech text-xs text-accent uppercase tracking-wider font-bold">TECHNICAL SKILLS</h3>
+          <div class="grid sm:grid-cols-2 gap-2.5 text-xs text-gray-300">
+            <div>
+              <span class="text-white font-semibold font-mono-tech text-[11px] block">AI / ML:</span>
+              <span>Python, YOLOv5/v8, TensorFlow, PyTorch, Scikit-learn, OpenCV, Object Detection, Segmentation</span>
             </div>
-            <p class="text-xs text-gray-300 mt-1">Architected EdgeDesk (Patent Application Filed) for encrypted multi-device remote desktop and edge telemetry across NVIDIA Jetson &amp; Linux hardware.</p>
-          </div>
-          <div>
-            <div class="flex justify-between text-sm font-bold text-white">
-              <span>Founding Engineer (AI &amp; Software) — Cognicity Pvt. Ltd., Indore</span>
-              <span class="font-mono-tech text-xs text-gray-400">Sep 2025 – Aug 2026</span>
+            <div>
+              <span class="text-white font-semibold font-mono-tech text-[11px] block">EDGE / IOT:</span>
+              <span>NVIDIA Jetson Nano / Orin, CUDA, TensorRT concepts, ESP32, Arduino, PLC, UART, I2C, TCP/IP</span>
             </div>
-            <p class="text-xs text-gray-300 mt-1">Led Computer Vision &amp; Edge/Fog pipelines: real-time crowd analytics, poultry health AI, LoRa Mesh smart traffic intersections, and AWS EC2 facial attendance system (~90% logging time reduction).</p>
-          </div>
-          <div>
-            <div class="flex justify-between text-sm font-bold text-white">
-              <span>Industrial Research Trainee — RRCAT (Dept. of Atomic Energy, Govt. of India)</span>
-              <span class="font-mono-tech text-xs text-gray-400">Indore</span>
+            <div>
+              <span class="text-white font-semibold font-mono-tech text-[11px] block">BACKEND &amp; CLOUD:</span>
+              <span>Flask, FastAPI, RESTful APIs, MySQL, SQLite, AWS EC2, Linux, Nginx, Gunicorn, Systemd, Git</span>
             </div>
-            <p class="text-xs text-gray-300 mt-1">Trained in scientific instrumentation, embedded control systems, and high-reliability automation.</p>
+            <div>
+              <span class="text-white font-semibold font-mono-tech text-[11px] block">GENAI:</span>
+              <span>LLM API integration, Prompt Engineering, RAG concepts</span>
+            </div>
           </div>
         </div>
 
+        <!-- Experience -->
+        <div class="space-y-3 pt-1 border-t border-white/10">
+          <h3 class="font-mono-tech text-xs text-accent uppercase tracking-wider font-bold">EXPERIENCE</h3>
+          
+          <div class="space-y-1">
+            <div class="flex flex-wrap justify-between text-xs sm:text-sm font-bold text-white">
+              <span>AI/ML &amp; IoT Engineer — Synquic Labs Pvt. Ltd., Indore</span>
+              <span class="font-mono-tech text-xs text-gray-400">Aug 2026 – Present</span>
+            </div>
+            <ul class="text-xs text-gray-300 space-y-1 list-disc list-inside">
+              <li>Develop AI/ML models, computer vision, and edge AI applications for product use cases.</li>
+              <li>Build IoT solutions with microcontrollers and embedded devices, integrating hardware with cloud and backend systems.</li>
+            </ul>
+          </div>
+
+          <div class="space-y-1">
+            <div class="flex flex-wrap justify-between text-xs sm:text-sm font-bold text-white">
+              <span>Founding Engineer – AI &amp; Software — Cognicity Pvt. Ltd., Indore</span>
+              <span class="font-mono-tech text-xs text-gray-400">Sep 2025 – Aug 2026</span>
+            </div>
+            <ul class="text-xs text-gray-300 space-y-1 list-disc list-inside">
+              <li>Worked directly with clients to scope AI/CV solutions, then owned the full build: data pipeline, model training, REST API integration, and AWS cloud deployment.</li>
+              <li>Designed and implemented YOLO-based detection systems, benchmarking results against client KPIs (mAP, precision, recall) to validate performance before release.</li>
+              <li>Managed deployment infrastructure — Systemd services, Nginx reverse proxy, SSH-based access — for cloud and edge systems running in production.</li>
+            </ul>
+          </div>
+
+          <div class="space-y-1">
+            <div class="flex flex-wrap justify-between text-xs sm:text-sm font-bold text-white">
+              <span>Machine Learning &amp; Computer Vision Intern — Cognicity Pvt. Ltd., Indore</span>
+              <span class="font-mono-tech text-xs text-gray-400">Aug 2025 – Sep 2025</span>
+            </div>
+            <ul class="text-xs text-gray-300 space-y-1 list-disc list-inside">
+              <li>Fine-tuned YOLO and TensorFlow models using data augmentation and hyperparameter tuning; deployed ML inference pipelines on NVIDIA Jetson Nano for the team’s first edge-AI client delivery.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Projects -->
+        <div class="space-y-3 pt-1 border-t border-white/10">
+          <h3 class="font-mono-tech text-xs text-accent uppercase tracking-wider font-bold">PROJECTS</h3>
+
+          <div class="space-y-1">
+            <div class="flex flex-wrap justify-between text-xs sm:text-sm font-bold text-white">
+              <span>EdgeDesk — Secure Multi-Device Remote Access Platform (Patent Filed)</span>
+              <span class="font-mono-tech text-[11px] text-gray-400">Python, WebSocket, VNC, Jetson Nano, TLS/WSS</span>
+            </div>
+            <ul class="text-xs text-gray-300 space-y-1 list-disc list-inside">
+              <li>Designed and built a VPN-style secure remote desktop platform for encrypted screen access and file transfer across a fleet of Jetson Nano edge devices — patent application filed for the multi-device architecture.</li>
+              <li>Built a custom WebSocket broker with encrypted file transfer and cross-device drag-and-drop, managing multiple edge devices from one dashboard with reboot-safe Linux services.</li>
+            </ul>
+          </div>
+
+          <div class="space-y-1">
+            <div class="flex flex-wrap justify-between text-xs sm:text-sm font-bold text-white">
+              <span>Real-Time Crowd Analytics &amp; Stampede Detection</span>
+              <span class="font-mono-tech text-[11px] text-gray-400">Python, YOLOv8, ByteTrack, OpenCV, Jetson Nano (CUDA)</span>
+            </div>
+            <ul class="text-xs text-gray-300 space-y-1 list-disc list-inside">
+              <li>Built a GPU-accelerated multi-object tracking pipeline achieving sub-50 ms inference latency for real-time person counting and density/velocity-based stampede alerts; <strong>Top Finalist among 200+ teams — MPSEDC Mahakumbh Hackathon 2025</strong>.</li>
+            </ul>
+          </div>
+
+          <div class="space-y-1">
+            <div class="flex flex-wrap justify-between text-xs sm:text-sm font-bold text-white">
+              <span>AI-Accelerated Facial Recognition Attendance System</span>
+              <span class="font-mono-tech text-[11px] text-gray-400">Python, Flask, dlib, MySQL, AWS EC2</span>
+            </div>
+            <ul class="text-xs text-gray-300 space-y-1 list-disc list-inside">
+              <li>Built and deployed a full-stack attendance system on AWS EC2, reducing manual attendance-taking time by <strong>~90%</strong> for a 3-course pilot through automated facial recognition.</li>
+            </ul>
+          </div>
+
+          <div class="space-y-1">
+            <div class="flex flex-wrap justify-between text-xs sm:text-sm font-bold text-white">
+              <span>AI-Powered Poultry Health Monitoring</span>
+              <span class="font-mono-tech text-[11px] text-gray-400">Python, YOLO, OpenCV, Object Detection</span>
+            </div>
+            <ul class="text-xs text-gray-300 space-y-1 list-disc list-inside">
+              <li>Owned the ML lifecycle end-to-end — data collection, annotation, training, and deployment — for a real farm-operator client.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Education & Awards Grid -->
         <div class="grid sm:grid-cols-2 gap-4 pt-2 border-t border-cyan-400/20 text-xs">
           <div>
-            <h3 class="font-mono-tech text-xs text-accent uppercase mb-1 font-semibold">EDUCATION</h3>
-            <div class="font-bold text-white">B.Tech + M.Tech Dual Degree in Internet of Things (IoT)</div>
+            <h3 class="font-mono-tech text-xs text-accent uppercase mb-1 font-bold">EDUCATION</h3>
+            <div class="font-bold text-white">B.Tech + M.Tech Dual Degree — Internet of Things</div>
             <div class="text-gray-300">Devi Ahilya Vishwavidyalaya (DAVV), Indore (2021 – 2026)</div>
+            <div class="text-gray-400 text-[11px] mt-0.5">Coursework: DSA, DBMS, OS, Computer Networks, ML, Embedded Systems</div>
           </div>
           <div>
-            <h3 class="font-mono-tech text-xs text-accent uppercase mb-1 font-semibold">CORE STACK &amp; HONORS</h3>
-            <div class="text-gray-300">
-              Python, PyTorch, YOLOv8, OpenCV, NVIDIA Jetson, Embedded Linux, ESP32/LoRa, AWS EC2, Flask, FastAPI, Mitsubishi PLC iQ-F Certified.
+            <h3 class="font-mono-tech text-xs text-accent uppercase mb-1 font-bold">AWARDS &amp; CERTIFICATIONS</h3>
+            <div class="text-gray-300 space-y-1">
+              <div>🏆 <strong class="text-white">Winner — Sustainathon 2025 (NATRAX)</strong></div>
+              <div>🏅 <strong class="text-white">Top Finalist — MPSEDC Mahakumbh Hackathon 2025</strong></div>
+              <div>📜 Data Science Certification — Universal Informatics</div>
+              <div>⚡ IoT &amp; Microcontrollers Training — RRCAT, DAE, Indore</div>
+              <div>⚙️ PLC iQ-F Certification — Mitsubishi Electric</div>
             </div>
           </div>
         </div>
@@ -3234,11 +3342,12 @@
       const pitch = `Nishant Jain — AI/ML & Edge Systems Engineer (Indore, IN | Open to Remote/Relocation)
 Specialization: Production Edge AI, Computer Vision, NVIDIA Jetson Fleets, Cloud Deployment.
 Key Credentials:
+• Winner — Sustainathon 2025 (NATRAX, National Automotive Test Tracks, Govt. of India).
 • Patent Application Filed: EdgeDesk encrypted multi-device remote telemetry across cellular NATs.
 • Sub-50ms Crowd Analytics: YOLOv8 + ByteTrack on Jetson Orin (MPSEDC Mahakumbh Hackathon Finalist, Top 200+ teams).
 • 90% Time Cut: Facial Attendance AI deployed on AWS EC2 across 3-course academic pilots.
-• Stack: Python, C++, TensorRT 8.6, PyTorch, OpenCV, Jetson, Docker, AWS EC2, Flask.
-Contact: jainnishant779@gmail.com | github.com/jainnishant779 | linkedin.com/in/nishujain02`;
+• Stack: Python, C++, PyTorch, TensorRT, YOLOv8/v11, Jetson, Docker, AWS EC2, FastAPI/Flask, LoRaWAN.
+Contact: +91-9098407353 | jainnishant779@gmail.com | github.com/jainnishant779 | linkedin.com/in/nishujain02`;
 
       if (navigator.clipboard) {
         navigator.clipboard.writeText(pitch).then(() => {
@@ -3258,26 +3367,45 @@ Contact: jainnishant779@gmail.com | github.com/jainnishant779 | linkedin.com/in/
       playTone(940, 0.08);
       const text = `NISHANT JAIN
 AI/ML & IoT Systems Engineer | Computer Vision | NVIDIA Jetson Edge AI
-Indore, Madhya Pradesh, India | jainnishant779@gmail.com
+Indore, Madhya Pradesh, India | Phone: +91-9098407353 | Email: jainnishant779@gmail.com
 LinkedIn: linkedin.com/in/nishujain02 | GitHub: github.com/jainnishant779
 
 SUMMARY
-AI/ML & Edge Systems Engineer building production Computer Vision, NVIDIA Jetson Edge AI, and IoT systems. Patent applicant for EdgeDesk (Secure Multi-Device Remote Access Platform) and Top Finalist among 200+ teams at MPSEDC Mahakumbh Hackathon 2025 for sub-50ms Crowd Analytics & Stampede Detection.
+AI/ML & Edge Systems Engineer building production Computer Vision, NVIDIA Jetson Edge AI, and IoT systems. Patent applicant for EdgeDesk (Secure Multi-Device Remote Access Platform), Winner at Sustainathon 2025 (NATRAX, Govt. of India), and Top Finalist among 200+ teams at MPSEDC Mahakumbh Hackathon 2025.
 
-EXPERIENCE
-• AI/ML & IoT Systems Engineer — Synquic Labs Pvt. Ltd. (Aug 2026 – Present)
-  Architected EdgeDesk (Patent Application Filed) for encrypted multi-device remote desktop and edge telemetry across NVIDIA Jetson & Linux hardware.
-• Founding Engineer (AI & Software) — Cognicity Pvt. Ltd. (Sep 2025 – Aug 2026)
-  Led Computer Vision & Edge/Fog pipelines: real-time crowd analytics, poultry health AI, LoRa Mesh smart traffic intersections, and AWS EC2 facial attendance system (~90% logging time reduction).
-• Industrial Research Trainee — RRCAT, Dept. of Atomic Energy, Govt. of India
-  Trained in scientific instrumentation, embedded control systems, and high-reliability automation.
+SKILLS
+• Programming & Core: Python, C/C++, Embedded Linux, Shell Scripting, Git, GitHub
+• AI, ML & Edge AI: PyTorch, TensorFlow, OpenCV, YOLO (v8/v11), MediaPipe, TensorRT, DeepStream, NVIDIA Jetson (Nano/Xavier/Orin), ONNX Runtime
+• Generative AI & LLMs: LLM API Integration, Prompt Engineering, Retrieval-Augmented Generation (RAG) Concepts
+• IoT & Embedded Systems: ESP32, Arduino, Raspberry Pi, LoRa / LoRaWAN, MQTT, WebSockets, Sensor Interfacing
+• Cloud & Backend: AWS (EC2), Docker, FastAPI, Flask, REST APIs
+
+WORK EXPERIENCE
+• AI/ML & IoT Systems Engineer — Synquic Labs Pvt. Ltd. (Aug 2026 – Present | Indore, M.P.)
+  - Architected EdgeDesk (Patent Application Filed) for encrypted multi-device remote desktop and edge telemetry across NVIDIA Jetson & Linux hardware.
+  - Implemented low-latency video streaming and encrypted edge tunneling across cellular NATs.
+
+• Founding Engineer (AI & Software) — Cognicity Pvt. Ltd. (Sep 2025 – Aug 2026 | Indore, M.P.)
+  - Built end-to-end Computer Vision pipelines: real-time stampede detection & crowd analytics (<50ms inference), poultry disease thermal tracking, and adaptive LoRa traffic signaling.
+  - Deployed automated facial attendance system on AWS EC2 across 3-course academic pilots, reducing manual attendance logging time by ~90%.
+
+• Machine Learning & Computer Vision Intern — Cognicity Pvt. Ltd. (Aug 2025 – Sep 2025 | Indore, M.P.)
+  - Researched and benchmarked lightweight object detection models (YOLO variants) for resource-constrained edge devices.
+  - Implemented data preprocessing, augmentation pipelines, and camera calibration for custom computer vision datasets.
+
+• Industrial Research Trainee — Raja Ramanna Centre for Advanced Technology (RRCAT) (Jun 2024 – Jul 2024 | Indore, M.P.)
+  - Department of Atomic Energy, Government of India.
+  - Hands-on exposure to scientific computing, embedded systems, and laboratory automation protocols.
 
 EDUCATION
-B.Tech + M.Tech Dual Degree in Internet of Things (IoT)
-Devi Ahilya Vishwavidyalaya (DAVV), Indore (2021 – 2026)
+Integrated Dual Degree (B.Tech + M.Tech) in Internet of Things (IoT)
+Devi Ahilya Vishwavidyalaya (DAVV), Indore (Dec 2021 – Present)
+Relevant Coursework: Machine Learning, Deep Learning, Edge Computing, Computer Vision, IoT Architecture, Embedded Systems.
 
-CORE SKILLS
-Python, PyTorch, TensorRT 8.6, YOLOv8, OpenCV, NVIDIA Jetson, Embedded Linux, Docker, AWS EC2, Flask, FastAPI, ESP32, LoRa Mesh.`;
+HONORS & ACHIEVEMENTS
+• Winner — Sustainathon 2025 (NATRAX, National Automotive Test Tracks, Govt. of India).
+• Top Finalist — MPSEDC Mahakumbh Hackathon 2025 (Top 200+ teams statewide for sub-50ms crowd density analytics).
+• Patent Application Filed — EdgeDesk: Secure Multi-Device Remote Access Platform for Edge Hardware.`;
 
       if (navigator.clipboard) {
         navigator.clipboard.writeText(text).then(() => {

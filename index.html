@@ -458,27 +458,21 @@
         </a>
       </nav>
 
-      <!-- Right Controls: SFX Toggle, ⌘K Terminal, Active Status & Let's Connect CTA -->
-      <div class="flex items-center gap-2 sm:gap-3">
+      <!-- Right Controls: SFX Toggle, ⌘K Terminal, & Let's Connect CTA -->
+      <div class="flex items-center gap-2 sm:gap-2.5">
         <!-- SFX Synthesizer Mute/Unmute Toggle -->
-        <button id="sfx-toggle-btn" onclick="toggleAudioSFX()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-black/60 border border-cyan-400/30 text-[11px] font-mono-tech text-cyan-400 hover:border-accent hover:text-white transition-all" aria-label="Toggle Sci-Fi Audio Synthesizer">
+        <button id="sfx-toggle-btn" onclick="toggleAudioSFX()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-black/60 border border-cyan-400/30 text-[11px] font-mono-tech text-cyan-400 hover:border-accent hover:text-white transition-all" title="Toggle Sound SFX">
           <span id="sfx-icon">🔊</span>
-          <span id="sfx-label" class="hidden sm:inline">SFX: ON</span>
+          <span id="sfx-label" class="hidden md:inline">SFX</span>
         </button>
 
         <!-- Command Palette / Terminal Launcher Button -->
-        <button onclick="openTerminalModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full studio-glass border border-cyan-400/40 text-[11px] font-mono-tech text-white hover:text-accent hover:border-accent transition-all group" aria-label="Open Cyberdeck Command Palette (Ctrl+K)">
+        <button onclick="openTerminalModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full studio-glass border border-cyan-400/40 text-[11px] font-mono-tech text-white hover:text-accent hover:border-accent transition-all group" title="Open Terminal (Ctrl+K)">
           <span class="w-1.5 h-1.5 rounded-full bg-accent animate-ping" aria-hidden="true"></span>
-          <span>⌘K</span>
-          <span class="hidden md:inline text-cyan-400 font-semibold">TERMINAL</span>
+          <span class="text-accent font-semibold">⌘K</span>
         </button>
 
-        <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 border border-cyan-400/20 text-xs font-mono-tech text-gray-300">
-          <span class="w-2 h-2 rounded-full bg-accent animate-pulse" aria-hidden="true"></span>
-          <span class="text-[11px] text-accent tracking-wider">AVAILABLE FOR ENG ROLES</span>
-        </div>
-
-        <a href="#contact" class="magnetic-btn studio-glass px-4 sm:px-5 py-2 rounded-full text-xs sm:text-[13px] font-medium text-white hover:text-accent border border-cyan-400/40 inline-flex items-center gap-2.5">
+        <a href="#contact" class="magnetic-btn studio-glass px-4 py-1.5 rounded-full text-xs font-medium text-white hover:text-accent border border-cyan-400/40 inline-flex items-center gap-2">
           <span>Let's Connect</span>
           <span class="text-accent" aria-hidden="true">→</span>
         </a>
@@ -514,46 +508,38 @@
     </div>
   </header>
 
-  <!-- Right Floating Minimal Scroll Indicator -->
-  <div class="hidden xl:flex flex-col items-center gap-2 fixed right-7 top-1/2 -translate-y-1/2 z-40 pointer-events-none select-none" aria-hidden="true">
-    <div class="w-[1px] h-10 bg-gradient-to-b from-transparent via-cyan-400/30 to-cyan-400/70"></div>
-    <span class="w-1.5 h-1.5 rounded-full bg-accent animate-ping"></span>
-    <span class="font-mono-tech text-[10px] tracking-widest text-gray-400 py-1">SCROLL</span>
-    <div class="w-[1px] h-10 bg-gradient-to-b from-cyan-400/70 via-cyan-400/30 to-transparent"></div>
-  </div>
-
-  <main id="main" class="relative z-10 max-w-[1440px] mx-auto px-5 sm:px-10 pt-16 sm:pt-20 pb-20 space-y-20 sm:space-y-28">
+  <main id="main" class="relative z-10 max-w-[1440px] mx-auto px-5 sm:px-10 pt-12 sm:pt-14 pb-16 space-y-16 sm:space-y-24">
 
     <!-- =====================================================================
          SECTION 01: ARCHITECTURAL PORTAL HERO (ACCURATE TIMELINE & CREDENTIALS)
          ===================================================================== -->
-    <section id="home" class="min-h-[calc(100vh-5.5rem)] flex flex-col justify-center relative pt-2 sm:pt-4 pb-4 sm:pb-6" aria-labelledby="hero-name-heading">
+    <section id="home" class="min-h-[calc(100vh-4.5rem)] max-h-[820px] flex flex-col justify-center relative pt-1 pb-1 sm:pb-2" aria-labelledby="hero-name-heading">
 
-      <div class="grid lg:grid-cols-12 gap-8 items-center w-full my-auto relative">
+      <div class="grid lg:grid-cols-12 gap-6 lg:gap-8 items-center w-full my-auto relative">
 
         <!-- Left Editorial Hero Column with Vertical Accent Line -->
-        <div class="lg:col-span-6 relative pl-4 sm:pl-6 border-l border-cyan-400/25 space-y-4 sm:space-y-5">
+        <div class="lg:col-span-6 relative pl-4 sm:pl-6 border-l border-cyan-400/25 space-y-2.5 sm:space-y-3.5">
           <!-- Top Glowing Triangle Beacon -->
           <span class="w-2 h-2 bg-accent absolute -left-[4.5px] top-1 rotate-45 shadow-[0_0_12px_var(--accent)]" aria-hidden="true"></span>
 
-          <div class="hero-reveal font-mono-tech text-xs tracking-[0.24em] text-gray-300 uppercase flex items-center gap-2.5">
+          <div class="hero-reveal font-mono-tech text-[11px] sm:text-xs tracking-[0.22em] text-gray-300 uppercase flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-accent animate-pulse" aria-hidden="true"></span>
             <span>AI/ML &amp; EDGE SYSTEMS ENGINEER · INDORE, IN</span>
           </div>
 
           <!-- Giant Stacked Name + Monospace Statement Divider -->
-          <div class="space-y-0.5 sm:space-y-1">
-            <h1 id="hero-name-heading" class="hero-reveal font-display font-extrabold text-[3rem] sm:text-[4.6rem] xl:text-[5.6rem] leading-[0.9] tracking-[-0.03em] text-white uppercase select-none">
+          <div class="space-y-0.5">
+            <h1 id="hero-name-heading" class="hero-reveal font-display font-extrabold text-[2.6rem] sm:text-[3.6rem] xl:text-[4.4rem] leading-[0.92] tracking-[-0.03em] text-white uppercase select-none">
               NISHANT
             </h1>
-            <div class="hero-reveal flex flex-wrap items-center gap-4 sm:gap-6 pt-1">
-              <span class="font-display font-extrabold text-[3rem] sm:text-[4.6rem] xl:text-[5.6rem] leading-[0.9] tracking-[-0.03em] text-accent uppercase select-none drop-shadow-[0_0_35px_rgba(0,229,240,0.25)]">
+            <div class="hero-reveal flex flex-wrap items-center gap-3 sm:gap-5 pt-0.5">
+              <span class="font-display font-extrabold text-[2.6rem] sm:text-[3.6rem] xl:text-[4.4rem] leading-[0.92] tracking-[-0.03em] text-accent uppercase select-none drop-shadow-[0_0_35px_rgba(0,229,240,0.25)]">
                 JAIN
               </span>
 
               <!-- Vertical Divider + Monospace Mission Statement -->
-              <div class="border-l border-white/20 pl-4 sm:pl-5 py-1">
-                <div class="font-mono-tech text-[10px] sm:text-xs leading-[1.5] sm:leading-[1.6] tracking-[0.16em] sm:tracking-[0.18em] text-gray-300 uppercase">
+              <div class="border-l border-white/20 pl-3 sm:pl-4 py-0.5">
+                <div class="font-mono-tech text-[9.5px] sm:text-[11px] leading-[1.45] sm:leading-[1.55] tracking-[0.15em] text-gray-300 uppercase">
                   BUILDING<br/>
                   INTELLIGENT SYSTEMS<br/>
                   FOR THE REAL WORLD.
@@ -563,60 +549,60 @@
           </div>
 
           <!-- Hero Description Focused on Real Hardware Constraints -->
-          <p class="hero-reveal text-gray-300 text-sm sm:text-base max-w-lg leading-relaxed font-normal">
+          <p class="hero-reveal text-gray-300 text-xs sm:text-[13.5px] max-w-lg leading-relaxed font-normal">
             I engineer production AI systems across computer vision, NVIDIA Jetson edge fleets, and cloud deployment — optimized for latency, constrained compute, and verified reliability.
           </p>
 
           <!-- Magnetic CTA Buttons Row -->
-          <div class="hero-reveal flex flex-wrap items-center gap-3 sm:gap-4 pt-1">
-            <a href="#projects" class="magnetic-btn btn-portal px-6 sm:px-7 py-3 sm:py-3.5 rounded-full text-xs sm:text-sm inline-flex items-center gap-2.5">
+          <div class="hero-reveal flex flex-wrap items-center gap-2.5 sm:gap-3.5 pt-0.5">
+            <a href="#projects" class="magnetic-btn btn-portal px-5 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-[13px] inline-flex items-center gap-2">
               <span>Explore 5 Featured Systems</span>
-              <span class="text-base leading-none" aria-hidden="true">→</span>
+              <span class="text-sm leading-none" aria-hidden="true">→</span>
             </a>
 
-            <button onclick="playCinematicIntro()" id="intro-btn" class="magnetic-btn px-4 sm:px-5 py-3 rounded-full text-xs sm:text-sm font-medium text-gray-200 hover:text-white bg-black/60 hover:bg-black/80 border border-cyan-400/30 hover:border-accent inline-flex items-center gap-2.5 transition-all group" aria-label="Play 3D Camera Fly-Through Intro">
-              <span class="w-7 h-7 rounded-full border border-cyan-400/40 group-hover:border-accent group-hover:text-accent flex items-center justify-center text-[10px] transition-colors" aria-hidden="true">▶</span>
+            <button onclick="playCinematicIntro()" id="intro-btn" class="magnetic-btn px-4 sm:px-4.5 py-2.5 sm:py-3 rounded-full text-xs font-medium text-gray-200 hover:text-white bg-black/60 hover:bg-black/80 border border-cyan-400/30 hover:border-accent inline-flex items-center gap-2 transition-all group" aria-label="Play 3D Camera Fly-Through Intro">
+              <span class="w-6 h-6 rounded-full border border-cyan-400/40 group-hover:border-accent group-hover:text-accent flex items-center justify-center text-[9px] transition-colors" aria-hidden="true">▶</span>
               <span id="intro-btn-text">Fly-Through 3D Portal</span>
-              <span class="text-[10px] font-mono-tech text-cyan-400/80 hidden sm:inline">(or Scroll ↓)</span>
+              <span class="text-[9.5px] font-mono-tech text-cyan-400/80 hidden sm:inline">(or Scroll ↓)</span>
             </button>
           </div>
 
           <!-- 4-Column Credible & Verified Metrics Row (Accurate Timeline) -->
-          <div class="hero-reveal grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 pt-4 sm:pt-5 max-w-xl border-t border-white/10">
-            <div class="border-r border-white/15 pr-3 sm:pr-4">
-              <div class="font-display font-bold text-2xl sm:text-[28px] text-white">5</div>
-              <div class="text-xs text-gray-400 mt-0.5 sm:mt-1">Featured Systems</div>
+          <div class="hero-reveal grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-5 pt-3 max-w-xl border-t border-white/10">
+            <div class="border-r border-white/15 pr-2.5 sm:pr-3">
+              <div class="font-display font-bold text-xl sm:text-2xl text-white">5</div>
+              <div class="text-[10.5px] sm:text-[11px] text-gray-400 mt-0.5">Featured Systems</div>
             </div>
-            <div class="sm:border-r border-white/15 pr-3 sm:pr-4">
-              <div class="font-display font-bold text-2xl sm:text-[28px] text-white">1+ Yrs</div>
-              <div class="text-xs text-gray-400 mt-0.5 sm:mt-1">Production Track</div>
+            <div class="sm:border-r border-white/15 pr-2.5 sm:pr-3">
+              <div class="font-display font-bold text-xl sm:text-2xl text-white">1+ Yrs</div>
+              <div class="text-[10.5px] sm:text-[11px] text-gray-400 mt-0.5">Production Track</div>
             </div>
-            <div class="border-r border-white/15 pr-3 sm:pr-4">
-              <div class="font-display font-bold text-2xl sm:text-[28px] text-accent">Top Finalist</div>
-              <div class="text-xs text-gray-400 mt-0.5 sm:mt-1">200+ Teams (MPSEDC)</div>
+            <div class="border-r border-white/15 pr-2.5 sm:pr-3">
+              <div class="font-display font-bold text-xl sm:text-2xl text-accent">Top Finalist</div>
+              <div class="text-[10.5px] sm:text-[11px] text-gray-400 mt-0.5">200+ Teams (MPSEDC)</div>
             </div>
             <div>
-              <div class="font-display font-bold text-2xl sm:text-[28px] text-accent">1</div>
-              <div class="text-xs text-gray-400 mt-0.5 sm:mt-1">Patent Application</div>
+              <div class="font-display font-bold text-xl sm:text-2xl text-accent">1</div>
+              <div class="text-[10.5px] sm:text-[11px] text-gray-400 mt-0.5">Patent Application</div>
             </div>
           </div>
         </div>
 
         <!-- Right 3D Monolith Overlay (Etched Monolith Wall Typography + Handwritten Note) -->
-        <div class="lg:col-span-6 relative min-h-[340px] sm:min-h-[460px] flex flex-col justify-end items-end pointer-events-none" aria-hidden="true">
+        <div class="lg:col-span-6 relative min-h-[260px] sm:min-h-[340px] flex flex-col justify-end items-end pointer-events-none" aria-hidden="true">
 
           <!-- Etched Typography on Monolith Right Face -->
-          <div class="hidden md:block absolute right-12 top-1/3 -translate-y-1/2 font-mono-tech text-[11px] tracking-[0.3em] text-gray-300/80 space-y-2.5 select-none" style="transform: perspective(600px) rotateY(-18deg) skewY(-4deg);">
+          <div class="hidden md:block absolute right-8 top-1/3 -translate-y-1/2 font-mono-tech text-[10.5px] tracking-[0.28em] text-gray-300/80 space-y-2 select-none" style="transform: perspective(600px) rotateY(-18deg) skewY(-4deg);">
             <div>IDEAS</div>
             <div>CODE</div>
             <div>DEVICES</div>
             <div>REAL WORLD</div>
-            <div class="w-8 h-[2px] bg-accent mt-2 shadow-[0_0_8px_var(--accent)]"></div>
+            <div class="w-7 h-[2px] bg-accent mt-1.5 shadow-[0_0_8px_var(--accent)]"></div>
           </div>
 
           <!-- Handwritten Note on Stone Ledge -->
-          <div class="hidden sm:flex flex-col items-end pr-4 pb-4 select-none">
-            <span class="font-hand text-2xl sm:text-3xl text-accent/90 -rotate-12 tracking-wide drop-shadow-[0_0_12px_rgba(0,229,240,0.4)]">
+          <div class="hidden sm:flex flex-col items-end pr-3 pb-3 select-none">
+            <span class="font-hand text-xl sm:text-2xl text-accent/90 -rotate-12 tracking-wide drop-shadow-[0_0_12px_rgba(0,229,240,0.4)]">
               Keep Building →
             </span>
           </div>
@@ -874,11 +860,12 @@
               </div>
             </div>
           </article>
+        </div>
 
         <!-- =====================================================================
              INTERACTIVE EDGE AI BENCHMARK COCKPIT (PROFILER & JITTER OSCILLOSCOPE)
              ===================================================================== -->
-        <div id="benchmark" class="studio-glass rounded-3xl p-6 sm:p-8 space-y-6 border border-cyan-400/30 relative overflow-hidden gsap-fade-up">
+        <div id="benchmark" class="w-full studio-glass rounded-3xl p-6 sm:p-8 space-y-6 border border-cyan-400/30 relative overflow-hidden gsap-fade-up">
           <!-- Background Ambient Glow Grid -->
           <div class="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-cyan-400/10 blur-[90px] pointer-events-none" aria-hidden="true"></div>
 
@@ -1920,17 +1907,18 @@
       floorNeonStreak.position.set(-1.02, -1.96, 1.15);
       monolithGroup.add(floorNeonStreak);
 
-      // 7 Concentric Hyperspace Energy Rings inside Portal
+      // 7 Concentric Hyperspace Energy Rings inside Portal (hidden by default, sized strictly to inner archway)
       warpRings = [];
-      const ringGeo = new THREE.TorusGeometry(1.65, 0.02, 6, 32);
+      const ringGeo = new THREE.TorusGeometry(0.85, 0.012, 6, 32);
       for (let i = 0; i < 7; i++) {
         const ringMat = new THREE.MeshBasicMaterial({
           color: ACCENT_COLOR_HEX,
           transparent: true,
-          opacity: 0.12,
+          opacity: 0,
           blending: THREE.AdditiveBlending
         });
         const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.visible = false;
         ring.position.set(0.05, 0.15, -0.25 + i * 0.45);
         monolithGroup.add(ring);
         warpRings.push(ring);
@@ -1960,6 +1948,7 @@
         opacity: 0,
         blending: THREE.AdditiveBlending
       }));
+      warpStreaks.visible = false;
       monolithGroup.add(warpStreaks);
 
       // Mountain Vista Backdrop inside Archway
@@ -2124,30 +2113,43 @@
           starField.rotation.y = t * 0.015 + scrollProgress * 0.04;
           starField.position.z = scrollProgress * 3.8;
 
-          // Hyperspace Energy Rings pulsation & expansion
+          // Hyperspace Energy Rings pulsation & expansion (strictly visible only during active scroll fly-through)
           if (warpRings && warpRings.length) {
+            const inWarpZone = scrollProgress > 0.12 && scrollProgress < 0.68;
             warpRings.forEach((ring, idx) => {
-              ring.rotation.z += (idx % 2 === 0 ? 0.008 : -0.008);
-              const pulse = Math.sin(t * 3.5 + idx * 0.7) * 0.12;
-              ring.scale.setScalar(1 + pulse + scrollProgress * 0.45);
-              ring.material.opacity = (0.12 + Math.sin(scrollProgress * Math.PI) * 0.65) * (1 - idx * 0.08);
+              ring.visible = inWarpZone;
+              if (inWarpZone) {
+                ring.rotation.z += (idx % 2 === 0 ? 0.008 : -0.008);
+                const pulse = Math.sin(t * 3.5 + idx * 0.7) * 0.08;
+                ring.scale.setScalar(1 + pulse + (scrollProgress - 0.12) * 0.45);
+                const env = Math.sin(((scrollProgress - 0.12) / 0.56) * Math.PI);
+                ring.material.opacity = env * 0.65 * Math.max(0, 1 - idx * 0.1);
+              } else {
+                ring.material.opacity = 0;
+              }
             });
           }
 
-          // Hyperspace Speed Streaks animation
+          // Hyperspace Speed Streaks animation (strictly visible only during active scroll fly-through)
           if (warpStreaks) {
-            const streakActive = Math.min(1, Math.max(0, (scrollProgress - 0.12) / 0.45));
-            warpStreaks.material.opacity = streakActive * 0.85;
-            const pos = warpStreaks.geometry.attributes.position.array;
-            for (let i = 0; i < 50; i++) {
-              pos[i * 6 + 2] += (0.09 + scrollProgress * 0.45);
-              pos[i * 6 + 5] += (0.09 + scrollProgress * 0.45);
-              if (pos[i * 6 + 2] > 6) {
-                pos[i * 6 + 2] -= 12;
-                pos[i * 6 + 5] -= 12;
+            const inStreakZone = scrollProgress > 0.15 && scrollProgress < 0.68;
+            warpStreaks.visible = inStreakZone;
+            if (inStreakZone) {
+              const streakActive = Math.sin(((scrollProgress - 0.15) / 0.53) * Math.PI);
+              warpStreaks.material.opacity = streakActive * 0.75;
+              const pos = warpStreaks.geometry.attributes.position.array;
+              for (let i = 0; i < 50; i++) {
+                pos[i * 6 + 2] += (0.09 + scrollProgress * 0.45);
+                pos[i * 6 + 5] += (0.09 + scrollProgress * 0.45);
+                if (pos[i * 6 + 2] > 6) {
+                  pos[i * 6 + 2] -= 12;
+                  pos[i * 6 + 5] -= 12;
+                }
               }
+              warpStreaks.geometry.attributes.position.needsUpdate = true;
+            } else {
+              warpStreaks.material.opacity = 0;
             }
-            warpStreaks.geometry.attributes.position.needsUpdate = true;
           }
 
           // Trigger audio warp whoosh once as user crosses into hyperspace
@@ -2161,10 +2163,15 @@
 
         const heroWrap = document.getElementById('hero-3d-wrapper');
         if (heroWrap) {
-          // Keep portal 3D view crisp during fly-through, then smoothly blend into the projects section
-          const fadeProgress = Math.min(1, Math.max(0, (scrollProgress - 0.45) / 0.55));
-          const opacity = Math.max(0.08, 1 - fadeProgress * 0.92);
-          heroWrap.style.opacity = opacity.toFixed(2);
+          // Keep portal 3D view crisp during fly-through, then completely fade out to 0 when leaving hero
+          if (scrollProgress >= 0.88) {
+            heroWrap.style.opacity = '0';
+            heroWrap.style.pointerEvents = 'none';
+          } else {
+            const fadeProgress = Math.min(1, Math.max(0, (scrollProgress - 0.45) / 0.43));
+            const opacity = 1 - fadeProgress;
+            heroWrap.style.opacity = opacity.toFixed(2);
+          }
         }
 
         renderer.render(scene, camera);

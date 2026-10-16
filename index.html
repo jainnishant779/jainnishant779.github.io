@@ -217,6 +217,35 @@
       border-color: var(--accent);
     }
 
+    /* Dynamic Cursor-Tracking Spotlight (Linear / Vercel Aesthetic) */
+    .spotlight-card {
+      position: relative;
+    }
+
+    .spotlight-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1.5px;
+      background: radial-gradient(
+        380px circle at var(--mouse-x, -500px) var(--mouse-y, -500px),
+        rgba(0, 229, 240, 0.45),
+        transparent 65%
+      );
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      z-index: 25;
+    }
+
+    .spotlight-card:hover::before {
+      opacity: 1;
+    }
+
     /* Primary Electric Cyan Pill Button */
     .btn-portal {
       background: var(--accent);
@@ -332,6 +361,12 @@
       height: 100vh;
       pointer-events: none;
       z-index: 9997;
+    }
+
+    @media (pointer: coarse) {
+      #cursor-dot, #cursor-ring, #cursor-sparks-canvas {
+        display: none !important;
+      }
     }
 
     /* Full-Screen Matrix Digital Rain Overlay */
@@ -458,8 +493,14 @@
         </a>
       </nav>
 
-      <!-- Right Controls: SFX Toggle, ⌘K Terminal, & Let's Connect CTA -->
+      <!-- Right Controls: Recruiter Brief, SFX Toggle, ⌘K Terminal, & Let's Connect CTA -->
       <div class="flex items-center gap-2 sm:gap-2.5">
+        <!-- 60-Second Recruiter Fast-Track Button -->
+        <button onclick="openRecruiterModal()" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cyan-950/50 border border-cyan-400/50 text-[11px] font-mono-tech text-accent hover:border-accent hover:text-white transition-all shadow-[0_0_12px_rgba(0,229,240,0.22)]" title="Open 60-Second Executive Technical Brief">
+          <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" aria-hidden="true"></span>
+          <span class="font-semibold">⚡ Recruiter Brief</span>
+        </button>
+
         <!-- SFX Synthesizer Mute/Unmute Toggle -->
         <button id="sfx-toggle-btn" onclick="toggleAudioSFX()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-black/60 border border-cyan-400/30 text-[11px] font-mono-tech text-cyan-400 hover:border-accent hover:text-white transition-all" title="Toggle Sound SFX">
           <span id="sfx-icon">🔊</span>
@@ -495,12 +536,12 @@
         <a href="#contact" onclick="toggleMobileMenu()" class="p-2.5 rounded-lg bg-white/5 hover:text-accent">• Contact</a>
       </div>
       <div class="grid grid-cols-2 gap-2 pt-1 border-t border-cyan-400/20">
-        <button onclick="openTerminalModal(); toggleMobileMenu();" class="p-2.5 rounded-lg bg-cyan-950/40 border border-cyan-400/30 text-accent font-mono-tech text-xs text-left flex items-center gap-2">
-          <span>⚡</span><span>⌘K Terminal</span>
+        <button onclick="openRecruiterModal(); toggleMobileMenu();" class="p-2.5 rounded-lg bg-cyan-950/60 border border-cyan-400/50 text-accent font-mono-tech text-xs text-left flex items-center gap-2">
+          <span>⚡</span><span>Recruiter Brief</span>
         </button>
-        <a href="#benchmark" onclick="toggleMobileMenu()" class="p-2.5 rounded-lg bg-cyan-950/40 border border-cyan-400/30 text-accent font-mono-tech text-xs text-left flex items-center gap-2">
-          <span>📊</span><span>AI Benchmark</span>
-        </a>
+        <button onclick="openTerminalModal(); toggleMobileMenu();" class="p-2.5 rounded-lg bg-white/5 border border-white/10 text-gray-200 font-mono-tech text-xs text-left flex items-center gap-2">
+          <span>⌘</span><span>Terminal [K]</span>
+        </button>
       </div>
       <button onclick="openCVModal(); toggleMobileMenu();" class="w-full py-2.5 rounded-xl btn-portal font-mono-tech text-xs">
         ↓ DOWNLOAD VERIFIED CV (PDF)
@@ -554,16 +595,26 @@
           </p>
 
           <!-- Magnetic CTA Buttons Row -->
-          <div class="hero-reveal flex flex-wrap items-center gap-2.5 sm:gap-3.5 pt-0.5">
-            <a href="#projects" class="magnetic-btn btn-portal px-5 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-[13px] inline-flex items-center gap-2">
-              <span>Explore 5 Featured Systems</span>
+          <div class="hero-reveal flex flex-wrap items-center gap-2 sm:gap-2.5 pt-0.5">
+            <a href="#projects" class="magnetic-btn btn-portal px-4.5 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-[12.5px] inline-flex items-center gap-2">
+              <span>Explore 5 Systems</span>
               <span class="text-sm leading-none" aria-hidden="true">→</span>
             </a>
 
-            <button onclick="playCinematicIntro()" id="intro-btn" class="magnetic-btn px-4 sm:px-4.5 py-2.5 sm:py-3 rounded-full text-xs font-medium text-gray-200 hover:text-white bg-black/60 hover:bg-black/80 border border-cyan-400/30 hover:border-accent inline-flex items-center gap-2 transition-all group" aria-label="Play 3D Camera Fly-Through Intro">
-              <span class="w-6 h-6 rounded-full border border-cyan-400/40 group-hover:border-accent group-hover:text-accent flex items-center justify-center text-[9px] transition-colors" aria-hidden="true">▶</span>
-              <span id="intro-btn-text">Fly-Through 3D Portal</span>
-              <span class="text-[9.5px] font-mono-tech text-cyan-400/80 hidden sm:inline">(or Scroll ↓)</span>
+            <!-- 60-Sec Recruiter Brief Trigger -->
+            <button onclick="openRecruiterModal()" class="magnetic-btn px-4 sm:px-4.5 py-2 sm:py-2.5 rounded-full text-xs font-mono-tech font-semibold text-accent hover:text-white bg-cyan-950/50 hover:bg-cyan-900/60 border border-cyan-400/50 hover:border-accent inline-flex items-center gap-1.5 transition-all shadow-[0_0_15px_rgba(0,229,240,0.2)]">
+              <span class="w-1.5 h-1.5 rounded-full bg-accent animate-ping" aria-hidden="true"></span>
+              <span>⚡ 60s Recruiter Pitch</span>
+            </button>
+
+            <!-- 1-Click ATS CV Viewer -->
+            <button onclick="openCVModal()" class="magnetic-btn px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full text-xs font-mono-tech text-gray-300 hover:text-white bg-black/60 hover:bg-black/80 border border-white/15 hover:border-cyan-400 inline-flex items-center gap-1.5 transition-all">
+              <span>📄 View CV</span>
+            </button>
+
+            <button onclick="playCinematicIntro()" id="intro-btn" class="magnetic-btn px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-full text-xs font-medium text-gray-300 hover:text-white bg-black/60 hover:bg-black/80 border border-white/15 hover:border-cyan-400 inline-flex items-center gap-1.5 transition-all group" aria-label="Play 3D Camera Fly-Through Intro">
+              <span class="w-5 h-5 rounded-full border border-cyan-400/40 group-hover:border-accent group-hover:text-accent flex items-center justify-center text-[8px] transition-colors" aria-hidden="true">▶</span>
+              <span id="intro-btn-text">Fly-Through</span>
             </button>
           </div>
 
@@ -668,7 +719,7 @@
 
           <!-- CARD 01: EDGEDESK (PATENT APPLICATION FILED) -->
           <article tabindex="0" role="button" aria-haspopup="dialog" aria-label="Inspect EdgeDesk Case Study"
-            class="project-card tilt-card studio-glass rounded-2xl overflow-hidden flex flex-col justify-between group cursor-pointer gsap-fade-up focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+            class="project-card tilt-card studio-glass spotlight-card rounded-2xl overflow-hidden flex flex-col justify-between group cursor-pointer gsap-fade-up focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
             data-tech="python,jetson,linux,docker,fastapi"
             onclick="openCaseStudy('edgedesk')"
             onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); openCaseStudy('edgedesk'); }">
@@ -707,7 +758,7 @@
 
           <!-- CARD 02: CROWD ANALYTICS (<50ms · MAHAKUMBH HACKATHON FINALIST) -->
           <article tabindex="0" role="button" aria-haspopup="dialog" aria-label="Inspect Crowd Analytics Case Study"
-            class="project-card tilt-card studio-glass rounded-2xl overflow-hidden flex flex-col justify-between group cursor-pointer gsap-fade-up focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+            class="project-card tilt-card studio-glass spotlight-card rounded-2xl overflow-hidden flex flex-col justify-between group cursor-pointer gsap-fade-up focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
             data-tech="python,pytorch,yolo,opencv,jetson,fastapi"
             onclick="openCaseStudy('crowd')"
             onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); openCaseStudy('crowd'); }">
@@ -746,7 +797,7 @@
 
           <!-- CARD 03: FULL-STACK AI FACIAL ATTENDANCE (AWS EC2 + FLASK) -->
           <article tabindex="0" role="button" aria-haspopup="dialog" aria-label="Inspect AI Facial Attendance Case Study"
-            class="project-card tilt-card studio-glass rounded-2xl overflow-hidden flex flex-col justify-between group cursor-pointer gsap-fade-up focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+            class="project-card tilt-card studio-glass spotlight-card rounded-2xl overflow-hidden flex flex-col justify-between group cursor-pointer gsap-fade-up focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
             data-tech="python,opencv,aws,linux,docker,mysql"
             onclick="openCaseStudy('attendance')"
             onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); openCaseStudy('attendance'); }">
@@ -785,7 +836,7 @@
 
           <!-- CARD 04: POULTRY HEALTH & MOBILITY ANOMALY AI -->
           <article tabindex="0" role="button" aria-haspopup="dialog" aria-label="Inspect Poultry Health AI Case Study"
-            class="project-card tilt-card studio-glass rounded-2xl overflow-hidden flex flex-col justify-between group cursor-pointer gsap-fade-up focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+            class="project-card tilt-card studio-glass spotlight-card rounded-2xl overflow-hidden flex flex-col justify-between group cursor-pointer gsap-fade-up focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
             data-tech="python,pytorch,yolo,opencv,esp32,mysql"
             onclick="openCaseStudy('poultry')"
             onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); openCaseStudy('poultry'); }">
@@ -824,7 +875,7 @@
 
           <!-- CARD 05: ON-DEVICE OFFLINE AI ASSISTANT -->
           <article tabindex="0" role="button" aria-haspopup="dialog" aria-label="Inspect On-Device AI Assistant Case Study"
-            class="project-card tilt-card studio-glass rounded-2xl overflow-hidden flex flex-col justify-between group cursor-pointer gsap-fade-up focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 sm:col-span-2 lg:col-span-1"
+            class="project-card tilt-card studio-glass spotlight-card rounded-2xl overflow-hidden flex flex-col justify-between group cursor-pointer gsap-fade-up focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 sm:col-span-2 lg:col-span-1"
             data-tech="python,pytorch,llmapis,linux,docker"
             onclick="openCaseStudy('assistant')"
             onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); openCaseStudy('assistant'); }">
@@ -865,7 +916,7 @@
         <!-- =====================================================================
              INTERACTIVE EDGE AI BENCHMARK COCKPIT (PROFILER & JITTER OSCILLOSCOPE)
              ===================================================================== -->
-        <div id="benchmark" class="w-full studio-glass rounded-3xl p-6 sm:p-8 space-y-6 border border-cyan-400/30 relative overflow-hidden gsap-fade-up">
+        <div id="benchmark" class="w-full studio-glass spotlight-card rounded-3xl p-6 sm:p-8 space-y-6 border border-cyan-400/30 relative overflow-hidden gsap-fade-up">
           <!-- Background Ambient Glow Grid -->
           <div class="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-cyan-400/10 blur-[90px] pointer-events-none" aria-hidden="true"></div>
 
@@ -1446,6 +1497,158 @@
   </div>
 
   <!-- =====================================================================
+       RECRUITER FAST-TRACK (60-SECOND EXECUTIVE TECHNICAL BRIEF)
+       ===================================================================== -->
+  <div id="recruiter-modal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-xl overflow-y-auto p-4 sm:p-8" role="dialog" aria-modal="true" aria-labelledby="recruiter-modal-heading">
+    <div class="max-w-4xl mx-auto space-y-4 my-4">
+      <!-- Top Action Bar -->
+      <div class="studio-glass rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 border border-cyan-400/50 shadow-[0_0_25px_rgba(0,229,240,0.2)]">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-accent animate-ping" aria-hidden="true"></span>
+          <div id="recruiter-modal-heading" class="font-mono-tech text-xs text-accent font-semibold tracking-wider">
+            ⚡ 60-SECOND RECRUITER BRIEF // NISHANT JAIN
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="copyRecruiterBrief()" class="px-3.5 py-1.5 rounded-full bg-cyan-950/60 border border-cyan-400/40 hover:border-accent text-accent hover:text-white font-mono-tech text-xs transition-all flex items-center gap-1.5">
+            <span id="copy-brief-icon">📋</span>
+            <span id="copy-brief-label">Copy ATS Pitch</span>
+          </button>
+          <button onclick="openCVModal(); closeRecruiterModal();" class="btn-portal text-xs px-4 py-1.5 rounded-full font-mono-tech">
+            📄 View Full CV
+          </button>
+          <button onclick="closeRecruiterModal()" class="font-mono-tech text-xs px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white">
+            [ESC / CLOSE]
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Brief Content -->
+      <div class="bg-[#050c0e] text-gray-100 rounded-2xl p-6 sm:p-8 border border-cyan-400/30 space-y-6">
+        
+        <!-- Header Profile Banner -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-cyan-400/20 pb-5">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-400/40 text-accent font-mono-tech text-[10px] font-semibold tracking-wider uppercase">
+                HIRING MANAGER CHEAT SHEET
+              </span>
+              <span class="text-xs text-gray-400 font-mono-tech">• 1-MIN READ</span>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              Nishant Jain
+            </h2>
+            <p class="font-mono-tech text-xs text-accent">
+              AI/ML &amp; Edge Systems Engineer · NVIDIA Jetson · Computer Vision · IoT
+            </p>
+          </div>
+
+          <div class="flex flex-wrap sm:flex-col sm:items-end gap-2 text-xs font-mono-tech">
+            <div class="px-3 py-1 rounded-full bg-emerald-950/40 border border-emerald-400/40 text-emerald-400 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Available for High-Impact Roles</span>
+            </div>
+            <div class="text-gray-400">Indore, IN · Open to Remote &amp; Relocation</div>
+          </div>
+        </div>
+
+        <!-- 4 Verified Key Pillars of Engineering Impact -->
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="p-4 rounded-xl bg-white/[0.03] border border-cyan-400/20 space-y-2">
+            <div class="flex items-center gap-2 font-mono-tech text-xs text-accent font-semibold">
+              <span>📄</span>
+              <span>INTELLECTUAL PROPERTY</span>
+            </div>
+            <h4 class="font-display font-bold text-white text-base">EdgeDesk Platform</h4>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              <strong>Indian Patent Application Filed.</strong> Engineered encrypted multi-device remote desktop and real-time telemetry broker over cellular NATs for NVIDIA Jetson edge fleets.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-white/[0.03] border border-cyan-400/20 space-y-2">
+            <div class="flex items-center gap-2 font-mono-tech text-xs text-accent font-semibold">
+              <span>⚡</span>
+              <span>SUB-50MS EDGE AI INFERENCE</span>
+            </div>
+            <h4 class="font-display font-bold text-white text-base">Crowd Analytics &amp; Surge Detection</h4>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              <strong>MPSEDC Mahakumbh Hackathon Finalist</strong> (Top Tier of 200+ teams). Real-time YOLOv8 + ByteTrack on Jetson Orin Nano with zero frame drops.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-white/[0.03] border border-cyan-400/20 space-y-2">
+            <div class="flex items-center gap-2 font-mono-tech text-xs text-accent font-semibold">
+              <span>⏱️</span>
+              <span>CLOUD &amp; FULL-STACK DELIVERY</span>
+            </div>
+            <h4 class="font-display font-bold text-white text-base">Facial Attendance System (AWS EC2)</h4>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              Cut manual attendance logging time by <strong>~90%</strong> across a 3-course academic pilot using 128-d dlib embeddings, Flask REST APIs, and MySQL.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-white/[0.03] border border-cyan-400/20 space-y-2">
+            <div class="flex items-center gap-2 font-mono-tech text-xs text-accent font-semibold">
+              <span>🤖</span>
+              <span>ON-DEVICE AI &amp; LOCAL LLMS</span>
+            </div>
+            <h4 class="font-display font-bold text-white text-base">Whisper INT8 &amp; Quantized ASR</h4>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              Quantized Whisper INT8 and local GGUF models for private, zero-cloud latency Hinglish transcription on resource-constrained hardware.
+            </p>
+          </div>
+        </div>
+
+        <!-- Technical Arsenal Matrix -->
+        <div class="p-4 rounded-xl bg-cyan-950/20 border border-cyan-400/20 space-y-3">
+          <div class="font-mono-tech text-xs text-accent uppercase tracking-wider font-semibold">
+            CORE TECHNICAL ARSENAL
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div>
+              <span class="text-gray-400 font-mono-tech block text-[10px]">LANGUAGES</span>
+              <span class="text-white font-medium">Python, C++, SQL, Bash</span>
+            </div>
+            <div>
+              <span class="text-gray-400 font-mono-tech block text-[10px]">AI / COMPUTER VISION</span>
+              <span class="text-white font-medium">PyTorch, TensorRT, YOLOv8, OpenCV</span>
+            </div>
+            <div>
+              <span class="text-gray-400 font-mono-tech block text-[10px]">EDGE HARDWARE</span>
+              <span class="text-white font-medium">NVIDIA Jetson, Raspberry Pi, ESP32</span>
+            </div>
+            <div>
+              <span class="text-gray-400 font-mono-tech block text-[10px]">CLOUD &amp; BACKEND</span>
+              <span class="text-white font-medium">AWS EC2, Docker, Flask, FastAPI</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Direct Recruiter Action Row -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-cyan-400/20 font-mono-tech text-xs">
+          <div class="flex items-center gap-3">
+            <a href="mailto:jainnishant779@gmail.com?subject=Interview%20Invitation%20%E2%80%94%20Nishant%20Jain" class="btn-portal px-4 py-2 rounded-full inline-flex items-center gap-2">
+              <span>✉️ Email Directly</span>
+            </a>
+            <a href="https://linkedin.com/in/nishujain02" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-full bg-white/5 border border-cyan-400/30 hover:border-accent text-white hover:text-accent transition-colors inline-flex items-center gap-1.5">
+              <span>💼 LinkedIn</span>
+              <span aria-hidden="true">↗</span>
+            </a>
+            <a href="https://github.com/jainnishant779" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-full bg-white/5 border border-cyan-400/30 hover:border-accent text-white hover:text-accent transition-colors inline-flex items-center gap-1.5">
+              <span>🐙 GitHub</span>
+              <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+          <div class="text-gray-400 text-[11px]">
+            ⚡ Response SLA: Within 12 hours
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
        ONE-PAGE PRINTABLE CV MODAL
        ===================================================================== -->
   <div id="cv-modal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-xl overflow-y-auto p-4 sm:p-8" role="dialog" aria-modal="true" aria-labelledby="cv-modal-heading">
@@ -1454,9 +1657,13 @@
         <div id="cv-modal-heading" class="font-mono-tech text-xs text-accent font-semibold">
           📄 NISHANT_JAIN_CV_ONEPAGE.PDF // VERIFIED CANONICAL RESUME
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 sm:gap-3">
+          <button onclick="copyPlaintextCV()" class="px-3.5 py-2 rounded-full bg-cyan-950/60 border border-cyan-400/40 hover:border-accent text-accent hover:text-white font-mono-tech text-xs transition-all flex items-center gap-1.5">
+            <span id="copy-cv-icon">📋</span>
+            <span id="copy-cv-label">Copy ATS Text</span>
+          </button>
           <button onclick="window.print()" class="btn-portal text-xs px-4 py-2 rounded-full font-mono-tech">
-            🖨️ PRINT / SAVE AS PDF
+            🖨️ PRINT / PDF
           </button>
           <button onclick="closeCVModal()" id="cv-close-btn" class="font-mono-tech text-xs px-3.5 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white">
             [CLOSE]
@@ -1561,6 +1768,8 @@
           Connected to Edge-Gateway Fleet. Type <span class="text-accent underline cursor-pointer" onclick="runQuickCmd('help')">help</span> to view commands, or click any quick command below.
         </div>
         <div class="flex flex-wrap gap-1.5 pt-1 text-[10px]">
+          <button onclick="runQuickCmd('recruiter')" class="px-2 py-0.5 rounded bg-cyan-950/70 border border-cyan-400/50 text-accent font-semibold hover:bg-cyan-900/60">⚡ recruiter</button>
+          <button onclick="runQuickCmd('resume')" class="px-2 py-0.5 rounded bg-cyan-950/70 border border-cyan-400/50 text-accent font-semibold hover:bg-cyan-900/60">📄 resume</button>
           <button onclick="runQuickCmd('skills')" class="px-2 py-0.5 rounded bg-white/5 border border-cyan-400/30 text-accent hover:bg-cyan-950/50">skills</button>
           <button onclick="runQuickCmd('projects')" class="px-2 py-0.5 rounded bg-white/5 border border-cyan-400/30 text-accent hover:bg-cyan-950/50">projects</button>
           <button onclick="runQuickCmd('benchmark')" class="px-2 py-0.5 rounded bg-white/5 border border-cyan-400/30 text-accent hover:bg-cyan-950/50">benchmark</button>
@@ -2383,7 +2592,7 @@
 
           ctx.fillStyle = '#ffffff';
           ctx.beginPath();
-          ctx.arc(p.x, p.y, 2.2, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
           ctx.fill();
 
           const bw = 16, bh = 22;
@@ -2391,27 +2600,49 @@
           ctx.lineWidth = 1;
           ctx.strokeRect(p.x - bw / 2, p.y - bh / 2, bw, bh);
 
+          // DeepStream Corner Reticle Brackets
+          const cl = 4;
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 1.2;
+          // Top-left
+          ctx.beginPath(); ctx.moveTo(p.x - bw / 2, p.y - bh / 2 + cl); ctx.lineTo(p.x - bw / 2, p.y - bh / 2); ctx.lineTo(p.x - bw / 2 + cl, p.y - bh / 2); ctx.stroke();
+          // Top-right
+          ctx.beginPath(); ctx.moveTo(p.x + bw / 2 - cl, p.y - bh / 2); ctx.lineTo(p.x + bw / 2, p.y - bh / 2); ctx.lineTo(p.x + bw / 2, p.y - bh / 2 + cl); ctx.stroke();
+          // Bottom-left
+          ctx.beginPath(); ctx.moveTo(p.x - bw / 2, p.y + bh / 2 - cl); ctx.lineTo(p.x - bw / 2, p.y + bh / 2); ctx.lineTo(p.x - bw / 2 + cl, p.y + bh / 2); ctx.stroke();
+          // Bottom-right
+          ctx.beginPath(); ctx.moveTo(p.x + bw / 2 - cl, p.y + bh / 2); ctx.lineTo(p.x + bw / 2, p.y + bh / 2); ctx.lineTo(p.x + bw / 2, p.y + bh / 2 - cl); ctx.stroke();
+
+          // Centroid Velocity Vector
           ctx.strokeStyle = `rgba(${ar}, ${ag}, ${ab}, 0.5)`;
+          ctx.lineWidth = 1;
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
-          ctx.lineTo(p.x + p.vx * 6, p.y + p.vy * 6);
+          ctx.lineTo(p.x + p.vx * 7, p.y + p.vy * 7);
           ctx.stroke();
 
-          if (idx < 3) {
+          if (idx < 5) {
             ctx.font = '7px monospace';
-            ctx.fillStyle = ACCENT_CSS_STR;
-            ctx.fillText(`ID#${p.id}`, p.x - bw / 2, p.y - bh / 2 - 2);
+            ctx.fillStyle = idx % 4 === 0 ? '#ff3b5c' : ACCENT_CSS_STR;
+            ctx.fillText(`PERSON 0.${88 + (p.id % 11)}`, p.x - bw / 2, p.y - bh / 2 - 2);
           }
         });
 
-        ctx.font = '8px monospace';
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        // Top CCTV Overlay
+        ctx.font = '7.5px monospace';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
         ctx.textAlign = 'left';
-        ctx.fillText(`CAM_04 [LIVE] · 60 FPS`, 14, 18);
+        ctx.fillText(`CCTV_04 [RTSP 1080p] · 60 FPS`, 14, 18);
 
         ctx.fillStyle = ACCENT_CSS_STR;
         ctx.textAlign = 'right';
-        ctx.fillText(`INFERENCE: <50ms · YOLOV8`, w - 14, 18);
+        ctx.fillText(`INFERENCE: 18.2ms · TENSORRT 8.6`, w - 14, 18);
+
+        // Bottom Target Tracker Status
+        ctx.font = '7.5px monospace';
+        ctx.textAlign = 'left';
+        ctx.fillStyle = `rgba(${ar}, ${ag}, ${ab}, 0.85)`;
+        ctx.fillText(`TARGETS: 14 ACTIVE · BYTETRACK · DENSITY: NOMINAL`, 14, h - 8);
       }
       render();
     }
@@ -2449,7 +2680,16 @@
         ctx.ellipse(cx, cy, 32, 44, 0, 0, Math.PI * 2);
         ctx.stroke();
 
-        // Face mesh landmark points
+        // Face mesh landmark points & triangulation wireframe
+        ctx.strokeStyle = `rgba(${ar}, ${ag}, ${ab}, 0.25)`;
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        for (let i = 0; i < landmarks.length - 1; i++) {
+          ctx.moveTo(cx + landmarks[i].x, cy + landmarks[i].y);
+          ctx.lineTo(cx + landmarks[i + 1].x, cy + landmarks[i + 1].y);
+        }
+        ctx.stroke();
+
         landmarks.forEach(pt => {
           ctx.fillStyle = ACCENT_CSS_STR;
           ctx.beginPath();
@@ -2468,21 +2708,21 @@
 
         // 128-d Vector Bars & Database Match Readout
         const rx = w * 0.58;
-        ctx.font = '8px monospace';
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.font = '7.5px monospace';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
         ctx.textAlign = 'left';
-        ctx.fillText(`128-D VECTOR EMBEDDING`, rx, 35);
+        ctx.fillText(`dlib 128-D EMBEDDING`, rx, 30);
 
         for (let i = 0; i < 16; i++) {
           const barW = 12 + Math.abs(Math.sin(t * 2 + i * 0.5)) * 65;
           ctx.fillStyle = i % 2 === 0 ? ACCENT_CSS_STR : `rgba(${ar}, ${ag}, ${ab}, 0.45)`;
-          ctx.fillRect(rx, 42 + i * 5, barW, 2.8);
+          ctx.fillRect(rx, 36 + i * 5, barW, 2.8);
         }
 
         ctx.fillStyle = ACCENT_CSS_STR;
-        ctx.fillText(`MATCH: VERIFIED (98.6%)`, rx, h - 22);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-        ctx.fillText(`AWS EC2 · MYSQL LOGGED`, rx, h - 10);
+        ctx.fillText(`COSINE: 0.942 [VERIFIED]`, rx, h - 20);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+        ctx.fillText(`AWS EC2 · ~90% TIME CUT`, rx, h - 9);
       }
       render(0);
     }
@@ -2619,10 +2859,10 @@
           ctx.fillRect(bx, by, barW, barH);
         }
 
-        ctx.font = '8px monospace';
+        ctx.font = '7.5px monospace';
         ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
         ctx.textAlign = 'center';
-        ctx.fillText(`WHISPER INT8 · OFFLINE STT · ZERO-CLOUD`, cx, h - 7);
+        ctx.fillText(`WHISPER INT8 · 28.4 tok/s · GGUF ZERO-CLOUD`, cx, h - 7);
       }
       render(0);
     }
@@ -2966,8 +3206,86 @@
     renderModalSimulator();
 
     /* =========================================================================
-       6. CV MODAL, CONTACT TRANSMISSION & ACCESSIBILITY
+       6. RECRUITER FAST-TRACK, CV MODAL, CONTACT & SPOTLIGHTS
        ========================================================================= */
+    function openRecruiterModal() {
+      playTone(820, 0.06);
+      lastFocusedElement = document.activeElement;
+      const m = document.getElementById('recruiter-modal');
+      if (m) m.classList.remove('hidden');
+    }
+
+    function closeRecruiterModal() {
+      playTone(460, 0.05);
+      const m = document.getElementById('recruiter-modal');
+      if (m) m.classList.add('hidden');
+      if (lastFocusedElement) lastFocusedElement.focus();
+    }
+
+    function copyRecruiterBrief() {
+      playTone(940, 0.08);
+      const pitch = `Nishant Jain — AI/ML & Edge Systems Engineer (Indore, IN | Open to Remote/Relocation)
+Specialization: Production Edge AI, Computer Vision, NVIDIA Jetson Fleets, Cloud Deployment.
+Key Credentials:
+• Patent Application Filed: EdgeDesk encrypted multi-device remote telemetry across cellular NATs.
+• Sub-50ms Crowd Analytics: YOLOv8 + ByteTrack on Jetson Orin (MPSEDC Mahakumbh Hackathon Finalist, Top 200+ teams).
+• 90% Time Cut: Facial Attendance AI deployed on AWS EC2 across 3-course academic pilots.
+• Stack: Python, C++, TensorRT 8.6, PyTorch, OpenCV, Jetson, Docker, AWS EC2, Flask.
+Contact: jainnishant779@gmail.com | github.com/jainnishant779 | linkedin.com/in/nishujain02`;
+
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(pitch).then(() => {
+          const lbl = document.getElementById('copy-brief-label');
+          if (lbl) {
+            lbl.textContent = 'Copied to Clipboard!';
+            setTimeout(() => { lbl.textContent = 'Copy ATS Pitch'; }, 2500);
+          }
+          showToast('⚡ Recruiter pitch copied to clipboard!');
+        }).catch(() => {
+          showToast('📋 Ready to copy.');
+        });
+      }
+    }
+
+    function copyPlaintextCV() {
+      playTone(940, 0.08);
+      const text = `NISHANT JAIN
+AI/ML & IoT Systems Engineer | Computer Vision | NVIDIA Jetson Edge AI
+Indore, Madhya Pradesh, India | jainnishant779@gmail.com
+LinkedIn: linkedin.com/in/nishujain02 | GitHub: github.com/jainnishant779
+
+SUMMARY
+AI/ML & Edge Systems Engineer building production Computer Vision, NVIDIA Jetson Edge AI, and IoT systems. Patent applicant for EdgeDesk (Secure Multi-Device Remote Access Platform) and Top Finalist among 200+ teams at MPSEDC Mahakumbh Hackathon 2025 for sub-50ms Crowd Analytics & Stampede Detection.
+
+EXPERIENCE
+• AI/ML & IoT Systems Engineer — Synquic Labs Pvt. Ltd. (Aug 2026 – Present)
+  Architected EdgeDesk (Patent Application Filed) for encrypted multi-device remote desktop and edge telemetry across NVIDIA Jetson & Linux hardware.
+• Founding Engineer (AI & Software) — Cognicity Pvt. Ltd. (Sep 2025 – Aug 2026)
+  Led Computer Vision & Edge/Fog pipelines: real-time crowd analytics, poultry health AI, LoRa Mesh smart traffic intersections, and AWS EC2 facial attendance system (~90% logging time reduction).
+• Industrial Research Trainee — RRCAT, Dept. of Atomic Energy, Govt. of India
+  Trained in scientific instrumentation, embedded control systems, and high-reliability automation.
+
+EDUCATION
+B.Tech + M.Tech Dual Degree in Internet of Things (IoT)
+Devi Ahilya Vishwavidyalaya (DAVV), Indore (2021 – 2026)
+
+CORE SKILLS
+Python, PyTorch, TensorRT 8.6, YOLOv8, OpenCV, NVIDIA Jetson, Embedded Linux, Docker, AWS EC2, Flask, FastAPI, ESP32, LoRa Mesh.`;
+
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+          const lbl = document.getElementById('copy-cv-label');
+          if (lbl) {
+            lbl.textContent = 'Copied ATS Text!';
+            setTimeout(() => { lbl.textContent = 'Copy ATS Text'; }, 2500);
+          }
+          showToast('📄 ATS Resume copied to clipboard!');
+        }).catch(() => {
+          showToast('📋 Ready for ATS systems.');
+        });
+      }
+    }
+
     function openCVModal() {
       playTone(780, 0.06);
       lastFocusedElement = document.activeElement;
@@ -2981,10 +3299,28 @@
       if (lastFocusedElement) lastFocusedElement.focus();
     }
 
+    function initCardSpotlights() {
+      const cards = document.querySelectorAll('.spotlight-card');
+      cards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          card.style.setProperty('--mouse-x', `${x}px`);
+          card.style.setProperty('--mouse-y', `${y}px`);
+        });
+      });
+    }
+
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeCaseStudy();
         closeCVModal();
+        closeRecruiterModal();
+        if (typeof closeTerminalModal === 'function') closeTerminalModal();
+      }
+      if ((e.key === 'r' || e.key === 'R') && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+        openRecruiterModal();
       }
     });
 
@@ -3333,12 +3669,14 @@
         case 'help':
           appendTermLog(`
             <div class="text-gray-300 space-y-1 pl-2 border-l border-cyan-400/30 text-[11px]">
-              <div><strong class="text-accent">skills</strong> — View full edge AI, computer vision & embedded stack</div>
-              <div><strong class="text-accent">projects</strong> — List 5 production systems & case studies</div>
+              <div><strong class="text-accent">recruiter</strong> — Open 60-Second Executive Technical Brief &amp; ATS pitch</div>
+              <div><strong class="text-accent">resume</strong> — View &amp; print verified ATS canonical resume</div>
+              <div><strong class="text-accent">skills</strong> — View full edge AI, computer vision &amp; embedded stack</div>
+              <div><strong class="text-accent">projects</strong> — List 5 production systems &amp; case studies</div>
               <div><strong class="text-accent">benchmark</strong> — Jump to interactive Jetson Latency Cockpit</div>
               <div><strong class="text-accent">patent</strong> — View EdgeDesk Patent Application details</div>
               <div><strong class="text-accent">fleet</strong> — Ping live distributed Jetson edge fleet nodes</div>
-              <div><strong class="text-accent">overdrive</strong> — Overclock 3D portal with max bloom & SFX</div>
+              <div><strong class="text-accent">overdrive</strong> — Overclock 3D portal with max bloom &amp; SFX</div>
               <div><strong class="text-accent">matrix</strong> — Toggle cyberpunk digital rain overlay</div>
               <div><strong class="text-accent">contact</strong> — Jump to direct contact email form</div>
               <div><strong class="text-accent">clear</strong> — Clear terminal screen buffer</div>
@@ -3425,6 +3763,23 @@
           closeTerminalModal();
           const c = document.getElementById('contact');
           if (c) c.scrollIntoView({ behavior: 'smooth' });
+        case 'recruiter':
+        case 'pitch':
+        case 'brief':
+          appendTermLog(`<div class="text-accent font-semibold">Opening 60-Second Executive Technical Brief...</div>`);
+          setTimeout(() => {
+            closeTerminalModal();
+            openRecruiterModal();
+          }, 400);
+          break;
+
+        case 'cv':
+        case 'resume':
+          appendTermLog(`<div class="text-accent font-semibold">Opening Verified Canonical Resume...</div>`);
+          setTimeout(() => {
+            closeTerminalModal();
+            openCVModal();
+          }, 400);
           break;
 
         case 'clear':
@@ -3593,7 +3948,7 @@
         }
       });
 
-      const interactiveSelector = 'a, button, input, textarea, .project-card, .tech-grid-btn, .benchmark-chip';
+      const interactiveSelector = 'a, button, input, textarea, .project-card, .spotlight-card, .tech-grid-btn, .benchmark-chip';
       document.querySelectorAll(interactiveSelector).forEach(el => {
         el.addEventListener('mouseenter', () => {
           ring.classList.add('active-hover');
@@ -3610,11 +3965,12 @@
       });
     }
 
-    // Initialize all new crazy systems on load
+    // Initialize all core and interactive systems on load
     window.addEventListener('DOMContentLoaded', () => {
       updateBenchmarkMetrics();
       initBenchmarkJitterCanvas();
       initCustomCursor();
+      initCardSpotlights();
     });
   </script>
 </body>

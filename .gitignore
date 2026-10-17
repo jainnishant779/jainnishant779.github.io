@@ -1,0 +1,5 @@
+# Test artifacts and screenshots
+test_screenshots/
+*.log
+.DS_Store
+Thumbs.db

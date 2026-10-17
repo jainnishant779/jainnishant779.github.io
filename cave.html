@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
+  <title>Nishant Jain — The Engineer's Cave | Interactive 3D Portfolio</title>
+  <meta name="description" content="The Engineer's Cave: An immersive subterranean engineering headquarters and interactive 3D portfolio of Nishant Jain, AI/ML & Edge Systems Engineer.">
+  <meta name="theme-color" content="#07090c">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Nishant Jain — The Engineer's Cave">
+  <meta property="og:description" content="Cinematic game-inspired 3D engineering lair: Computer Vision, NVIDIA Jetson, EdgeDesk Patent, and Real-World AI Systems.">
+  <meta property="og:url" content="https://jainnishant779.github.io/cave.html">
+  <meta property="og:image" content="assets/batcave/hero-command-center.jpg">
+  <meta property="og:type" content="website">
+
+  <!-- Fonts: Space Grotesk (Hero), Plus Jakarta Sans (Body), JetBrains Mono (Telemetry) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cave: {
+              void: '#05070a',
+              stone: '#0c0f14',
+              stoneLight: '#141922',
+              border: '#1f2735',
+              borderGold: '#d4af37',
+              gold: '#e5a93c',
+              goldLight: '#f5c366',
+              amber: '#fea831',
+              emerald: '#10b981',
+              cyan: '#00e5f0',
+              muted: '#8a94a6'
+            }
+          },
+          fontFamily: {
+            grotesk: ['"Space Grotesk"', 'sans-serif'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    :root {
+      --color-gold: #e5a93c;
+      --color-emerald: #10b981;
+      --color-cyan: #00e5f0;
+      --color-stone: #0c0f14;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: #05070a;
+      color: #f0f3f8;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Subterranean Glow & Vignette */
+    .cave-vignette {
+      background: radial-gradient(circle at center, rgba(12, 15, 20, 0) 30%, rgba(5, 7, 10, 0.95) 90%);
+      pointer-events: none;
+    }
+
+    /* Holographic Screen Glass */
+    .holo-panel {
+      background: rgba(12, 16, 24, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(229, 169, 60, 0.22);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+    .holo-panel-active {
+      border-color: rgba(229, 169, 60, 0.6);
+      box-shadow: 0 0 30px rgba(229, 169, 60, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #05070a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1f2735;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #e5a93c;
+    }
+
+    /* Scanning Radar Line Animation */
+    @keyframes radarScan {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(200%); }
+    }
+    .animate-radar {
+      animation: radarScan 3.5s linear infinite;
+    }
+
+    /* Cinematic Opening Text Fade In */
+    @keyframes cinematicFadeIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-cinematic-in {
+      animation: cinematicFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+  </style>
+</head>
+
+<body class="bg-cave-void text-gray-100 min-h-screen selection:bg-cave-gold selection:text-black">
+
+  <!-- =====================================================================
+       AUDIO ATMOSPHERE CONTROLLER (Subterranean Hum & Pneumatic Feedback)
+       ===================================================================== -->
+  <div id="audio-indicator" class="fixed top-6 right-20 z-50 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 border border-white/10 text-xs font-mono text-gray-300 pointer-events-auto backdrop-blur-md">
+    <button onclick="toggleAudio()" class="flex items-center gap-1.5 hover:text-cave-gold transition-colors" title="Toggle Subterranean Ambience">
+      <span id="audio-icon">🔇</span>
+      <span id="audio-label" class="hidden sm:inline">Ambience</span>
+    </button>
+  </div>
+
+  <!-- =====================================================================
+       1. CINEMATIC OPENING OVERLAY (0–12s Sequence + Skip Option)
+       ===================================================================== -->
+  <div id="opening-sequence" class="fixed inset-0 z-50 bg-black flex flex-col items-center justify-between transition-opacity duration-1000 select-none overflow-hidden">
+    
+    <!-- Background Video: Avatar Arrival in Batcave -->
+    <video id="opening-video" autoplay muted playsinline class="absolute inset-0 w-full h-full object-cover opacity-80" poster="assets/batcave-avatar-poster.jpg">
+      <source src="gemini_generated_video_5c2b24b7.mp4" type="video/mp4">
+    </video>
+
+    <!-- Cinematic Vignette & Atmospheric Overlays -->
+    <div class="absolute inset-0 cave-vignette"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/60"></div>
+
+    <!-- Top Status Bar in Opening -->
+    <div class="w-full p-6 sm:p-10 flex items-center justify-between relative z-20">
+      <div class="flex items-center gap-3">
+        <span class="w-2.5 h-2.5 rounded-full bg-cave-gold animate-ping"></span>
+        <span class="font-mono text-xs tracking-widest text-cave-gold uppercase font-bold">
+          SECURITY PROTOCOL // SECTOR_07 ACTIVATED
+        </span>
+      </div>
+
+      <!-- Skip Button -->
+      <button onclick="enterCaveDirectly()" class="group flex items-center gap-2 px-4 py-2 rounded-full bg-black/70 border border-cave-gold/40 text-xs font-mono text-cave-gold hover:bg-cave-gold hover:text-black transition-all">
+        <span>SKIP INTRO</span>
+        <span class="transform group-hover:translate-x-1 transition-transform">⏭</span>
+      </button>
+    </div>
+
+    <!-- Center Cinematic Text Overlay (Identity Reveal at 6s - 12s) -->
+    <div id="opening-identity" class="max-w-3xl text-center px-6 relative z-20 space-y-5 transform translate-y-6 opacity-0 transition-all duration-1000">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cave-gold/15 border border-cave-gold/40 text-cave-gold text-xs font-mono tracking-widest uppercase">
+        <span>AUTHENTICATED ACCESS // CHIEF ENGINEER</span>
+      </div>
+
+      <h1 class="font-grotesk text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white uppercase leading-none">
+        NISHANT JAIN
+      </h1>
+
+      <p class="font-mono text-sm sm:text-base text-gray-300 max-w-xl mx-auto tracking-wide">
+        AI/ML Engineer · Computer Vision · Edge AI · IoT
+      </p>
+
+      <p class="text-xs sm:text-sm text-gray-400 font-sans max-w-lg mx-auto">
+        Building intelligent, localized edge computing systems that operate in real time where latency matters.
+      </p>
+
+      <!-- Immediate Action Buttons -->
+      <div class="flex flex-wrap items-center justify-center gap-4 pt-3">
+        <button onclick="enterCaveDirectly()" class="px-8 py-3.5 rounded-full bg-cave-gold text-black font-grotesk font-bold text-sm tracking-wide shadow-[0_0_25px_rgba(229,169,60,0.45)] hover:bg-cave-goldLight transition-all flex items-center gap-2">
+          <span>ENTER THE CAVE</span>
+          <span>↵</span>
+        </button>
+
+        <a href="Nishant_Jain_CV_OnePage.pdf" download="Nishant_Jain_CV_OnePage.pdf" target="_blank" class="px-6 py-3.5 rounded-full bg-black/60 border border-white/20 hover:border-cave-gold text-white font-mono text-xs font-semibold tracking-wider transition-all flex items-center gap-2">
+          <span>📄 DOWNLOAD CV (PDF)</span>
+        </a>
+
+        <button onclick="playIntroVideoModal()" class="px-5 py-3.5 rounded-full bg-black/60 border border-white/20 hover:border-cave-gold text-white font-mono text-xs font-semibold tracking-wider transition-all flex items-center gap-2">
+          <span>▶ WATCH INTRO</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Bottom Progress Meter -->
+    <div class="w-full p-6 sm:p-10 flex flex-col items-center relative z-20 space-y-2">
+      <div class="w-48 h-1 bg-white/10 rounded-full overflow-hidden">
+        <div id="opening-progress" class="h-full bg-cave-gold w-0 transition-all duration-300"></div>
+      </div>
+      <span class="text-[10px] font-mono text-gray-500 uppercase tracking-widest">
+        CAVE SYSTEMS BOOT SEQUENCE: <span id="opening-timer">00:00</span>
+      </span>
+    </div>
+
+  </div>
+
+  <!-- =====================================================================
+       2. TOP SITE HEADER & STATION NAVIGATION
+       ===================================================================== -->
+  <header class="fixed top-0 left-0 right-0 z-40 px-6 sm:px-10 py-4 bg-gradient-to-b from-black/90 via-black/60 to-transparent backdrop-blur-md border-b border-white/5 flex items-center justify-between">
+    
+    <!-- Left Identity: N Logo + Nishant Jain -->
+    <a href="#home" class="flex items-center gap-3 group">
+      <div class="w-9 h-9 rounded-xl bg-cave-stone border border-cave-gold/30 flex items-center justify-center text-cave-gold font-grotesk font-bold text-base shadow-[0_0_15px_rgba(229,169,60,0.15)] group-hover:border-cave-gold transition-colors">
+        N
+      </div>
+      <div>
+        <div class="font-grotesk font-bold text-sm tracking-widest text-white uppercase group-hover:text-cave-gold transition-colors">
+          NISHANT JAIN
+        </div>
+        <div class="font-mono text-[10px] text-gray-400 tracking-tight">
+          THE ENGINEER'S CAVE // AI/ML &amp; EDGE
+        </div>
+      </div>
+    </a>
+
+    <!-- Center Station Tabs -->
+    <nav class="hidden lg:flex items-center gap-1 p-1 bg-black/60 border border-white/10 rounded-full text-xs font-mono">
+      <a href="#home" class="nav-tab px-4 py-2 rounded-full text-white hover:text-cave-gold transition-colors font-semibold" data-target="home">
+        00. Command Center
+      </a>
+      <a href="#projects" class="nav-tab px-4 py-2 rounded-full text-gray-400 hover:text-white transition-colors" data-target="projects">
+        01. Project Bay
+      </a>
+      <a href="#about" class="nav-tab px-4 py-2 rounded-full text-gray-400 hover:text-white transition-colors" data-target="about">
+        02. About &amp; Journey
+      </a>
+      <a href="#skills" class="nav-tab px-4 py-2 rounded-full text-gray-400 hover:text-white transition-colors" data-target="skills">
+        03. Systems Lab
+      </a>
+      <a href="#experience" class="nav-tab px-4 py-2 rounded-full text-gray-400 hover:text-white transition-colors" data-target="experience">
+        04. Experience
+      </a>
+      <a href="#contact" class="nav-tab px-4 py-2 rounded-full text-gray-400 hover:text-white transition-colors" data-target="contact">
+        05. Contact
+      </a>
+    </nav>
+
+    <!-- Right Controls: Quick Download CV + Mobile Drawer Toggle -->
+    <div class="flex items-center gap-3">
+      <a href="Nishant_Jain_CV_OnePage.pdf" download="Nishant_Jain_CV_OnePage.pdf" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-cave-gold/15 border border-cave-gold/40 text-cave-gold hover:bg-cave-gold hover:text-black font-mono text-xs font-bold transition-all shadow-[0_0_15px_rgba(229,169,60,0.15)]">
+        <span>📥 1-Page CV</span>
+      </a>
+
+      <button onclick="toggleMobileNav()" class="lg:hidden w-10 h-10 rounded-xl bg-cave-stone border border-white/15 flex items-center justify-center text-white" aria-label="Open Navigation">
+        ☰
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Navigation Menu -->
+  <div id="mobile-nav" class="fixed inset-0 z-50 bg-cave-void/98 backdrop-blur-xl p-8 flex flex-col justify-between hidden">
+    <div class="flex items-center justify-between border-b border-white/10 pb-4">
+      <div class="font-grotesk font-bold text-lg text-cave-gold">THE ENGINEER'S CAVE</div>
+      <button onclick="toggleMobileNav()" class="text-2xl text-gray-400">✕</button>
+    </div>
+    <div class="space-y-6 text-xl font-grotesk font-bold">
+      <div><a href="#home" onclick="toggleMobileNav()" class="block text-white hover:text-cave-gold">00. Command Center</a></div>
+      <div><a href="#projects" onclick="toggleMobileNav()" class="block text-white hover:text-cave-gold">01. Project Bay</a></div>
+      <div><a href="#about" onclick="toggleMobileNav()" class="block text-white hover:text-cave-gold">02. About &amp; Journey</a></div>
+      <div><a href="#skills" onclick="toggleMobileNav()" class="block text-white hover:text-cave-gold">03. Systems Lab</a></div>
+      <div><a href="#experience" onclick="toggleMobileNav()" class="block text-white hover:text-cave-gold">04. Experience Timeline</a></div>
+      <div><a href="#contact" onclick="toggleMobileNav()" class="block text-white hover:text-cave-gold">05. Contact Terminal</a></div>
+    </div>
+    <div class="pt-6 border-t border-white/10 space-y-3">
+      <a href="Nishant_Jain_CV_OnePage.pdf" download="Nishant_Jain_CV_OnePage.pdf" target="_blank" class="block text-center py-3 rounded-full bg-cave-gold text-black font-bold text-xs uppercase tracking-wider">
+        Download Verified CV (PDF)
+      </a>
+      <div class="text-center text-xs font-mono text-gray-500">📍 Indore, M.P. • +91-9098407353</div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       3. THREE.JS 3D CAVE CANVAS (Background Atmospheric Scene)
+       ===================================================================== -->
+  <div id="cave-3d-stage" class="fixed inset-0 pointer-events-none z-0"></div>
+
+  <!-- =====================================================================
+       4. MAIN EXPLORABLE STATIONS CONTAINER
+       ===================================================================== -->
+  <main class="relative z-10">
+
+    <!-- ===================================================================
+         STATION 00: THE COMMAND CENTER (HERO)
+         =================================================================== -->
+    <section id="home" class="min-h-screen pt-28 pb-16 px-6 sm:px-12 flex flex-col justify-center relative">
+      
+      <!-- High-res Batcave Command Center Illustration Layer -->
+      <div class="absolute inset-0 z-0 opacity-40 mix-blend-screen pointer-events-none overflow-hidden">
+        <img src="assets/batcave/hero-command-center.jpg" alt="Batcave Command Center" class="w-full h-full object-cover object-center filter saturate-125">
+        <div class="absolute inset-0 cave-vignette"></div>
+      </div>
+
+      <div class="max-w-7xl mx-auto w-full grid lg:grid-cols-12 gap-8 items-center relative z-10">
+        
+        <!-- Left: Monogram, Welcome Headline & Pitch -->
+        <div class="lg:col-span-7 space-y-6">
+          
+          <div class="inline-flex items-center gap-2.5 px-3.5 py-1 rounded-full bg-black/60 border border-cave-gold/30 text-xs font-mono text-cave-gold">
+            <span class="w-2 h-2 rounded-full bg-cave-emerald animate-pulse"></span>
+            <span>IDEAS / CODE / DEVICES / REAL IMPACT</span>
+          </div>
+
+          <h1 class="font-grotesk text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white leading-none">
+            WELCOME TO <br>
+            <span class="text-cave-gold underline decoration-cave-gold/40 decoration-wavy decoration-2">MY CAVE.</span>
+          </h1>
+
+          <p class="text-sm sm:text-base text-gray-300 max-w-xl leading-relaxed font-sans">
+            I’m <strong>Nishant Jain</strong>, an AI/ML and IoT engineer building real-world systems at the intersection of <strong>computer vision</strong>, <strong>edge AI</strong>, <strong>IoT</strong>, and <strong>cloud</strong>. Patent applicant for EdgeDesk and winner at Sustainathon 2025.
+          </p>
+
+          <!-- Interactive Action Controls -->
+          <div class="flex flex-wrap items-center gap-4 pt-2">
+            <a href="#projects" class="px-8 py-3.5 rounded-full bg-cave-gold text-black font-grotesk font-bold text-sm tracking-wide shadow-[0_0_25px_rgba(229,169,60,0.35)] hover:bg-cave-goldLight transition-all flex items-center gap-2">
+              <span>Explore Projects</span>
+              <span>→</span>
+            </a>
+
+            <button onclick="playIntroVideoModal()" class="px-6 py-3.5 rounded-full bg-black/70 border border-white/20 hover:border-cave-gold text-white font-mono text-xs font-semibold tracking-wider transition-all flex items-center gap-2">
+              <span>▶ Watch Video</span>
+            </button>
+
+            <a href="Nishant_Jain_CV_OnePage.pdf" download="Nishant_Jain_CV_OnePage.pdf" target="_blank" class="px-6 py-3.5 rounded-full bg-cave-stone border border-cave-gold/40 text-cave-gold hover:bg-cave-gold hover:text-black font-mono text-xs font-semibold tracking-wider transition-all flex items-center gap-2">
+              <span>📥 Download CV</span>
+            </a>
+          </div>
+
+          <!-- Bottom Telemetry Badges -->
+          <div class="pt-6 border-t border-white/10 flex flex-wrap items-center gap-x-8 gap-y-2 font-mono text-xs text-gray-400">
+            <div>📍 Indore, Madhya Pradesh</div>
+            <div>🏆 Sustainathon 2025 Winner</div>
+            <div>📜 Patent Application Filed</div>
+          </div>
+        </div>
+
+        <!-- Right: Holographic "CURRENTLY WORKING ON" & Real-World Telemetry Screen -->
+        <div class="lg:col-span-5 space-y-5">
+          
+          <!-- Central Active Workstation Pod -->
+          <div class="holo-panel rounded-3xl p-6 sm:p-7 space-y-5 relative overflow-hidden">
+            <!-- Subtle Scanning Radar Sweep -->
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-cave-gold/5 to-transparent h-24 animate-radar pointer-events-none"></div>
+
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+              <span class="text-[11px] font-mono tracking-widest text-cave-gold font-bold uppercase">
+                CURRENTLY WORKING ON
+              </span>
+              <span class="px-2.5 py-0.5 rounded-full bg-cave-emerald/20 border border-cave-emerald/40 text-cave-emerald text-[10px] font-mono font-bold">
+                ACTIVE LAB TELEMETRY
+              </span>
+            </div>
+
+            <div>
+              <h3 class="font-grotesk text-2xl font-bold text-white">EdgeDesk</h3>
+              <p class="text-xs text-gray-300 mt-1 leading-relaxed">
+                Secure multi-device remote access platform for NVIDIA Jetson and edge Linux hardware across carrier-grade NATs.
+              </p>
+            </div>
+
+            <!-- Status Check Chips -->
+            <div class="grid grid-cols-3 gap-2 text-center text-[10px] font-mono">
+              <div class="p-2.5 rounded-xl bg-black/60 border border-white/10">
+                <span class="text-cave-emerald font-bold">✓ Hardware</span>
+                <div class="text-gray-400 mt-0.5">Jetson Orin</div>
+              </div>
+              <div class="p-2.5 rounded-xl bg-black/60 border border-white/10">
+                <span class="text-cave-emerald font-bold">✓ Software</span>
+                <div class="text-gray-400 mt-0.5">WSS Tunnel</div>
+              </div>
+              <div class="p-2.5 rounded-xl bg-black/60 border border-white/10">
+                <span class="text-cave-gold font-bold">✓ Deployment</span>
+                <div class="text-gray-400 mt-0.5">Systemd Node</div>
+              </div>
+            </div>
+
+            <!-- Jump to Detail Button -->
+            <div class="pt-2">
+              <a href="#projects" onclick="openProjectDetail('edgedesk')" class="w-full block text-center py-2.5 rounded-xl bg-cave-gold/15 hover:bg-cave-gold text-cave-gold hover:text-black font-mono text-xs font-bold border border-cave-gold/30 transition-all">
+                Inspect EdgeDesk Station Architecture →
+              </a>
+            </div>
+          </div>
+
+          <!-- Secondary Quick Terminal Card: Real-Time Stampede Detection -->
+          <div class="holo-panel rounded-2xl p-4 flex items-center justify-between text-xs font-mono">
+            <div class="flex items-center gap-3">
+              <span class="w-3 h-3 rounded-full bg-cave-emerald animate-ping"></span>
+              <div>
+                <span class="text-white font-bold block">Crowd Analytics &amp; Stampede Detection</span>
+                <span class="text-gray-400 text-[10px]">Mahakumbh Hackathon Top Finalist // sub-50ms</span>
+              </div>
+            </div>
+            <a href="#projects" onclick="openProjectDetail('crowd-analytics')" class="text-cave-gold hover:underline">
+              View [→]
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Scroll Cue -->
+      <div class="absolute bottom-6 left-1/2 -translate-x-1/2 text-center text-[10px] font-mono text-gray-500 uppercase tracking-widest pointer-events-none">
+        SCROLL TO EXPLORE STATIONS ↓
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         STATION 01: PROJECT BAY (REAL PROJECTS. REAL IMPACT.)
+         =================================================================== -->
+    <section id="projects" class="py-28 px-6 sm:px-12 border-t border-white/10 bg-cave-stone relative">
+      <div class="max-w-7xl mx-auto space-y-12">
+        
+        <!-- Section Header -->
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-white/10 pb-6">
+          <div>
+            <span class="text-xs font-mono text-cave-gold font-bold uppercase tracking-widest block mb-1">
+              STATION 01 // WORKSTATIONS &amp; EXHIBITS
+            </span>
+            <h2 class="font-grotesk text-3xl sm:text-5xl font-extrabold text-white uppercase tracking-tight">
+              Real Projects. Real Impact.
+            </h2>
+            <p class="text-sm text-gray-400 max-w-xl mt-2">
+              A curated collection across computer vision, edge AI, IoT, and cloud deployments — engineered with real-world constraints in mind.
+            </p>
+          </div>
+
+          <!-- Filter Pills -->
+          <div class="flex flex-wrap gap-2 text-xs font-mono">
+            <button onclick="filterProjects('all')" class="proj-filter px-3.5 py-1.5 rounded-full bg-cave-gold text-black font-bold transition-all" data-filter="all">All</button>
+            <button onclick="filterProjects('cv')" class="proj-filter px-3.5 py-1.5 rounded-full bg-black/50 border border-white/10 text-gray-300 hover:text-white transition-all" data-filter="cv">Computer Vision</button>
+            <button onclick="filterProjects('edge')" class="proj-filter px-3.5 py-1.5 rounded-full bg-black/50 border border-white/10 text-gray-300 hover:text-white transition-all" data-filter="edge">Edge AI</button>
+            <button onclick="filterProjects('iot')" class="proj-filter px-3.5 py-1.5 rounded-full bg-black/50 border border-white/10 text-gray-300 hover:text-white transition-all" data-filter="iot">IoT &amp; Embedded</button>
+            <button onclick="filterProjects('cloud')" class="proj-filter px-3.5 py-1.5 rounded-full bg-black/50 border border-white/10 text-gray-300 hover:text-white transition-all" data-filter="cloud">Cloud / Backend</button>
+          </div>
+        </div>
+
+        <!-- Projects Grid (6 Exhibit Cards matching the concept board) -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+          <!-- Project 01: EdgeDesk -->
+          <article class="proj-card holo-panel rounded-3xl p-5 space-y-4 hover:border-cave-gold transition-all duration-300 group cursor-pointer" onclick="openProjectDetail('edgedesk')" data-cat="edge iot">
+            <div class="h-48 rounded-2xl overflow-hidden bg-black/60 relative border border-white/10">
+              <img src="assets/batcave/card-edgedesk.jpg" alt="EdgeDesk Industrial Unit" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/80 border border-cave-gold/60 text-cave-gold font-mono text-[10px] font-bold">
+                PATENT FILED
+              </div>
+            </div>
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between text-xs font-mono text-gray-400">
+                <span>STATION 01</span>
+                <span class="text-cave-gold">NVIDIA Jetson / Linux</span>
+              </div>
+              <h3 class="font-grotesk text-xl font-bold text-white group-hover:text-cave-gold transition-colors">
+                EdgeDesk
+              </h3>
+              <p class="text-xs text-gray-400 leading-relaxed">
+                Secure multi-device remote access &amp; encrypted telemetry platform for distributed edge AI devices across cellular NATs.
+              </p>
+            </div>
+            <div class="pt-2 flex items-center justify-between text-xs font-mono border-t border-white/10 pt-3">
+              <span class="text-gray-400">WebSockets · VNC · Systemd</span>
+              <span class="text-cave-gold font-bold">Inspect [→]</span>
+            </div>
+          </article>
+
+          <!-- Project 02: Crowd Analytics & Stampede Detection -->
+          <article class="proj-card holo-panel rounded-3xl p-5 space-y-4 hover:border-cave-gold transition-all duration-300 group cursor-pointer" onclick="openProjectDetail('crowd-analytics')" data-cat="cv edge">
+            <div class="h-48 rounded-2xl overflow-hidden bg-black/60 relative border border-white/10">
+              <img src="assets/batcave/card-attendance.jpg" alt="Crowd Analytics" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/80 border border-cave-emerald/60 text-cave-emerald font-mono text-[10px] font-bold">
+                TOP FINALIST 2025
+              </div>
+            </div>
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between text-xs font-mono text-gray-400">
+                <span>STATION 02</span>
+                <span class="text-cave-emerald">sub-50ms // Jetson Orin</span>
+              </div>
+              <h3 class="font-grotesk text-xl font-bold text-white group-hover:text-cave-gold transition-colors">
+                Crowd Analytics &amp; Stampede Detection
+              </h3>
+              <p class="text-xs text-gray-400 leading-relaxed">
+                GPU-accelerated multi-object tracking (YOLOv8 + ByteTrack) with optical-flow counter-vector surge prediction.
+              </p>
+            </div>
+            <div class="pt-2 flex items-center justify-between text-xs font-mono border-t border-white/10 pt-3">
+              <span class="text-gray-400">TensorRT FP16 · OpenCV</span>
+              <span class="text-cave-gold font-bold">Inspect [→]</span>
+            </div>
+          </article>
+
+          <!-- Project 03: Poultry Health AI -->
+          <article class="proj-card holo-panel rounded-3xl p-5 space-y-4 hover:border-cave-gold transition-all duration-300 group cursor-pointer" onclick="openProjectDetail('poultry-health-ai')" data-cat="cv edge">
+            <div class="h-48 rounded-2xl overflow-hidden bg-black/60 relative border border-white/10">
+              <img src="assets/batcave/card-poultry.jpg" alt="Poultry Health AI" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/80 border border-white/20 text-gray-300 font-mono text-[10px] font-bold">
+                FARM PILOT
+              </div>
+            </div>
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between text-xs font-mono text-gray-400">
+                <span>STATION 03</span>
+                <span class="text-cave-gold">Thermal + Optical CV</span>
+              </div>
+              <h3 class="font-grotesk text-xl font-bold text-white group-hover:text-cave-gold transition-colors">
+                Poultry Health AI
+              </h3>
+              <p class="text-xs text-gray-400 leading-relaxed">
+                Dual-camera computer vision pipeline monitoring flock health anomalies and thermal distress for agricultural operators.
+              </p>
+            </div>
+            <div class="pt-2 flex items-center justify-between text-xs font-mono border-t border-white/10 pt-3">
+              <span class="text-gray-400">YOLO · Thermal Sensor · Edge</span>
+              <span class="text-cave-gold font-bold">Inspect [→]</span>
+            </div>
+          </article>
+
+          <!-- Project 04: Facial Attendance System -->
+          <article class="proj-card holo-panel rounded-3xl p-5 space-y-4 hover:border-cave-gold transition-all duration-300 group cursor-pointer" onclick="openProjectDetail('attendance-ai')" data-cat="cv cloud">
+            <div class="h-48 rounded-2xl overflow-hidden bg-black/60 relative border border-white/10">
+              <img src="assets/batcave/card-parkfnb.jpg" alt="Attendance AI" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/80 border border-cave-emerald/60 text-cave-emerald font-mono text-[10px] font-bold">
+                90% TIME CUT
+              </div>
+            </div>
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between text-xs font-mono text-gray-400">
+                <span>STATION 04</span>
+                <span class="text-gray-400">AWS EC2 Production</span>
+              </div>
+              <h3 class="font-grotesk text-xl font-bold text-white group-hover:text-cave-gold transition-colors">
+                Attendance AI Platform
+              </h3>
+              <p class="text-xs text-gray-400 leading-relaxed">
+                Automated facial recognition verification deployed across 3-course academic university pilots at DAVV.
+              </p>
+            </div>
+            <div class="pt-2 flex items-center justify-between text-xs font-mono border-t border-white/10 pt-3">
+              <span class="text-gray-400">Flask · dlib · MySQL · EC2</span>
+              <span class="text-cave-gold font-bold">Inspect [→]</span>
+            </div>
+          </article>
+
+          <!-- Project 05: On-Device AI Assistant -->
+          <article class="proj-card holo-panel rounded-3xl p-5 space-y-4 hover:border-cave-gold transition-all duration-300 group cursor-pointer" onclick="openProjectDetail('on-device-ai')" data-cat="edge">
+            <div class="h-48 rounded-2xl overflow-hidden bg-black/60 relative border border-white/10">
+              <img src="assets/batcave/card-ondevice.jpg" alt="On-Device AI Assistant" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/80 border border-cave-cyan/60 text-cave-cyan font-mono text-[10px] font-bold">
+                OFFLINE R&amp;D
+              </div>
+            </div>
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between text-xs font-mono text-gray-400">
+                <span>STATION 05</span>
+                <span class="text-cave-cyan">Whisper + GGUF</span>
+              </div>
+              <h3 class="font-grotesk text-xl font-bold text-white group-hover:text-cave-gold transition-colors">
+                On-Device AI Assistant
+              </h3>
+              <p class="text-xs text-gray-400 leading-relaxed">
+                Offline on-device speech-to-text transcription and localized LLM inference running on mobile hardware without cloud data leaks.
+              </p>
+            </div>
+            <div class="pt-2 flex items-center justify-between text-xs font-mono border-t border-white/10 pt-3">
+              <span class="text-gray-400">sherpa-onnx · llama.cpp</span>
+              <span class="text-cave-gold font-bold">Inspect [→]</span>
+            </div>
+          </article>
+
+          <!-- Project 06: LLM Research & LoRa Mesh -->
+          <article class="proj-card holo-panel rounded-3xl p-5 space-y-4 hover:border-cave-gold transition-all duration-300 group cursor-pointer" onclick="openProjectDetail('lora-traffic-mesh')" data-cat="iot edge">
+            <div class="h-48 rounded-2xl overflow-hidden bg-black/60 relative border border-white/10">
+              <img src="assets/batcave/card-llm.jpg" alt="LoRa Mesh" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/80 border border-cave-gold/60 text-cave-gold font-mono text-[10px] font-bold">
+                DECENTRALIZED
+              </div>
+            </div>
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between text-xs font-mono text-gray-400">
+                <span>STATION 06</span>
+                <span class="text-cave-gold">ESP32 · LoRaWAN</span>
+              </div>
+              <h3 class="font-grotesk text-xl font-bold text-white group-hover:text-cave-gold transition-colors">
+                Adaptive LoRa Traffic Mesh
+              </h3>
+              <p class="text-xs text-gray-400 leading-relaxed">
+                Decentralized multi-node traffic intersection mesh dynamically coordinating signal times without internet dependency.
+              </p>
+            </div>
+            <div class="pt-2 flex items-center justify-between text-xs font-mono border-t border-white/10 pt-3">
+              <span class="text-gray-400">C++ · ESP32 · LoRa Mesh</span>
+              <span class="text-cave-gold font-bold">Inspect [→]</span>
+            </div>
+          </article>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         STATION 02: ABOUT ME & ENGINEERING JOURNEY
+         =================================================================== -->
+    <section id="about" class="py-28 px-6 sm:px-12 border-t border-white/10 bg-cave-void relative overflow-hidden">
+      
+      <!-- Background Terrace View Layer -->
+      <div class="absolute right-0 top-0 bottom-0 w-full lg:w-1/2 opacity-25 pointer-events-none">
+        <img src="assets/batcave/about-balcony.jpg" alt="Cave Terrace Balcony" class="w-full h-full object-cover object-left filter saturate-125">
+        <div class="absolute inset-0 bg-gradient-to-r from-cave-void via-cave-void/80 to-transparent"></div>
+      </div>
+
+      <div class="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 items-center relative z-10">
+        
+        <div class="lg:col-span-7 space-y-6">
+          <span class="text-xs font-mono text-cave-gold font-bold uppercase tracking-widest block">
+            STATION 02 // PERSONAL DOSSIER
+          </span>
+
+          <h2 class="font-grotesk text-3xl sm:text-5xl font-extrabold text-white tracking-tight uppercase leading-tight">
+            MORE THAN <br>
+            <span class="text-cave-gold">JUST CODE.</span>
+          </h2>
+
+          <p class="text-sm sm:text-base text-gray-300 leading-relaxed font-sans">
+            I’m an engineer who enjoys turning ideas into real-world systems. I work at the intersection of computer vision, edge AI, IoT, and cloud, building solutions that go far beyond theoretical lab models.
+          </p>
+
+          <!-- Handwritten Script Pill Accent -->
+          <div class="inline-block px-4 py-2 rounded-2xl bg-black/70 border border-cave-gold/30 text-cave-goldLight font-mono text-xs italic">
+            "Curious Builder · Problem Solver · Silicon Explorer"
+          </div>
+
+          <!-- Professional Journey Timeline -->
+          <div class="pt-4 space-y-6">
+            <h3 class="font-grotesk text-lg font-bold text-white uppercase tracking-wider">
+              My Journey
+            </h3>
+
+            <!-- 2026 - Present -->
+            <div class="flex items-start gap-4">
+              <div class="w-16 font-mono text-xs font-bold text-cave-gold text-right pt-0.5">
+                2026<br><span class="text-[10px] text-gray-500">Present</span>
+              </div>
+              <div class="w-0.5 h-16 bg-cave-gold/40 relative">
+                <span class="w-2.5 h-2.5 rounded-full bg-cave-gold absolute -left-1 top-1"></span>
+              </div>
+              <div class="flex-1 space-y-0.5">
+                <h4 class="font-grotesk text-base font-bold text-white">AI/ML &amp; IoT Engineer — Synquic Labs</h4>
+                <p class="text-xs text-gray-400">
+                  Architected EdgeDesk (Patent Application Filed) for encrypted multi-device remote desktop &amp; telemetry over cellular NATs.
+                </p>
+              </div>
+            </div>
+
+            <!-- 2025 -->
+            <div class="flex items-start gap-4">
+              <div class="w-16 font-mono text-xs font-bold text-gray-400 text-right pt-0.5">
+                2025
+              </div>
+              <div class="w-0.5 h-16 bg-white/20 relative">
+                <span class="w-2.5 h-2.5 rounded-full bg-white/40 absolute -left-1 top-1"></span>
+              </div>
+              <div class="flex-1 space-y-0.5">
+                <h4 class="font-grotesk text-base font-bold text-white">Founding Engineer — Cognicity</h4>
+                <p class="text-xs text-gray-400">
+                  Led end-to-end computer vision pipelines: real-time stampede detection, poultry thermal monitoring, and AWS EC2 attendance systems.
+                </p>
+              </div>
+            </div>
+
+            <!-- 2021 - 2026 -->
+            <div class="flex items-start gap-4">
+              <div class="w-16 font-mono text-xs font-bold text-gray-400 text-right pt-0.5">
+                2021<br><span class="text-[10px] text-gray-500">2026</span>
+              </div>
+              <div class="w-0.5 h-14 bg-white/20 relative">
+                <span class="w-2.5 h-2.5 rounded-full bg-white/40 absolute -left-1 top-1"></span>
+              </div>
+              <div class="flex-1 space-y-0.5">
+                <h4 class="font-grotesk text-base font-bold text-white">Integrated Dual Degree (B.Tech + M.Tech) in IoT — DAVV</h4>
+                <p class="text-xs text-gray-400">
+                  Devi Ahilya Vishwavidyalaya, Indore. Deep Learning, Computer Vision, Embedded Systems, IoT architecture.
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="pt-4 flex flex-wrap gap-4">
+            <a href="Nishant_Jain_CV_OnePage.pdf" download="Nishant_Jain_CV_OnePage.pdf" target="_blank" class="px-6 py-3 rounded-full bg-cave-gold text-black font-grotesk font-bold text-xs uppercase tracking-wider hover:bg-cave-goldLight transition-all">
+              Download Verified CV (PDF)
+            </a>
+            <button onclick="playIntroVideoModal()" class="px-5 py-3 rounded-full bg-black/60 border border-white/20 text-white font-mono text-xs hover:border-cave-gold transition-all">
+              Watch Cave Arrival Video
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Right: Dossier Summary Card -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="holo-panel rounded-3xl p-6 sm:p-8 space-y-5 border border-cave-gold/30">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+              <span class="font-mono text-xs text-cave-gold font-bold uppercase tracking-wider">
+                DOSSIER SPECIFICATION
+              </span>
+              <span class="text-xs font-mono text-gray-500">CONFIDENTIAL // VERIFIED</span>
+            </div>
+
+            <div class="space-y-3 text-xs font-mono">
+              <div class="flex justify-between pb-2 border-b border-white/5">
+                <span class="text-gray-400">PRIMARY ROLE:</span>
+                <span class="text-white font-bold">Edge AI &amp; Computer Vision</span>
+              </div>
+              <div class="flex justify-between pb-2 border-b border-white/5">
+                <span class="text-gray-400">LOCATION:</span>
+                <span class="text-white font-bold">Indore, M.P., India</span>
+              </div>
+              <div class="flex justify-between pb-2 border-b border-white/5">
+                <span class="text-gray-400">GOVT AWARDS:</span>
+                <span class="text-cave-gold font-bold">Winner — Sustainathon 2025</span>
+              </div>
+              <div class="flex justify-between pb-2 border-b border-white/5">
+                <span class="text-gray-400">IP STATUS:</span>
+                <span class="text-cave-gold font-bold">Patent Application Filed</span>
+              </div>
+              <div class="flex justify-between pb-2 border-b border-white/5">
+                <span class="text-gray-400">EMAIL:</span>
+                <a href="mailto:jainnishant779@gmail.com" class="text-cave-gold hover:underline">jainnishant779@gmail.com</a>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-400">PHONE:</span>
+                <a href="tel:+919098407353" class="text-white hover:text-cave-gold">+91-9098407353</a>
+              </div>
+            </div>
+
+            <div class="pt-2">
+              <div class="p-3.5 rounded-2xl bg-black/60 border border-white/10 text-[11px] text-gray-400 leading-relaxed font-sans">
+                "Nishant specializes in bridging low-level hardware constraints (NVIDIA Jetson, microcontrollers, memory limits) with production-grade AI pipelines."
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         STATION 03: SYSTEMS LAB (SKILLS & TOOLS I WORK WITH)
+         =================================================================== -->
+    <section id="skills" class="py-28 px-6 sm:px-12 border-t border-white/10 bg-cave-stone relative">
+      <div class="max-w-7xl mx-auto space-y-12">
+        
+        <div class="space-y-2 border-b border-white/10 pb-6">
+          <span class="text-xs font-mono text-cave-gold font-bold uppercase tracking-widest block">
+            STATION 03 // SYSTEMS LAB
+          </span>
+          <h2 class="font-grotesk text-3xl sm:text-5xl font-extrabold text-white uppercase tracking-tight">
+            Tools &amp; Technologies I Work With.
+          </h2>
+          <p class="text-sm text-gray-400 max-w-xl">
+            A curated set of tools and technologies across AI/ML, computer vision, IoT, backend and cloud deployments.
+          </p>
+        </div>
+
+        <!-- Categorized Skills Grid -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+          <!-- Category 1: AI/ML & Computer Vision -->
+          <div class="holo-panel rounded-3xl p-6 space-y-4 border border-cave-gold/20 hover:border-cave-gold transition-colors">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+              <h3 class="font-grotesk font-bold text-base text-white">AI/ML &amp; Vision</h3>
+              <span class="text-xs font-mono text-cave-gold">01</span>
+            </div>
+            <ul class="space-y-2.5 text-xs font-mono text-gray-300">
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-gold"></span>Python (NumPy, PyTorch)</li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-gold"></span>YOLOv8 &amp; YOLOv11</li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-gold"></span>TensorRT &amp; DeepStream</li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-gold"></span>OpenCV &amp; MediaPipe</li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-gold"></span>ByteTrack / BoT-SORT</li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-gold"></span>TensorFlow &amp; Scikit-Learn</li>
+            </ul>
+          </div>
+
+          <!-- Category 2: Edge & IoT -->
+          <div class="holo-panel rounded-3xl p-6 space-y-4 border border-cave-gold/20 hover:border-cave-gold transition-colors">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+              <h3 class="font-grotesk font-bold text-base text-white">Edge AI &amp; Hardware</h3>
+              <span class="text-xs font-mono text-cave-emerald">02</span>
+            </div>
+            <ul class="space-y-2.5 text-xs font-mono text-gray-300">
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-emerald"></span>NVIDIA Jetson Nano/Orin</li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-emerald"></span>ESP32 &amp; Arduino</li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-emerald"></span>LoRa &amp; LoRaWAN Mesh</li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-emerald"></span>Embedded Linux (Systemd)</li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-emerald"></span>MQTT &amp; WebSockets</li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-emerald"></span>Mitsubishi PLC iQ-F Certified</li>
+            </ul>
+          </div>
+
+          <!-- Category 3: Backend & Cloud -->
+          <div class="holo-panel rounded-3xl p-6 space-y-4 border border-cave-gold/20 hover:border-cave-gold transition-colors">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+              <h3 class="font-grotesk font-bold text-base text-white">Cloud &amp; Backend</h3>
+              <span class="text-xs font-mono text-cave-cyan">03</span>
+            </div>
+            <ul class="space-y-2.5 text-xs font-mono text-gray-300">
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-cyan"></span>AWS EC2 &amp; S3</li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-cyan"></span>Docker &amp; Containerization</li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-cyan"></span>FastAPI &amp; Flask</li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-cyan"></span>Node.js &amp; REST APIs</li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-cyan"></span>MySQL &amp; SQLite</li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-cyan"></span>Nginx &amp; Gunicorn</li>
+            </ul>
+          </div>
+
+          <!-- Category 4: GenAI & R&D -->
+          <div class="holo-panel rounded-3xl p-6 space-y-4 border border-cave-gold/20 hover:border-cave-gold transition-colors">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+              <h3 class="font-grotesk font-bold text-base text-white">GenAI &amp; Mobile R&amp;D</h3>
+              <span class="text-xs font-mono text-cave-goldLight">04</span>
+            </div>
+            <ul class="space-y-2.5 text-xs font-mono text-gray-300">
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-goldLight"></span>LLM API Integration</li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-goldLight"></span>Prompt Engineering</li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-goldLight"></span>RAG System Concepts</li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-goldLight"></span>sherpa-onnx (Offline STT)</li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-goldLight"></span>llama.cpp &amp; GGUF Quantization</li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cave-goldLight"></span>Git &amp; GitHub Actions</li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         STATION 04: EXPERIENCE TIMELINE
+         =================================================================== -->
+    <section id="experience" class="py-28 px-6 sm:px-12 border-t border-white/10 bg-cave-void relative">
+      <div class="max-w-5xl mx-auto space-y-12">
+        
+        <div class="space-y-2 border-b border-white/10 pb-6">
+          <span class="text-xs font-mono text-cave-gold font-bold uppercase tracking-widest block">
+            STATION 04 // EXPERIENCE ARCHIVE
+          </span>
+          <h2 class="font-grotesk text-3xl sm:text-5xl font-extrabold text-white uppercase tracking-tight">
+            Building Through Real Experience.
+          </h2>
+          <p class="text-sm text-gray-400 max-w-xl">
+            Work, internships and research contributions in AI/ML, computer vision, and IoT systems.
+          </p>
+        </div>
+
+        <div class="space-y-8">
+          
+          <!-- Role 1: Synquic Labs -->
+          <div class="holo-panel rounded-3xl p-6 sm:p-8 space-y-3 border-l-4 border-l-cave-gold">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <span class="px-2.5 py-0.5 rounded-full bg-cave-gold/20 text-cave-gold text-[10px] font-mono font-bold uppercase">
+                  CURRENT ROLE
+                </span>
+                <h3 class="font-grotesk text-xl font-bold text-white mt-1">
+                  AI/ML &amp; IoT Systems Engineer — Synquic Labs Pvt. Ltd.
+                </h3>
+              </div>
+              <div class="font-mono text-xs text-gray-400">
+                Aug 2026 – Present • Indore, M.P.
+              </div>
+            </div>
+            <ul class="text-xs sm:text-sm text-gray-300 space-y-1.5 list-disc list-inside">
+              <li>Architected <strong>EdgeDesk (Patent Application Filed)</strong>, a zero-trust multi-device remote desktop and telemetry engine running over cellular NATs.</li>
+              <li>Engineered low-latency video streaming, VNC encapsulation, and encrypted edge tunneling on NVIDIA Jetson &amp; Linux hardware.</li>
+            </ul>
+          </div>
+
+          <!-- Role 2: Cognicity Founding Engineer -->
+          <div class="holo-panel rounded-3xl p-6 sm:p-8 space-y-3 border-l-4 border-l-white/30">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h3 class="font-grotesk text-xl font-bold text-white">
+                  Founding Engineer (AI &amp; Software) — Cognicity Pvt. Ltd.
+                </h3>
+              </div>
+              <div class="font-mono text-xs text-gray-400">
+                Sep 2025 – Aug 2026 • Indore, M.P.
+              </div>
+            </div>
+            <ul class="text-xs sm:text-sm text-gray-300 space-y-1.5 list-disc list-inside">
+              <li>Built real-time stampede detection &amp; crowd density analytics with sub-50ms inference (Top Finalist MPSEDC Mahakumbh Hackathon 2025).</li>
+              <li>Engineered and deployed automated facial recognition attendance on AWS EC2 across 3-course academic university pilots, cutting logging time by ~90%.</li>
+            </ul>
+          </div>
+
+          <!-- Role 3: Cognicity Intern -->
+          <div class="holo-panel rounded-3xl p-6 sm:p-8 space-y-3 border-l-4 border-l-white/20">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h3 class="font-grotesk text-xl font-bold text-white">
+                  Machine Learning &amp; Computer Vision Intern — Cognicity Pvt. Ltd.
+                </h3>
+              </div>
+              <div class="font-mono text-xs text-gray-400">
+                Aug 2025 – Sep 2025 • Indore, M.P.
+              </div>
+            </div>
+            <ul class="text-xs sm:text-sm text-gray-300 space-y-1.5 list-disc list-inside">
+              <li>Researched and benchmarked lightweight YOLO variants for resource-constrained edge hardware.</li>
+              <li>Developed automated data preprocessing, augmentation pipelines, and camera calibration for custom vision datasets.</li>
+            </ul>
+          </div>
+
+          <!-- Role 4: RRCAT -->
+          <div class="holo-panel rounded-3xl p-6 sm:p-8 space-y-3 border-l-4 border-l-white/10">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h3 class="font-grotesk text-xl font-bold text-white">
+                  Industrial Research Trainee — RRCAT, Dept. of Atomic Energy
+                </h3>
+              </div>
+              <div class="font-mono text-xs text-gray-400">
+                Jun 2024 – Jul 2024 • Indore, M.P.
+              </div>
+            </div>
+            <p class="text-xs sm:text-sm text-gray-300">
+              Government of India laboratory facility. Hands-on exposure to scientific computing, embedded systems, and laboratory automation protocols.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         STATION 05: HOLOGRAPHIC CONTACT TERMINAL
+         =================================================================== -->
+    <section id="contact" class="py-28 px-6 sm:px-12 border-t border-white/10 bg-cave-stone relative">
+      <div class="max-w-6xl mx-auto grid lg:grid-cols-12 gap-12 items-center">
+        
+        <!-- Left: Contact Details & Hiring Status -->
+        <div class="lg:col-span-6 space-y-6">
+          <span class="text-xs font-mono text-cave-gold font-bold uppercase tracking-widest block">
+            STATION 05 // CONTACT TERMINAL
+          </span>
+
+          <h2 class="font-grotesk text-3xl sm:text-5xl font-extrabold text-white uppercase tracking-tight leading-tight">
+            Let's Build <br>
+            <span class="text-cave-gold">Something Meaningful.</span>
+          </h2>
+
+          <p class="text-sm text-gray-300 leading-relaxed font-sans">
+            I am open to full-time opportunities, engineering roles, and production contract builds in AI/ML, computer vision, and edge systems.
+          </p>
+
+          <div class="space-y-4 pt-2 font-mono text-xs">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-black/60 border border-white/10 flex items-center justify-center text-cave-gold">✉️</span>
+              <div>
+                <span class="text-gray-400 block text-[10px]">EMAIL ADDRESS</span>
+                <a href="mailto:jainnishant779@gmail.com" class="text-white hover:text-cave-gold font-bold">jainnishant779@gmail.com</a>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-black/60 border border-white/10 flex items-center justify-center text-cave-gold">📞</span>
+              <div>
+                <span class="text-gray-400 block text-[10px]">PHONE / WHATSAPP</span>
+                <a href="tel:+919098407353" class="text-white hover:text-cave-gold font-bold">+91-9098407353</a>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-black/60 border border-white/10 flex items-center justify-center text-cave-gold">📍</span>
+              <div>
+                <span class="text-gray-400 block text-[10px]">LOCATION</span>
+                <span class="text-white font-bold">Indore, Madhya Pradesh, India</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-4 flex items-center gap-4">
+            <a href="https://github.com/jainnishant779" target="_blank" class="px-4 py-2 rounded-xl bg-black/70 border border-white/15 hover:border-cave-gold text-xs font-mono text-white flex items-center gap-2 transition-colors">
+              <span>💻 GitHub</span>
+            </a>
+            <a href="https://linkedin.com/in/nishujain02" target="_blank" class="px-4 py-2 rounded-xl bg-black/70 border border-white/15 hover:border-cave-gold text-xs font-mono text-white flex items-center gap-2 transition-colors">
+              <span>🔗 LinkedIn</span>
+            </a>
+            <a href="Nishant_Jain_CV_OnePage.pdf" download="Nishant_Jain_CV_OnePage.pdf" target="_blank" class="px-4 py-2 rounded-xl bg-cave-gold text-black text-xs font-mono font-bold flex items-center gap-1.5 hover:bg-cave-goldLight transition-colors">
+              <span>📥 Download CV</span>
+            </a>
+          </div>
+
+        </div>
+
+        <!-- Right: Holographic Terminal Form -->
+        <div class="lg:col-span-6">
+          <form onsubmit="handleContactSubmit(event)" class="holo-panel rounded-3xl p-6 sm:p-8 space-y-4 border border-cave-gold/40 shadow-2xl relative">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+              <span class="font-mono text-xs text-cave-gold font-bold uppercase">
+                ENCRYPTED_MESSAGE_TRANSMISSION
+              </span>
+              <span class="w-2 h-2 rounded-full bg-cave-emerald animate-ping"></span>
+            </div>
+
+            <div class="space-y-1">
+              <label class="text-[10px] font-mono text-gray-400 uppercase">Your Name</label>
+              <input type="text" id="contact-name" required placeholder="John Doe" class="w-full px-4 py-3 rounded-xl bg-black/60 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-cave-gold">
+            </div>
+
+            <div class="space-y-1">
+              <label class="text-[10px] font-mono text-gray-400 uppercase">Your Email</label>
+              <input type="email" id="contact-email" required placeholder="john@company.com" class="w-full px-4 py-3 rounded-xl bg-black/60 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-cave-gold">
+            </div>
+
+            <div class="space-y-1">
+              <label class="text-[10px] font-mono text-gray-400 uppercase">Subject</label>
+              <input type="text" id="contact-subject" placeholder="Project Inquiry / Job Opportunity" class="w-full px-4 py-3 rounded-xl bg-black/60 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-cave-gold">
+            </div>
+
+            <div class="space-y-1">
+              <label class="text-[10px] font-mono text-gray-400 uppercase">Message</label>
+              <textarea id="contact-message" required rows="4" placeholder="Brief project scope or message..." class="w-full px-4 py-3 rounded-xl bg-black/60 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-cave-gold"></textarea>
+            </div>
+
+            <button type="submit" class="w-full py-3.5 rounded-xl bg-cave-gold text-black font-grotesk font-bold text-xs uppercase tracking-wider hover:bg-cave-goldLight transition-all shadow-md">
+              Send Message [→]
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =====================================================================
+       5. DETAILED PROJECT EXHIBIT MODAL
+       ===================================================================== -->
+  <div id="project-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-xl p-4 sm:p-8 flex items-center justify-center hidden overflow-y-auto">
+    <div class="holo-panel max-w-4xl w-full rounded-3xl p-6 sm:p-10 border border-cave-gold/40 shadow-2xl relative my-8">
+      
+      <!-- Close Button -->
+      <button onclick="closeProjectModal()" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-black/60 border border-white/20 text-white hover:border-cave-gold flex items-center justify-center font-mono text-sm">
+        ✕
+      </button>
+
+      <!-- Injected Detail Content -->
+      <div id="project-modal-body" class="space-y-6">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Video Player Modal for Intro -->
+  <div id="video-intro-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl p-4 sm:p-8 flex items-center justify-center hidden">
+    <div class="max-w-4xl w-full bg-black rounded-3xl border border-cave-gold/40 overflow-hidden relative shadow-2xl">
+      <button onclick="closeVideoIntroModal()" class="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/80 text-white border border-white/20 flex items-center justify-center text-sm">
+        ✕
+      </button>
+      <div class="aspect-video w-full">
+        <video id="modal-video-player" controls class="w-full h-full object-cover">
+          <source src="gemini_generated_video_5c2b24b7.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="p-4 bg-cave-stone border-t border-white/10 flex items-center justify-between font-mono text-xs">
+        <span class="text-cave-gold font-bold">NISHANT JAIN // THE ENGINEER'S CAVE ARRIVAL</span>
+        <a href="Nishant_Jain_CV_OnePage.pdf" download="Nishant_Jain_CV_OnePage.pdf" target="_blank" class="text-white hover:text-cave-gold underline">
+          Download CV (PDF)
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       6. SCRIPTS: THREE.JS AMBIENCE, TIMELINE ROUTING, AUDIO SYNTH
+       ===================================================================== -->
+  <script>
+    /* -------------------------------------------------------------------------
+       1. CINEMATIC OPENING CONTROLLER (0–12s)
+       ------------------------------------------------------------------------- */
+    const openingVideo = document.getElementById('opening-video');
+    const openingSequence = document.getElementById('opening-sequence');
+    const openingIdentity = document.getElementById('opening-identity');
+    const openingProgress = document.getElementById('opening-progress');
+    const openingTimer = document.getElementById('opening-timer');
+
+    let openingActive = true;
+    let openingStartTime = Date.now();
+    const DURATION = 10.0; // Seconds
+
+    function tickOpening() {
+      if (!openingActive) return;
+      const elapsed = (Date.now() - openingStartTime) / 1000;
+      const pct = Math.min(100, (elapsed / DURATION) * 100);
+      
+      if (openingProgress) openingProgress.style.width = `${pct}%`;
+      if (openingTimer) {
+        const secs = Math.floor(elapsed);
+        const ms = Math.floor((elapsed % 1) * 100);
+        openingTimer.textContent = `00:0${secs}:${ms < 10 ? '0' : ''}${ms}`;
+      }
+
+      // At 5.5s, reveal identity text overlay smoothly
+      if (elapsed > 5.5 && openingIdentity) {
+        openingIdentity.classList.remove('opacity-0', 'translate-y-6');
+        openingIdentity.classList.add('opacity-100', 'translate-y-0');
+      }
+
+      // Auto-enter cave after 11.5s
+      if (elapsed > 11.5) {
+        enterCaveDirectly();
+        return;
+      }
+
+      requestAnimationFrame(tickOpening);
+    }
+    requestAnimationFrame(tickOpening);
+
+    function enterCaveDirectly() {
+      openingActive = false;
+      if (openingVideo) openingVideo.pause();
+      if (openingSequence) {
+        openingSequence.style.opacity = '0';
+        openingSequence.style.pointerEvents = 'none';
+        setTimeout(() => { openingSequence.remove(); }, 1000);
+      }
+      playPneumaticDoorSound();
+    }
+
+    /* -------------------------------------------------------------------------
+       2. THREE.JS SUBTERRANEAN 3D AMBIENT ATMOSPHERE
+       ------------------------------------------------------------------------- */
+    let scene, camera, renderer, dustParticles;
+    const stage = document.getElementById('cave-3d-stage');
+
+    function initCave3D() {
+      if (!window.THREE || !stage) return;
+
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x05070a, 0.045);
+
+      camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+      camera.position.set(0, 0, 10);
+
+      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+      stage.appendChild(renderer.domElement);
+
+      // Atmospheric Dust Motes
+      const count = 350;
+      const geom = new THREE.BufferGeometry();
+      const positions = new Float32Array(count * 3);
+      for (let i = 0; i < count * 3; i += 3) {
+        positions[i] = (Math.random() - 0.5) * 30;
+        positions[i + 1] = (Math.random() - 0.5) * 20;
+        positions[i + 2] = (Math.random() - 0.5) * 25;
+      }
+      geom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+      const mat = new THREE.PointsMaterial({
+        color: 0xe5a93c,
+        size: 0.12,
+        transparent: true,
+        opacity: 0.45
+      });
+      dustParticles = new THREE.Points(geom, mat);
+      scene.add(dustParticles);
+
+      // Ambient Lighting
+      const amb = new THREE.AmbientLight(0x0d121a, 2.0);
+      scene.add(amb);
+
+      const amberLight = new THREE.PointLight(0xe5a93c, 2.5, 20);
+      amberLight.position.set(2, 2, 4);
+      scene.add(amberLight);
+
+      function animate() {
+        requestAnimationFrame(animate);
+        if (dustParticles) {
+          dustParticles.rotation.y += 0.0006;
+          dustParticles.rotation.x += 0.0003;
+        }
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    }
+    initCave3D();
+
+    /* -------------------------------------------------------------------------
+       3. WEB AUDIO API SYNTHESIZER (Cave Pneumatics & Ambience)
+       ------------------------------------------------------------------------- */
+    let audioCtx = null;
+    let isMuted = true;
+
+    function getAudioCtx() {
+      if (!audioCtx) {
+        const AudioCtor = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtor) audioCtx = new AudioCtor();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function toggleAudio() {
+      isMuted = !isMuted;
+      const icon = document.getElementById('audio-icon');
+      if (icon) icon.textContent = isMuted ? '🔇' : '🔊';
+      if (!isMuted) {
+        playPneumaticDoorSound();
+      }
+    }
+
+    function playPneumaticDoorSound() {
+      if (isMuted) return;
+      try {
+        const ctx = getAudioCtx();
+        if (!ctx) return;
+        // Sub-bass thump
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(110, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(32, ctx.currentTime + 0.6);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.6);
+      } catch (e) {}
+    }
+
+    /* -------------------------------------------------------------------------
+       4. PROJECT DETAIL MODAL DATA
+       ------------------------------------------------------------------------- */
+    const projectDetails = {
+      edgedesk: {
+        title: 'EdgeDesk: Secure Multi-Device Remote Access Platform',
+        badge: 'PATENT APPLICATION FILED',
+        badgeColor: 'text-cave-gold border-cave-gold/60',
+        image: 'assets/batcave/edgedesk-detail.jpg',
+        subtitle: 'Synquic Labs Pvt. Ltd. (Indore, M.P.) • Aug 2026 – Present',
+        summary: 'A secure, zero-trust remote desktop, VNC encapsulation, and telemetry engine designed for distributed NVIDIA Jetson and Linux edge clusters running behind carrier-grade NATs.',
+        problem: 'Field-deployed edge AI nodes (in agricultural farms, factory floors, traffic poles) do not have public static IPs, making remote debugging, screen inspection, and file synchronization impossible without cumbersome VPNs.',
+        solution: 'Engineered a custom WebSocket broker running over end-to-end encrypted TLS/WSS. Allowed multi-device access directly from browser, real-time FPS/latency telemetry, and auto-reconnecting systemd daemons.',
+        impact: [
+          'Filed official Indian Patent Application for secure multi-device remote edge access.',
+          'Maintains sub-30ms frame streaming latency across cellular LTE connections.',
+          'Operates as an autonomous Linux service that survives power reboots in field deployments.'
+        ],
+        stack: ['Python', 'WebSockets', 'VNC/RFB', 'NVIDIA Jetson', 'Linux Systemd', 'TLS/AES-256']
+      },
+      'crowd-analytics': {
+        title: 'Real-Time Stampede Detection & Crowd Analytics',
+        badge: 'TOP FINALIST 2025',
+        badgeColor: 'text-cave-emerald border-cave-emerald/60',
+        image: 'assets/batcave/card-attendance.jpg',
+        subtitle: 'Cognicity Pvt. Ltd. / MPSEDC • Sep 2025 – Aug 2026',
+        summary: 'GPU-accelerated multi-camera tracking system deployed to detect crowd surges, counter-movement bottlenecks, and stampede risks before accidents occur.',
+        problem: 'Mass gathering bottlenecks require sub-50ms latency to alert field security. Standard cloud computer vision fails due to cellular upload throttling during high-density public gatherings.',
+        solution: 'Built an edge AI pipeline combining YOLOv8 with ByteTrack, quantized to TensorRT FP16 on NVIDIA Jetson Orin. Computed localized optical flow vectors to flag abnormal human counter-flow movement.',
+        impact: [
+          'Selected as Top Finalist among 200+ statewide teams at MPSEDC Mahakumbh Hackathon 2025.',
+          'Demonstrated stable sub-50ms end-to-end latency per camera feed on Jetson Orin hardware.',
+          'Integrated automated buzzer and alert dispatcher over localized mesh.'
+        ],
+        stack: ['Python', 'YOLOv8', 'ByteTrack', 'NVIDIA Jetson Orin', 'TensorRT', 'OpenCV']
+      },
+      'poultry-health-ai': {
+        title: 'Poultry Health AI & Thermal Vision Tracking',
+        badge: 'FARM PILOT DEPLOYED',
+        badgeColor: 'text-gray-300 border-white/20',
+        image: 'assets/batcave/card-poultry.jpg',
+        subtitle: 'Cognicity Pvt. Ltd. • Aug 2025 – Sep 2025',
+        summary: 'Dual optical and thermal vision system deployed to commercial farm operators to identify flock disease onset and thermal distress early.',
+        problem: 'Avian diseases spread rapidly in commercial poultry farms. Manual observation fails until birds are already critically sick.',
+        solution: 'Calibrated dual thermal/optical sensors with lightweight YOLO models running on edge microcomputers, flagging temperature spikes above baseline.',
+        impact: [
+          'Delivered directly to a live farm operator client.',
+          'Owned full lifecycle: data collection, custom annotation, training, and edge deployment.',
+          'Reduced flock mortality risk through 24/7 automated thermal telemetry.'
+        ],
+        stack: ['Python', 'YOLO', 'Thermal CV', 'OpenCV', 'Edge Linux']
+      },
+      'attendance-ai': {
+        title: 'Automated Facial Attendance Platform',
+        badge: 'AWS EC2 PRODUCTION',
+        badgeColor: 'text-cave-emerald border-cave-emerald/60',
+        image: 'assets/batcave/card-parkfnb.jpg',
+        subtitle: 'Cognicity Pvt. Ltd. / DAVV Pilots • Sep 2025 – Aug 2026',
+        summary: 'Automated facial recognition and attendance logging platform deployed across 3-course academic university pilots, eliminating manual paper roll calls.',
+        problem: 'Manual university attendance wasted 15–20 minutes of lecture time and was prone to proxy attendance.',
+        solution: 'Developed a high-throughput facial detection and vector embedding comparison service deployed with Flask, dlib, and OpenCV on AWS EC2 with automated MySQL sync.',
+        impact: [
+          'Cut attendance verification time by ~90% (from 18 minutes to under 90 seconds).',
+          'Successfully piloted across multiple academic department lectures at DAVV.',
+          'Exported instant compliance reports and real-time attendance dashboards.'
+        ],
+        stack: ['Python', 'Flask', 'dlib', 'OpenCV', 'AWS EC2', 'MySQL', 'Nginx']
+      },
+      'on-device-ai': {
+        title: 'On-Device AI Assistant (Offline Mobile R&D)',
+        badge: 'OFFLINE R&D',
+        badgeColor: 'text-cave-cyan border-cave-cyan/60',
+        image: 'assets/batcave/card-ondevice.jpg',
+        subtitle: 'Personal Engineering R&D • 2025 – 2026',
+        summary: 'Offline on-device speech-to-text transcription and localized LLM inference running on mobile hardware without sending audio or data to the cloud.',
+        problem: 'Mobile voice assistants transmit sensitive audio data to centralized servers, introducing privacy vulnerabilities and network latency.',
+        solution: 'Engineered an on-device pipeline leveraging sherpa-onnx (Whisper-based speech recognition) coupled with llama.cpp GGUF 4-bit quantized local language models.',
+        impact: [
+          '100% offline functionality without cellular connectivity.',
+          'Sub-second transcription response on mobile ARM architectures.',
+          'Zero cloud data exposure.'
+        ],
+        stack: ['Android', 'sherpa-onnx', 'Whisper', 'llama.cpp', 'GGUF Models']
+      },
+      'lora-traffic-mesh': {
+        title: 'Adaptive LoRa Mesh Smart Traffic Signalling',
+        badge: 'DECENTRALIZED IOT',
+        badgeColor: 'text-cave-gold border-cave-gold/60',
+        image: 'assets/batcave/card-llm.jpg',
+        subtitle: 'DAVV IoT Lab Project • 2024 – 2025',
+        summary: 'Decentralized multi-intersection traffic management protocol running on ESP32 microcontrollers communicating over LoRa radio mesh.',
+        problem: 'Centralized smart traffic signals fail during cellular network blackouts or server crashes, causing gridlocks.',
+        solution: 'Implemented peer-to-peer LoRa mesh consensus where adjacent intersections communicate queue lengths directly without internet dependency.',
+        impact: [
+          '100% cloud-independent resilient traffic balancing.',
+          'Reduced junction idle times by ~34% during simulated rush hour surges.',
+          'Ultra-low power consumption suitable for solar battery operation.'
+        ],
+        stack: ['C++', 'ESP32', 'LoRa / LoRaWAN', 'FreeRTOS', 'Mesh Consensus']
+      }
+    };
+
+    function openProjectDetail(key) {
+      const data = projectDetails[key];
+      if (!data) return;
+
+      const modal = document.getElementById('project-modal');
+      const body = document.getElementById('project-modal-body');
+
+      body.innerHTML = `
+        <div class="space-y-4">
+          <div class="flex items-center justify-between border-b border-white/10 pb-3">
+            <span class="text-xs font-mono text-gray-400">${data.subtitle}</span>
+            <span class="px-3 py-1 rounded-full bg-black/60 border ${data.badgeColor} text-[10px] font-mono font-bold">
+              ${data.badge}
+            </span>
+          </div>
+
+          <h3 class="font-grotesk text-2xl sm:text-3xl font-extrabold text-white">${data.title}</h3>
+
+          <div class="rounded-2xl overflow-hidden border border-white/10 max-h-64 bg-black">
+            <img src="${data.image}" alt="${data.title}" class="w-full h-full object-cover">
+          </div>
+
+          <p class="text-xs sm:text-sm text-gray-300 leading-relaxed font-sans">${data.summary}</p>
+
+          <div class="grid sm:grid-cols-2 gap-3 text-xs">
+            <div class="p-4 rounded-2xl bg-black/50 border border-white/10 space-y-1">
+              <span class="text-cave-gold font-mono font-bold block text-[11px] uppercase">Problem Statement</span>
+              <p class="text-gray-400 leading-relaxed">${data.problem}</p>
+            </div>
+            <div class="p-4 rounded-2xl bg-black/50 border border-white/10 space-y-1">
+              <span class="text-cave-gold font-mono font-bold block text-[11px] uppercase">Engineering Solution</span>
+              <p class="text-gray-400 leading-relaxed">${data.solution}</p>
+            </div>
+          </div>
+
+          <div class="space-y-1 pt-1">
+            <span class="text-xs font-mono font-bold text-white uppercase">Key Outcomes &amp; Verification</span>
+            <ul class="text-xs text-gray-300 space-y-1 list-disc list-inside">
+              ${data.impact.map(i => `<li>${i}</li>`).join('')}
+            </ul>
+          </div>
+
+          <div class="pt-3 border-t border-white/10 flex flex-wrap gap-2">
+            ${data.stack.map(s => `<span class="px-2.5 py-1 rounded-lg bg-black/70 border border-white/10 font-mono text-[10px] text-gray-300">${s}</span>`).join('')}
+          </div>
+        </div>
+      `;
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeProjectModal() {
+      const modal = document.getElementById('project-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function playIntroVideoModal() {
+      const modal = document.getElementById('video-intro-modal');
+      const player = document.getElementById('modal-video-player');
+      if (modal) modal.classList.remove('hidden');
+      if (player) {
+        player.currentTime = 0;
+        player.play();
+      }
+    }
+
+    function closeVideoIntroModal() {
+      const modal = document.getElementById('video-intro-modal');
+      const player = document.getElementById('modal-video-player');
+      if (player) player.pause();
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function filterProjects(cat) {
+      document.querySelectorAll('.proj-filter').forEach(btn => {
+        if (btn.getAttribute('data-filter') === cat) {
+          btn.className = 'proj-filter px-3.5 py-1.5 rounded-full bg-cave-gold text-black font-bold transition-all';
+        } else {
+          btn.className = 'proj-filter px-3.5 py-1.5 rounded-full bg-black/50 border border-white/10 text-gray-300 hover:text-white transition-all';
+        }
+      });
+
+      document.querySelectorAll('.proj-card').forEach(card => {
+        const itemCat = card.getAttribute('data-cat') || '';
+        if (cat === 'all' || itemCat.includes(cat)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function toggleMobileNav() {
+      const nav = document.getElementById('mobile-nav');
+      if (nav) nav.classList.toggle('hidden');
+    }
+
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      alert('Transmission Received! Connecting to Nishant Jain via jainnishant779@gmail.com.');
+    }
+
+    // Hash router
+    function handleHashRoute() {
+      const hash = window.location.hash;
+      if (hash.startsWith('#projects/')) {
+        const key = hash.replace('#projects/', '');
+        openProjectDetail(key);
+      }
+    }
+    window.addEventListener('hashchange', handleHashRoute);
+    window.addEventListener('load', handleHashRoute);
+
+    // Escape listener
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeProjectModal();
+        closeVideoIntroModal();
+      }
+    });
+  </script>
+</body>
+</html>

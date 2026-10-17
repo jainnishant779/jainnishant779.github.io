@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
+  <title>Nishant Jain — AI/ML &amp; Edge Systems Engineer</title>
+  <meta name="description" content="Portfolio of Nishant Jain. Edge AI, Computer Vision, NVIDIA Jetson, Patent Applicant, and Winner Sustainathon 2025. Inspired by mild sugar design.">
+  <meta name="theme-color" content="#f7f5f1">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Nishant Jain — AI/ML &amp; Edge Systems Engineer">
+  <meta property="og:description" content="Production Edge AI, Computer Vision, NVIDIA Jetson, Patent Applicant, and Winner Sustainathon 2025.">
+  <meta property="og:url" content="https://jainnishant779.github.io/mildsugar-preview.html">
+  <meta property="og:type" content="website">
+
+  <!-- Fonts: Righteous (Signature Display) & Plus Jakarta Sans / LINE Seed aesthetic -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Righteous&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            sugar: {
+              cream: '#f7f5f1',
+              card: '#ffffff',
+              dark: '#3c3728',
+              muted: '#7d7663',
+              border: '#e8e4db',
+              orange: '#fea831',
+              orangeDark: '#e59322',
+              nightBg: '#1c1a16',
+              nightCard: '#27241e',
+              nightText: '#f2eee4',
+              nightMuted: '#9e9683',
+              nightBorder: '#39352c',
+              mint: '#3eb4a8',
+              cyan: '#00c2cb'
+            }
+          },
+          fontFamily: {
+            display: ['Righteous', 'sans-serif'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* =========================================================================
+       MILD SUGAR DESIGN TOKENS & SYSTEM
+       ========================================================================= */
+    :root {
+      --color-black: #3c3728;
+      --color-white: #f7f5f1;
+      --color-card: #ffffff;
+      --color-orange: #fea831;
+      --color-border: #e8e4db;
+      --color-muted: #7d7663;
+      --custom-ease: cubic-bezier(.25, .46, .45, .94);
+      --dot-size: 6px;
+      --dot-offset: 9px;
+    }
+
+    .dark {
+      --color-black: #f2eee4;
+      --color-white: #1c1a16;
+      --color-card: #27241e;
+      --color-orange: #fea831;
+      --color-border: #39352c;
+      --color-muted: #9e9683;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      background-color: var(--color-white);
+      color: var(--color-black);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+      transition: background-color 0.4s var(--custom-ease), color 0.4s var(--custom-ease);
+    }
+
+    ::selection {
+      background-color: #fea831;
+      color: #ffffff;
+    }
+
+    /* Mild Sugar Rolling Text Effect */
+    .label {
+      position: relative;
+      display: inline-block;
+      overflow: hidden;
+      vertical-align: middle;
+    }
+    .label-text {
+      display: block;
+      transition: transform 0.36s var(--custom-ease);
+      will-change: transform;
+    }
+    .label-text--clone {
+      position: absolute;
+      inset: 0;
+      transform: translateY(100%);
+    }
+    .group:hover .label-text,
+    a:hover .label-text,
+    button:hover .label-text {
+      transform: translateY(-100%);
+    }
+    .group:hover .label-text--clone,
+    a:hover .label-text--clone,
+    button:hover .label-text--clone {
+      transform: translateY(0);
+    }
+
+    /* Mild Sugar Menu Button (3 Dots to X) */
+    .sugar-menu-btn {
+      width: 54px;
+      height: 54px;
+      border-radius: 9999px;
+      background: var(--color-orange);
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.25s var(--custom-ease), box-shadow 0.25s ease;
+      box-shadow: 0 4px 16px rgba(254, 168, 49, 0.35);
+    }
+    .sugar-menu-btn:hover {
+      transform: scale(1.06);
+      box-shadow: 0 6px 20px rgba(254, 168, 49, 0.5);
+    }
+    .sugar-menu-btn:active {
+      transform: scale(0.95);
+    }
+    .sugar-menu-btn .dot {
+      position: absolute;
+      width: var(--dot-size);
+      height: var(--dot-size);
+      background: #ffffff;
+      border-radius: 9999px;
+      transition: transform 0.3s var(--custom-ease), opacity 0.2s ease, width 0.3s ease;
+    }
+    .sugar-menu-btn .dot:nth-child(1) { transform: translateY(calc(var(--dot-offset) * -1)); }
+    .sugar-menu-btn .dot:nth-child(2) { transform: translateY(0); }
+    .sugar-menu-btn .dot:nth-child(3) { transform: translateY(var(--dot-offset)); }
+
+    /* When menu is active, dots become an X */
+    .sugar-menu-btn.is-active .dot:nth-child(1) {
+      width: 22px;
+      height: 3px;
+      border-radius: 2px;
+      transform: rotate(45deg);
+    }
+    .sugar-menu-btn.is-active .dot:nth-child(2) {
+      opacity: 0;
+      transform: scale(0);
+    }
+    .sugar-menu-btn.is-active .dot:nth-child(3) {
+      width: 22px;
+      height: 3px;
+      border-radius: 2px;
+      transform: rotate(-45deg);
+    }
+
+    /* Stalker Cursor */
+    #sugar-stalker {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 9999;
+      width: 110px;
+      height: 110px;
+      background: #fea831;
+      color: #ffffff;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 0.04em;
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+      transition: transform 0.22s var(--custom-ease), opacity 0.2s ease;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      user-select: none;
+    }
+    #sugar-stalker.is-visible {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    #sugar-stalker.is-hovering {
+      transform: translate(-50%, -50%) scale(1.15);
+      background: #3c3728;
+    }
+
+    /* Rotating Circular Stamp in Preloader */
+    @keyframes spinClockwise {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-spin-slow {
+      animation: spinClockwise 18s linear infinite;
+    }
+
+    /* Speech Bubble for Character */
+    .speech-bubble {
+      position: relative;
+      background: #ffffff;
+      border: 2px solid #3c3728;
+      border-radius: 18px;
+      padding: 10px 18px;
+      box-shadow: 0 8px 24px rgba(60, 55, 40, 0.12);
+      transition: transform 0.25s var(--custom-ease), opacity 0.25s ease;
+    }
+    .dark .speech-bubble {
+      background: #27241e;
+      border-color: #fea831;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 45px;
+      border-width: 10px 10px 0;
+      border-style: solid;
+      border-color: #3c3728 transparent;
+      display: block;
+      width: 0;
+    }
+    .dark .speech-bubble::after {
+      border-color: #fea831 transparent;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--color-white);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #dcd7cd;
+      border-radius: 4px;
+    }
+    .dark ::-webkit-scrollbar-thumb {
+      background: #474236;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #fea831;
+    }
+  </style>
+</head>
+
+<body class="antialiased min-h-screen relative selection:bg-sugar-orange selection:text-white">
+
+  <!-- =====================================================================
+       1. MILD SUGAR PRELOADER ("Don't be shy. Feel free to say “Hey!”")
+       ===================================================================== -->
+  <div id="sugar-preloader" class="fixed inset-0 z-[100] bg-sugar-cream dark:bg-sugar-nightBg flex flex-col items-center justify-center transition-all duration-700 select-none">
+    <div class="relative flex flex-col items-center text-center p-6 max-w-sm">
+      <!-- Circular Spinning Text SVG -->
+      <div class="w-44 h-44 relative flex items-center justify-center mb-6">
+        <svg class="w-full h-full animate-spin-slow" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path id="circlePath" d="M 100, 100 m -70, 0 a 70,70 0 1,1 140,0 a 70,70 0 1,1 -140,0" fill="none"/>
+          <text class="text-[12px] font-bold uppercase tracking-[0.22em] fill-sugar-dark dark:fill-sugar-nightText">
+            <textPath href="#circlePath" startOffset="0%">
+              • NISHANT JAIN • AI/ML &amp; EDGE SYSTEMS •
+            </textPath>
+          </text>
+        </svg>
+        <!-- Center Emoji -->
+        <span class="absolute text-4xl transform hover:scale-125 transition-transform duration-200">🤝</span>
+      </div>
+
+      <p class="font-sans text-sm text-sugar-muted dark:text-sugar-nightMuted leading-relaxed mb-1">
+        Don’t be shy.<br>Feel free to say
+      </p>
+      <h2 class="font-display text-4xl sm:text-5xl text-sugar-dark dark:text-sugar-nightText tracking-tight mb-6">
+        “Hey!”
+      </h2>
+
+      <button onclick="dismissPreloader()" class="group inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-sugar-orange text-white text-xs font-bold tracking-wider uppercase shadow-md hover:bg-sugar-orangeDark transition-all">
+        <span class="label">
+          <span class="label-text">Enter Lab</span>
+          <span class="label-text label-text--clone" aria-hidden="true">Enter Lab</span>
+        </span>
+        <svg class="w-3.5 h-3.5 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M7 17L17 7M17 7H7M17 7V17"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       2. STALKER CURSOR
+       ===================================================================== -->
+  <div id="sugar-stalker" class="hidden md:flex font-display">Hey!</div>
+
+  <!-- =====================================================================
+       3. SITE HEADER (Mild Sugar Japanese Layout)
+       ===================================================================== -->
+  <header class="fixed top-0 left-0 right-0 z-40 px-6 sm:px-12 py-6 flex items-start justify-between pointer-events-none">
+    <!-- Left Logo & Specializations -->
+    <div class="pointer-events-auto">
+      <a href="#home" class="font-display text-xl sm:text-2xl text-sugar-dark dark:text-sugar-nightText tracking-tight block hover:text-sugar-orange transition-colors">
+        nishant jain
+      </a>
+      <div class="text-[11px] sm:text-xs text-sugar-muted dark:text-sugar-nightMuted leading-snug mt-1 font-mono tracking-tight hidden sm:block">
+        <div>AI/ML &amp; Edge Systems</div>
+        <div>Computer Vision (YOLO)</div>
+        <div>NVIDIA Jetson Fleets</div>
+        <div>Patent Applicant</div>
+      </div>
+    </div>
+
+    <!-- Right Controls: Ambient Time Toggle + 3-Dot Mild Sugar Menu -->
+    <div class="flex items-center gap-3 sm:gap-4 pointer-events-auto">
+      <!-- Time / Mode Toggle -->
+      <button onclick="toggleDayNight()" id="time-toggle-btn" class="w-11 h-11 rounded-full bg-sugar-card dark:bg-sugar-nightCard border border-sugar-border dark:border-sugar-nightBorder text-sugar-dark dark:text-sugar-nightText flex items-center justify-center text-sm shadow-sm hover:border-sugar-orange transition-all" title="Toggle Day/Night Mode">
+        <span id="time-icon">☀️</span>
+      </button>
+
+      <!-- Preview Navigation Badge -->
+      <a href="index.html" class="hidden lg:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-sugar-card dark:bg-sugar-nightCard border border-sugar-border dark:border-sugar-nightBorder text-xs text-sugar-dark dark:text-sugar-nightText hover:border-sugar-orange font-medium shadow-sm transition-all" title="View 3D Cyberpunk Version">
+        <span>⚡ Switch to 3D Cyber Mode</span>
+      </a>
+
+      <!-- Mild Sugar 3-Dots Menu Button -->
+      <button onclick="toggleMenu()" id="menu-button" class="sugar-menu-btn" aria-label="Open Navigation Menu" aria-expanded="false">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- =====================================================================
+       4. FULLSCREEN NAVIGATION DRAWER (Mild Sugar Japanese Minimalist)
+       ===================================================================== -->
+  <div id="sugar-nav-drawer" class="fixed inset-0 z-30 bg-sugar-cream/95 dark:bg-sugar-nightBg/95 backdrop-blur-xl opacity-0 pointer-events-none transition-all duration-400 flex flex-col justify-between p-8 sm:p-16">
+    <!-- Top Spacer -->
+    <div class="h-16"></div>
+
+    <!-- Main Navigation List -->
+    <div class="max-w-4xl mx-auto w-full grid md:grid-cols-2 gap-10 sm:gap-16 items-center">
+      <!-- Primary Links -->
+      <nav class="space-y-4 sm:space-y-6">
+        <div>
+          <a href="#home" onclick="toggleMenu()" class="group inline-flex items-baseline gap-4 font-display text-4xl sm:text-6xl text-sugar-dark dark:text-sugar-nightText hover:text-sugar-orange transition-colors">
+            <span class="text-xs font-mono text-sugar-orange">01</span>
+            <span class="label">
+              <span class="label-text">Home</span>
+              <span class="label-text label-text--clone" aria-hidden="true">Home</span>
+            </span>
+          </a>
+        </div>
+        <div>
+          <a href="#cases" onclick="toggleMenu()" class="group inline-flex items-baseline gap-4 font-display text-4xl sm:text-6xl text-sugar-dark dark:text-sugar-nightText hover:text-sugar-orange transition-colors">
+            <span class="text-xs font-mono text-sugar-orange">02</span>
+            <span class="label">
+              <span class="label-text">Cases</span>
+              <span class="label-text label-text--clone" aria-hidden="true">Cases</span>
+            </span>
+          </a>
+        </div>
+        <div>
+          <a href="#about" onclick="toggleMenu()" class="group inline-flex items-baseline gap-4 font-display text-4xl sm:text-6xl text-sugar-dark dark:text-sugar-nightText hover:text-sugar-orange transition-colors">
+            <span class="text-xs font-mono text-sugar-orange">03</span>
+            <span class="label">
+              <span class="label-text">About</span>
+              <span class="label-text label-text--clone" aria-hidden="true">About</span>
+            </span>
+          </a>
+        </div>
+        <div>
+          <a href="#contact" onclick="toggleMenu()" class="group inline-flex items-baseline gap-4 font-display text-4xl sm:text-6xl text-sugar-dark dark:text-sugar-nightText hover:text-sugar-orange transition-colors">
+            <span class="text-xs font-mono text-sugar-orange">04</span>
+            <span class="label">
+              <span class="label-text">Contact</span>
+              <span class="label-text label-text--clone" aria-hidden="true">Contact</span>
+            </span>
+          </a>
+        </div>
+      </nav>
+
+      <!-- Case Quick Jumps & Resume -->
+      <div class="border-t md:border-t-0 md:border-l border-sugar-border dark:border-sugar-nightBorder pt-6 md:pt-0 md:pl-10 space-y-4">
+        <h4 class="text-xs uppercase font-bold tracking-widest text-sugar-muted dark:text-sugar-nightMuted font-mono">
+          Featured Case Studies
+        </h4>
+        <ul class="space-y-2.5 text-sm">
+          <li>
+            <a href="#case-1" onclick="toggleMenu()" class="hover:text-sugar-orange flex items-center justify-between text-sugar-dark dark:text-sugar-nightText font-medium">
+              <span>Case 01 — EdgeDesk (Patent Filed)</span>
+              <span class="text-xs text-sugar-orange font-mono">Jetson Orin</span>
+            </a>
+          </li>
+          <li>
+            <a href="#case-2" onclick="toggleMenu()" class="hover:text-sugar-orange flex items-center justify-between text-sugar-dark dark:text-sugar-nightText font-medium">
+              <span>Case 02 — Stampede Detection</span>
+              <span class="text-xs text-sugar-orange font-mono">&lt;50ms</span>
+            </a>
+          </li>
+          <li>
+            <a href="#case-3" onclick="toggleMenu()" class="hover:text-sugar-orange flex items-center justify-between text-sugar-dark dark:text-sugar-nightText font-medium">
+              <span>Case 03 — AWS EC2 Attendance AI</span>
+              <span class="text-xs text-sugar-orange font-mono">90% Fast</span>
+            </a>
+          </li>
+          <li>
+            <a href="#case-4" onclick="toggleMenu()" class="hover:text-sugar-orange flex items-center justify-between text-sugar-dark dark:text-sugar-nightText font-medium">
+              <span>Case 04 — Poultry Thermal Vision</span>
+              <span class="text-xs text-sugar-orange font-mono">Thermal CV</span>
+            </a>
+          </li>
+          <li>
+            <a href="#case-5" onclick="toggleMenu()" class="hover:text-sugar-orange flex items-center justify-between text-sugar-dark dark:text-sugar-nightText font-medium">
+              <span>Case 05 — LoRa Mesh Traffic</span>
+              <span class="text-xs text-sugar-orange font-mono">Decentralized</span>
+            </a>
+          </li>
+        </ul>
+
+        <!-- Direct CV Download Link -->
+        <div class="pt-4 border-t border-sugar-border dark:border-sugar-nightBorder">
+          <a href="Nishant_Jain_CV_OnePage.pdf" download="Nishant_Jain_CV_OnePage.pdf" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-sugar-orange text-white text-xs font-bold tracking-wider shadow-md hover:bg-sugar-orangeDark transition-all">
+            <span>📥 DOWNLOAD VERIFIED CV (PDF)</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Footer in Menu -->
+    <div class="max-w-4xl mx-auto w-full flex items-center justify-between text-xs text-sugar-muted dark:text-sugar-nightMuted font-mono">
+      <div>📍 Indore, M.P., India</div>
+      <div>© Nishant Jain — mild sugar design style</div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       5. HERO SECTION: INTERACTIVE ROOM & CHARACTER STAGE
+       ===================================================================== -->
+  <section id="home" class="min-h-screen pt-28 pb-16 px-6 sm:px-12 flex flex-col justify-center relative">
+    <div class="max-w-6xl mx-auto w-full grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      
+      <!-- LEFT / CENTER: Interactive Lab Room & Animated Character Canvas (Lg: 7 cols) -->
+      <div class="lg:col-span-7 flex flex-col items-center justify-center relative">
+        
+        <!-- Speech Bubble over Character -->
+        <div id="character-speech" class="speech-bubble mb-2 transform scale-0 opacity-0 transition-all duration-300 z-20 flex items-center gap-2">
+          <span class="text-lg">🤝</span>
+          <span class="font-bold text-sm text-sugar-dark dark:text-sugar-nightText" id="speech-text">
+            “Hey! Welcome to my Edge AI Lab!”
+          </span>
+        </div>
+
+        <!-- Room Container with Ambient Visuals -->
+        <div class="w-full max-w-[560px] aspect-[4/3] bg-sugar-card dark:bg-sugar-nightCard rounded-3xl p-4 sm:p-6 border border-sugar-border dark:border-sugar-nightBorder shadow-[0_12px_40px_rgba(0,0,0,0.06)] relative overflow-hidden flex items-center justify-center">
+          
+          <!-- Room Ambient Lighting Window & Sky -->
+          <div id="room-window" class="absolute top-4 right-6 w-28 h-36 rounded-2xl border-2 border-sugar-border dark:border-sugar-nightBorder overflow-hidden bg-gradient-to-b from-sky-200 to-amber-100 dark:from-indigo-950 dark:to-purple-950 transition-colors duration-500 shadow-inner">
+            <!-- Window Frame Divider -->
+            <div class="absolute inset-y-0 left-1/2 w-0.5 bg-sugar-border dark:bg-sugar-nightBorder"></div>
+            <div class="absolute inset-x-0 top-1/2 h-0.5 bg-sugar-border dark:bg-sugar-nightBorder"></div>
+            <!-- Celestial Body (Sun / Moon) -->
+            <div id="window-celestial" class="w-7 h-7 rounded-full bg-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.8)] absolute top-3 left-3 transition-all duration-700"></div>
+          </div>
+
+          <!-- Bookshelf & Trophy -->
+          <div class="absolute top-6 left-6 flex flex-col gap-1.5 opacity-80">
+            <div class="flex items-end gap-1">
+              <span class="w-3 h-10 bg-amber-600 rounded-sm"></span>
+              <span class="w-3.5 h-12 bg-sugar-orange rounded-sm"></span>
+              <span class="w-3 h-9 bg-emerald-600 rounded-sm"></span>
+              <span class="text-xl ml-1" title="Winner — Sustainathon 2025 (NATRAX)">🏆</span>
+            </div>
+            <div class="w-24 h-1 bg-sugar-dark dark:bg-sugar-nightBorder rounded-full"></div>
+            <span class="text-[9px] font-mono text-sugar-muted dark:text-sugar-nightMuted">Edge AI Lab // DAVV</span>
+          </div>
+
+          <!-- Hardware Shelf: Jetson Orin with Blinking LED -->
+          <div class="absolute bottom-6 left-6 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-sugar-cream dark:bg-sugar-nightBg border border-sugar-border dark:border-sugar-nightBorder text-[10px] font-mono">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            <span class="text-sugar-dark dark:text-sugar-nightText font-semibold">NVIDIA JETSON ORIN</span>
+            <span class="text-sugar-orange font-bold">ONLINE</span>
+          </div>
+
+          <!-- Interactive Character Canvas -->
+          <canvas id="character-canvas" width="460" height="340" class="w-full h-full object-contain cursor-pointer relative z-10" role="button" aria-label="Click Nishant avatar to say Hey" tabindex="0"></canvas>
+
+          <!-- Interactive Click-Me Hint Pill -->
+          <div class="absolute bottom-4 right-6 pointer-events-none text-[11px] font-mono text-sugar-muted dark:text-sugar-nightMuted flex items-center gap-1.5">
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-sugar-orange animate-pulse"></span>
+            <span>Click or hover avatar</span>
+          </div>
+        </div>
+
+        <!-- Sub-status Bar -->
+        <div class="flex items-center justify-between w-full max-w-[560px] mt-3 px-2 text-xs font-mono text-sugar-muted dark:text-sugar-nightMuted">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-sugar-orange"></span>
+            <span>DAVV IoT &amp; Edge Systems</span>
+          </div>
+          <div>Patent Filed • Sustainathon Winner</div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Mild Sugar Side Panel Profile (Lg: 5 cols) -->
+      <div class="lg:col-span-5 flex flex-col justify-center space-y-6">
+        
+        <!-- Big "Hey! 🤝" Greeting -->
+        <div class="space-y-2">
+          <p class="font-display text-4xl sm:text-5xl text-sugar-orange tracking-tight flex items-center gap-3">
+            <span>Hey!</span>
+            <span class="inline-block transform hover:rotate-12 transition-transform duration-200">🤝</span>
+          </p>
+          <h1 class="font-display text-3xl sm:text-4xl text-sugar-dark dark:text-sugar-nightText leading-tight">
+            I’m an AI/ML &amp; Edge Systems Engineer<br>
+            working under the name<br>
+            <span class="text-sugar-orange underline decoration-sugar-orange/30 decoration-wavy decoration-2">Nishant Jain.</span>
+          </h1>
+        </div>
+
+        <!-- Bilingual Japanese/English Subtitle -->
+        <div class="text-xs font-mono text-sugar-muted dark:text-sugar-nightMuted tracking-wide">
+          エッジAI・画像認識 (Computer Vision)・IoT組み込みシステム開発
+        </div>
+
+        <!-- Brief Story -->
+        <p class="text-sm sm:text-base text-sugar-muted dark:text-sugar-nightMuted leading-relaxed">
+          I build production-grade <strong>Computer Vision pipelines</strong> and <strong>NVIDIA Jetson Edge AI</strong> fleets that operate in real time where latency matters. Patent applicant for <strong>EdgeDesk</strong> (secure remote edge access) and winner at <strong>Sustainathon 2025</strong>.
+        </p>
+
+        <!-- CTA Buttons: Get to know me + CV Download -->
+        <div class="flex flex-wrap items-center gap-4 pt-2">
+          <!-- Mild Sugar Rolling Button: Get to know me -->
+          <a href="#cases" class="group inline-flex items-center gap-3 px-7 py-3.5 rounded-full bg-sugar-orange text-white font-bold text-sm tracking-wide shadow-md hover:bg-sugar-orangeDark transition-all">
+            <span class="label">
+              <span class="label-text">Get to know me</span>
+              <span class="label-text label-text--clone" aria-hidden="true">Get to know me</span>
+            </span>
+            <svg class="w-4 h-4 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M7 17L17 7M17 7H7M17 7V17"/>
+            </svg>
+          </a>
+
+          <!-- Download CV Button -->
+          <a href="Nishant_Jain_CV_OnePage.pdf" download="Nishant_Jain_CV_OnePage.pdf" target="_blank" class="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-sugar-card dark:bg-sugar-nightCard border border-sugar-border dark:border-sugar-nightBorder text-sugar-dark dark:text-sugar-nightText hover:border-sugar-orange text-sm font-semibold transition-all">
+            <span>📄</span>
+            <span class="label">
+              <span class="label-text">Download CV (PDF)</span>
+              <span class="label-text label-text--clone" aria-hidden="true">Download CV (PDF)</span>
+            </span>
+          </a>
+        </div>
+
+        <!-- Quick Contacts Bar -->
+        <div class="pt-4 border-t border-sugar-border dark:border-sugar-nightBorder flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-mono text-sugar-muted dark:text-sugar-nightMuted">
+          <a href="mailto:jainnishant779@gmail.com" class="hover:text-sugar-orange transition-colors">✉️ jainnishant779@gmail.com</a>
+          <a href="tel:+919098407353" class="hover:text-sugar-orange transition-colors">📞 +91-9098407353</a>
+          <a href="https://github.com/jainnishant779" target="_blank" class="hover:text-sugar-orange transition-colors">💻 github</a>
+          <a href="https://linkedin.com/in/nishujain02" target="_blank" class="hover:text-sugar-orange transition-colors">🔗 linkedin</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       6. FEATURED CASES SECTION (Mild Sugar Numbered Case Studies)
+       ===================================================================== -->
+  <section id="cases" class="py-24 px-6 sm:px-12 border-t border-sugar-border dark:border-sugar-nightBorder bg-sugar-cream/50 dark:bg-sugar-nightBg/50">
+    <div class="max-w-6xl mx-auto space-y-16">
+      
+      <!-- Section Header -->
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-sugar-border dark:border-sugar-nightBorder">
+        <div>
+          <span class="text-xs font-mono text-sugar-orange font-bold uppercase tracking-widest block mb-1">
+            SELECTED WORKS // 2024 – 2026
+          </span>
+          <h2 class="font-display text-4xl sm:text-6xl text-sugar-dark dark:text-sugar-nightText tracking-tight">
+            Cases.
+          </h2>
+        </div>
+        <p class="text-sm text-sugar-muted dark:text-sugar-nightMuted max-w-sm">
+          Deep-dive case studies covering edge telemetry, low-latency computer vision, and patent-pending IoT architecture.
+        </p>
+      </div>
+
+      <!-- Cases Grid / List (Mild Sugar Layout) -->
+      <div class="space-y-16">
+
+        <!-- CASE 01: EdgeDesk -->
+        <article id="case-1" class="group bg-sugar-card dark:bg-sugar-nightCard rounded-3xl p-6 sm:p-10 border border-sugar-border dark:border-sugar-nightBorder hover:border-sugar-orange transition-all duration-300 shadow-sm hover:shadow-xl grid lg:grid-cols-12 gap-8 items-center" data-stalker-text="View Case 01">
+          <div class="lg:col-span-4 space-y-4">
+            <span class="font-display text-5xl sm:text-6xl text-sugar-orange block leading-none">
+              Case 1
+            </span>
+            <div class="flex flex-wrap gap-2 pt-1">
+              <span class="px-3 py-1 rounded-full bg-sugar-orange text-white text-[11px] font-bold">Edge AI</span>
+              <span class="px-3 py-1 rounded-full bg-sugar-cream dark:bg-sugar-nightBg border border-sugar-border dark:border-sugar-nightBorder text-sugar-dark dark:text-sugar-nightText text-[11px] font-mono">Patent Application Filed</span>
+            </div>
+            <h3 class="font-display text-2xl sm:text-3xl text-sugar-dark dark:text-sugar-nightText leading-snug">
+              EdgeDesk: Secure Multi-Device Remote Telemetry Engine
+            </h3>
+            <p class="text-sm text-sugar-muted dark:text-sugar-nightMuted leading-relaxed">
+              Architected a zero-trust encrypted remote desktop, VNC tunneling, and file management platform for distributed NVIDIA Jetson and Linux edge fleets across cellular NATs.
+            </p>
+            <div class="pt-2">
+              <button onclick="openCaseModal(1)" class="group/btn inline-flex items-center gap-2 text-xs font-bold text-sugar-orange hover:text-sugar-orangeDark font-mono tracking-wider uppercase">
+                <span class="label">
+                  <span class="label-text">Read Architecture Breakdown</span>
+                  <span class="label-text label-text--clone" aria-hidden="true">Read Architecture Breakdown</span>
+                </span>
+                <span>↗</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Card Visual Preview -->
+          <div class="lg:col-span-8 bg-sugar-cream dark:bg-sugar-nightBg rounded-2xl p-6 sm:p-8 border border-sugar-border dark:border-sugar-nightBorder flex flex-col justify-between space-y-6">
+            <div class="flex items-center justify-between text-xs font-mono text-sugar-muted dark:text-sugar-nightMuted border-b border-sugar-border dark:border-sugar-nightBorder pb-3">
+              <span>HARDWARE: NVIDIA Jetson Nano / Orin</span>
+              <span class="text-sugar-orange font-bold">WSS / TLS / NAT-TRAVERSAL</span>
+            </div>
+            <!-- Interactive Simulator Graphic -->
+            <div class="bg-white dark:bg-sugar-nightCard rounded-xl p-5 border border-sugar-border dark:border-sugar-nightBorder space-y-3 font-mono text-xs">
+              <div class="flex items-center justify-between">
+                <span class="text-sugar-dark dark:text-sugar-nightText font-bold">FLEET STATUS: 8 NODES CONNECTED</span>
+                <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">ENCRYPTED WSS</span>
+              </div>
+              <div class="grid grid-cols-4 gap-2 text-center text-[10px]">
+                <div class="p-2 rounded bg-sugar-cream dark:bg-sugar-nightBg border border-sugar-border dark:border-sugar-nightBorder">
+                  <div class="text-sugar-muted">LATENCY</div>
+                  <div class="font-bold text-sugar-dark dark:text-sugar-nightText">18ms</div>
+                </div>
+                <div class="p-2 rounded bg-sugar-cream dark:bg-sugar-nightBg border border-sugar-border dark:border-sugar-nightBorder">
+                  <div class="text-sugar-muted">FPS</div>
+                  <div class="font-bold text-sugar-dark dark:text-sugar-nightText">30 fps</div>
+                </div>
+                <div class="p-2 rounded bg-sugar-cream dark:bg-sugar-nightBg border border-sugar-border dark:border-sugar-nightBorder">
+                  <div class="text-sugar-muted">BANDWIDTH</div>
+                  <div class="font-bold text-sugar-dark dark:text-sugar-nightText">1.2 MB/s</div>
+                </div>
+                <div class="p-2 rounded bg-sugar-cream dark:bg-sugar-nightBg border border-sugar-border dark:border-sugar-nightBorder">
+                  <div class="text-sugar-muted">CIPHER</div>
+                  <div class="font-bold text-sugar-dark dark:text-sugar-nightText">AES-256</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- CASE 02: Real-Time Stampede Detection -->
+        <article id="case-2" class="group bg-sugar-card dark:bg-sugar-nightCard rounded-3xl p-6 sm:p-10 border border-sugar-border dark:border-sugar-nightBorder hover:border-sugar-orange transition-all duration-300 shadow-sm hover:shadow-xl grid lg:grid-cols-12 gap-8 items-center" data-stalker-text="View Case 02">
+          <div class="lg:col-span-4 space-y-4">
+            <span class="font-display text-5xl sm:text-6xl text-sugar-orange block leading-none">
+              Case 2
+            </span>
+            <div class="flex flex-wrap gap-2 pt-1">
+              <span class="px-3 py-1 rounded-full bg-sugar-orange text-white text-[11px] font-bold">Computer Vision</span>
+              <span class="px-3 py-1 rounded-full bg-sugar-cream dark:bg-sugar-nightBg border border-sugar-border dark:border-sugar-nightBorder text-sugar-dark dark:text-sugar-nightText text-[11px] font-mono">Mahakumbh Finalist</span>
+            </div>
+            <h3 class="font-display text-2xl sm:text-3xl text-sugar-dark dark:text-sugar-nightText leading-snug">
+              Sub-50ms Crowd Analytics &amp; Stampede Detection
+            </h3>
+            <p class="text-sm text-sugar-muted dark:text-sugar-nightMuted leading-relaxed">
+              GPU-accelerated multi-object tracking pipeline (YOLOv8 + ByteTrack) optimized on Jetson Orin with TensorRT FP16 quantization. Selected as Top Finalist among 200+ teams across Madhya Pradesh.
+            </p>
+            <div class="pt-2">
+              <button onclick="openCaseModal(2)" class="group/btn inline-flex items-center gap-2 text-xs font-bold text-sugar-orange hover:text-sugar-orangeDark font-mono tracking-wider uppercase">
+                <span class="label">
+                  <span class="label-text">Read Analytics Metrics</span>
+                  <span class="label-text label-text--clone" aria-hidden="true">Read Analytics Metrics</span>
+                </span>
+                <span>↗</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Card Visual Preview -->
+          <div class="lg:col-span-8 bg-sugar-cream dark:bg-sugar-nightBg rounded-2xl p-6 sm:p-8 border border-sugar-border dark:border-sugar-nightBorder flex flex-col justify-between space-y-6">
+            <div class="flex items-center justify-between text-xs font-mono text-sugar-muted dark:text-sugar-nightMuted border-b border-sugar-border dark:border-sugar-nightBorder pb-3">
+              <span>INFERENCE: TensorRT FP16</span>
+              <span class="text-sugar-orange font-bold">LATENCY: &lt; 50ms</span>
+            </div>
+            <!-- Bounding Box Telemetry Simulation -->
+            <div class="bg-white dark:bg-sugar-nightCard rounded-xl p-5 border border-sugar-border dark:border-sugar-nightBorder space-y-3 font-mono text-xs">
+              <div class="flex items-center justify-between">
+                <span class="text-sugar-dark dark:text-sugar-nightText font-bold">SECTOR 04 · DENSITY THRESHOLD</span>
+                <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-bold">SURGE MONITORING</span>
+              </div>
+              <div class="h-20 rounded bg-sugar-cream dark:bg-sugar-nightBg border border-dashed border-sugar-border dark:border-sugar-nightBorder flex items-center justify-around p-2">
+                <div class="text-center">
+                  <span class="text-sugar-muted text-[10px]">Headcount</span>
+                  <div class="text-xl font-bold text-sugar-dark dark:text-sugar-nightText">142</div>
+                </div>
+                <div class="text-center">
+                  <span class="text-sugar-muted text-[10px]">Velocity Vector</span>
+                  <div class="text-xl font-bold text-emerald-600">0.82 m/s</div>
+                </div>
+                <div class="text-center">
+                  <span class="text-sugar-muted text-[10px]">Alarm State</span>
+                  <div class="text-xl font-bold text-sugar-orange">NOMINAL</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- CASE 03: Facial Attendance AI on AWS -->
+        <article id="case-3" class="group bg-sugar-card dark:bg-sugar-nightCard rounded-3xl p-6 sm:p-10 border border-sugar-border dark:border-sugar-nightBorder hover:border-sugar-orange transition-all duration-300 shadow-sm hover:shadow-xl grid lg:grid-cols-12 gap-8 items-center" data-stalker-text="View Case 03">
+          <div class="lg:col-span-4 space-y-4">
+            <span class="font-display text-5xl sm:text-6xl text-sugar-orange block leading-none">
+              Case 3
+            </span>
+            <div class="flex flex-wrap gap-2 pt-1">
+              <span class="px-3 py-1 rounded-full bg-sugar-orange text-white text-[11px] font-bold">Cloud &amp; CV</span>
+              <span class="px-3 py-1 rounded-full bg-sugar-cream dark:bg-sugar-nightBg border border-sugar-border dark:border-sugar-nightBorder text-sugar-dark dark:text-sugar-nightText text-[11px] font-mono">AWS EC2 Cloud</span>
+            </div>
+            <h3 class="font-display text-2xl sm:text-3xl text-sugar-dark dark:text-sugar-nightText leading-snug">
+              Automated Facial Attendance AI System
+            </h3>
+            <p class="text-sm text-sugar-muted dark:text-sugar-nightMuted leading-relaxed">
+              Full-stack automated attendance verification platform deployed on AWS EC2 across 3-course academic pilots, reducing manual roll-call logging time by ~90%.
+            </p>
+            <div class="pt-2">
+              <button onclick="openCaseModal(3)" class="group/btn inline-flex items-center gap-2 text-xs font-bold text-sugar-orange hover:text-sugar-orangeDark font-mono tracking-wider uppercase">
+                <span class="label">
+                  <span class="label-text">View Deployment Details</span>
+                  <span class="label-text label-text--clone" aria-hidden="true">View Deployment Details</span>
+                </span>
+                <span>↗</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="lg:col-span-8 bg-sugar-cream dark:bg-sugar-nightBg rounded-2xl p-6 sm:p-8 border border-sugar-border dark:border-sugar-nightBorder flex flex-col justify-between space-y-4">
+            <div class="flex items-center justify-between text-xs font-mono text-sugar-muted dark:text-sugar-nightMuted border-b border-sugar-border dark:border-sugar-nightBorder pb-3">
+              <span>STACK: Flask, dlib, OpenCV, MySQL</span>
+              <span class="text-sugar-orange font-bold">PILOT: DAVV DEPT</span>
+            </div>
+            <div class="bg-white dark:bg-sugar-nightCard rounded-xl p-5 border border-sugar-border dark:border-sugar-nightBorder flex items-center justify-between">
+              <div>
+                <div class="text-xs text-sugar-muted">Manual Attendance Time</div>
+                <div class="text-2xl font-bold line-through text-red-500">15 - 20 mins</div>
+              </div>
+              <div class="text-right">
+                <div class="text-xs text-sugar-muted">AI Face Scan Time</div>
+                <div class="text-3xl font-bold text-emerald-600 font-display">&lt; 90 secs</div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- CASE 04 & 05: Compact Grid -->
+        <div class="grid md:grid-cols-2 gap-8">
+          
+          <!-- Case 04 -->
+          <article id="case-4" class="group bg-sugar-card dark:bg-sugar-nightCard rounded-3xl p-6 sm:p-8 border border-sugar-border dark:border-sugar-nightBorder hover:border-sugar-orange transition-all duration-300 shadow-sm hover:shadow-xl flex flex-col justify-between" data-stalker-text="Case 04">
+            <div class="space-y-4">
+              <span class="font-display text-4xl text-sugar-orange block">Case 4</span>
+              <div class="flex flex-wrap gap-2">
+                <span class="px-2.5 py-0.5 rounded-full bg-sugar-orange text-white text-[10px] font-bold">AgriTech AI</span>
+              </div>
+              <h3 class="font-display text-xl sm:text-2xl text-sugar-dark dark:text-sugar-nightText">
+                AI-Powered Poultry Health &amp; Thermal Monitoring
+              </h3>
+              <p class="text-xs sm:text-sm text-sugar-muted dark:text-sugar-nightMuted leading-relaxed">
+                Computer vision + thermal anomaly tracking deployed for live farm operators to detect disease onset and thermal distress early.
+              </p>
+            </div>
+            <div class="pt-6">
+              <button onclick="openCaseModal(4)" class="text-xs font-bold text-sugar-orange font-mono hover:underline">
+                Read Farm Pilot Breakdown ↗
+              </button>
+            </div>
+          </article>
+
+          <!-- Case 05 -->
+          <article id="case-5" class="group bg-sugar-card dark:bg-sugar-nightCard rounded-3xl p-6 sm:p-8 border border-sugar-border dark:border-sugar-nightBorder hover:border-sugar-orange transition-all duration-300 shadow-sm hover:shadow-xl flex flex-col justify-between" data-stalker-text="Case 05">
+            <div class="space-y-4">
+              <span class="font-display text-4xl text-sugar-orange block">Case 5</span>
+              <div class="flex flex-wrap gap-2">
+                <span class="px-2.5 py-0.5 rounded-full bg-sugar-orange text-white text-[10px] font-bold">IoT &amp; LoRa Mesh</span>
+              </div>
+              <h3 class="font-display text-xl sm:text-2xl text-sugar-dark dark:text-sugar-nightText">
+                Adaptive LoRa Mesh Smart Traffic Signaling
+              </h3>
+              <p class="text-xs sm:text-sm text-sugar-muted dark:text-sugar-nightMuted leading-relaxed">
+                Decentralized multi-node traffic intersection mesh on ESP32 &amp; LoRaWAN that dynamically balances signal wait-times without cloud dependency.
+              </p>
+            </div>
+            <div class="pt-6">
+              <button onclick="openCaseModal(5)" class="text-xs font-bold text-sugar-orange font-mono hover:underline">
+                Read Mesh Architecture ↗
+              </button>
+            </div>
+          </article>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       7. ABOUT SECTION (Mild Sugar Story, Philosophy & Credentials)
+       ===================================================================== -->
+  <section id="about" class="py-24 px-6 sm:px-12 border-t border-sugar-border dark:border-sugar-nightBorder">
+    <div class="max-w-4xl mx-auto space-y-16">
+      
+      <!-- Section Title -->
+      <div class="space-y-3">
+        <span class="text-xs font-mono text-sugar-orange font-bold uppercase tracking-widest block">
+          ABOUT &amp; PHILOSOPHY
+        </span>
+        <h2 class="font-display text-3xl sm:text-5xl text-sugar-dark dark:text-sugar-nightText leading-tight">
+          Bringing Intelligence to the Physical World.
+        </h2>
+        <div class="text-xs font-mono text-sugar-muted dark:text-sugar-nightMuted">
+          ホワイトボードからエッジへ。理論から実装へ。
+        </div>
+      </div>
+
+      <!-- Core Story & Philosophy Grid -->
+      <div class="space-y-10 text-sugar-muted dark:text-sugar-nightMuted leading-relaxed text-sm sm:text-base">
+        
+        <div class="space-y-4">
+          <h3 class="font-display text-xl text-sugar-dark dark:text-sugar-nightText">
+            The Philosophy of Edge AI
+          </h3>
+          <p>
+            Most AI systems today live trapped inside distant datacenters. But the physical world doesn’t wait 300 milliseconds for a roundtrip API response when an industrial machine malfunctions, a crowd surges, or a vehicle navigates a blind corner.
+          </p>
+          <p>
+            My mission as an engineer is to <strong>miniaturize, quantize, and embed neural intelligence directly where the sensors live</strong> — onto NVIDIA Jetson microcomputers, microcontrollers, and localized edge servers.
+          </p>
+        </div>
+
+        <!-- Capability Breakdown (Mild Sugar Style) -->
+        <div class="grid sm:grid-cols-2 gap-6 pt-6 border-t border-sugar-border dark:border-sugar-nightBorder">
+          
+          <div class="bg-sugar-card dark:bg-sugar-nightCard p-6 rounded-2xl border border-sugar-border dark:border-sugar-nightBorder space-y-2">
+            <div class="text-sugar-orange font-bold text-xs font-mono">01 // VISION &amp; INFERENCE</div>
+            <h4 class="font-display text-lg text-sugar-dark dark:text-sugar-nightText">Computer Vision &amp; TensorRT</h4>
+            <p class="text-xs text-sugar-muted dark:text-sugar-nightMuted leading-normal">
+              YOLOv8/v11, ByteTrack, PyTorch, OpenCV, TensorRT FP16/INT8 quantization, DeepStream pipelines.
+            </p>
+          </div>
+
+          <div class="bg-sugar-card dark:bg-sugar-nightCard p-6 rounded-2xl border border-sugar-border dark:border-sugar-nightBorder space-y-2">
+            <div class="text-sugar-orange font-bold text-xs font-mono">02 // HARDWARE &amp; IOT</div>
+            <h4 class="font-display text-lg text-sugar-dark dark:text-sugar-nightText">Edge Hardware &amp; Embedded</h4>
+            <p class="text-xs text-sugar-muted dark:text-sugar-nightMuted leading-normal">
+              NVIDIA Jetson Nano/Xavier/Orin, ESP32, Arduino, LoRaWAN, UART, I2C, MQTT, Linux Systemd.
+            </p>
+          </div>
+
+          <div class="bg-sugar-card dark:bg-sugar-nightCard p-6 rounded-2xl border border-sugar-border dark:border-sugar-nightBorder space-y-2">
+            <div class="text-sugar-orange font-bold text-xs font-mono">03 // CLOUD &amp; BACKEND</div>
+            <h4 class="font-display text-lg text-sugar-dark dark:text-sugar-nightText">Cloud &amp; Telemetry APIs</h4>
+            <p class="text-xs text-sugar-muted dark:text-sugar-nightMuted leading-normal">
+              AWS EC2, Docker, FastAPI, Flask, WebSockets, REST APIs, TLS/WSS edge tunneling.
+            </p>
+          </div>
+
+          <div class="bg-sugar-card dark:bg-sugar-nightCard p-6 rounded-2xl border border-sugar-border dark:border-sugar-nightBorder space-y-2">
+            <div class="text-sugar-orange font-bold text-xs font-mono">04 // GENERATIVE AI</div>
+            <h4 class="font-display text-lg text-sugar-dark dark:text-sugar-nightText">LLMs &amp; Agents</h4>
+            <p class="text-xs text-sugar-muted dark:text-sugar-nightMuted leading-normal">
+              LLM API Integration, Prompt Engineering, Retrieval-Augmented Generation (RAG) Concepts.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Experience & Honors -->
+        <div class="pt-6 border-t border-sugar-border dark:border-sugar-nightBorder space-y-6">
+          <h3 class="font-display text-xl text-sugar-dark dark:text-sugar-nightText">
+            Verified Milestones &amp; Honors
+          </h3>
+          <div class="space-y-4">
+            <div class="flex items-start gap-4">
+              <span class="text-2xl">🏆</span>
+              <div>
+                <strong class="text-sugar-dark dark:text-sugar-nightText text-sm sm:text-base">Winner — Sustainathon 2025</strong>
+                <p class="text-xs text-sugar-muted">National Automotive Test Tracks (NATRAX), Government of India.</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <span class="text-2xl">🏅</span>
+              <div>
+                <strong class="text-sugar-dark dark:text-sugar-nightText text-sm sm:text-base">Top Finalist — MPSEDC Mahakumbh Hackathon 2025</strong>
+                <p class="text-xs text-sugar-muted">Top 200+ teams across Madhya Pradesh for sub-50ms Crowd Analytics.</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <span class="text-2xl">📜</span>
+              <div>
+                <strong class="text-sugar-dark dark:text-sugar-nightText text-sm sm:text-base">Patent Application Filed — EdgeDesk</strong>
+                <p class="text-xs text-sugar-muted">Secure Multi-Device Remote Access Platform for Edge Hardware.</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <span class="text-2xl">⚡</span>
+              <div>
+                <strong class="text-sugar-dark dark:text-sugar-nightText text-sm sm:text-base">Industrial Research Trainee — RRCAT</strong>
+                <p class="text-xs text-sugar-muted">Raja Ramanna Centre for Advanced Technology, Department of Atomic Energy, Govt. of India.</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <span class="text-2xl">🎓</span>
+              <div>
+                <strong class="text-sugar-dark dark:text-sugar-nightText text-sm sm:text-base">Integrated Dual Degree (B.Tech + M.Tech) in Internet of Things</strong>
+                <p class="text-xs text-sugar-muted">Devi Ahilya Vishwavidyalaya (DAVV), Indore (2021 – Present).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       8. CONTACT SECTION (Say “Hey!” & Recruiter Fast-Track)
+       ===================================================================== -->
+  <section id="contact" class="py-24 px-6 sm:px-12 border-t border-sugar-border dark:border-sugar-nightBorder bg-sugar-card dark:bg-sugar-nightCard">
+    <div class="max-w-4xl mx-auto space-y-12 text-center">
+      
+      <!-- Heading -->
+      <div class="space-y-3">
+        <span class="text-xs font-mono text-sugar-orange font-bold uppercase tracking-widest block">
+          LET’S BUILD SOMETHING RELIABLE
+        </span>
+        <h2 class="font-display text-4xl sm:text-6xl text-sugar-dark dark:text-sugar-nightText">
+          Feel free to say “Hey!”
+        </h2>
+        <p class="text-sm sm:text-base text-sugar-muted dark:text-sugar-nightMuted max-w-md mx-auto">
+          Currently open to AI/ML &amp; Edge Systems roles, production contract builds, and engineering collaborations.
+        </p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <a href="mailto:jainnishant779@gmail.com" class="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-sugar-orange text-white font-bold text-sm tracking-wide shadow-lg hover:bg-sugar-orangeDark transition-all">
+          <span class="label">
+            <span class="label-text">Send an Email</span>
+            <span class="label-text label-text--clone" aria-hidden="true">Send an Email</span>
+          </span>
+          <svg class="w-4 h-4 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M7 17L17 7M17 7H7M17 7V17"/>
+          </svg>
+        </a>
+
+        <a href="Nishant_Jain_CV_OnePage.pdf" download="Nishant_Jain_CV_OnePage.pdf" target="_blank" class="inline-flex items-center gap-2 px-7 py-4 rounded-full bg-sugar-cream dark:bg-sugar-nightBg border border-sugar-border dark:border-sugar-nightBorder text-sugar-dark dark:text-sugar-nightText hover:border-sugar-orange font-semibold text-sm shadow-sm transition-all">
+          <span>📥 Download 1-Page CV (PDF)</span>
+        </a>
+
+        <button onclick="copyRecruiterPitch()" class="inline-flex items-center gap-2 px-6 py-4 rounded-full bg-sugar-cream dark:bg-sugar-nightBg border border-sugar-border dark:border-sugar-nightBorder text-sugar-dark dark:text-sugar-nightText hover:border-sugar-orange font-semibold text-sm shadow-sm transition-all">
+          <span>📋</span>
+          <span id="copy-pitch-text">Copy ATS Recruiter Pitch</span>
+        </button>
+      </div>
+
+      <!-- Contact Metadata -->
+      <div class="pt-8 border-t border-sugar-border dark:border-sugar-nightBorder grid sm:grid-cols-3 gap-4 text-xs font-mono text-sugar-muted dark:text-sugar-nightMuted">
+        <div>
+          <span class="block text-sugar-dark dark:text-sugar-nightText font-bold">EMAIL</span>
+          <a href="mailto:jainnishant779@gmail.com" class="hover:text-sugar-orange">jainnishant779@gmail.com</a>
+        </div>
+        <div>
+          <span class="block text-sugar-dark dark:text-sugar-nightText font-bold">PHONE</span>
+          <a href="tel:+919098407353" class="hover:text-sugar-orange">+91-9098407353</a>
+        </div>
+        <div>
+          <span class="block text-sugar-dark dark:text-sugar-nightText font-bold">LOCATION</span>
+          <span>Indore, Madhya Pradesh, India</span>
+        </div>
+      </div>
+
+      <!-- Links & Socials -->
+      <div class="flex items-center justify-center gap-6 pt-2 text-xs font-mono">
+        <a href="https://github.com/jainnishant779" target="_blank" class="text-sugar-dark dark:text-sugar-nightText hover:text-sugar-orange font-bold">GitHub</a>
+        <span class="text-sugar-muted">•</span>
+        <a href="https://linkedin.com/in/nishujain02" target="_blank" class="text-sugar-dark dark:text-sugar-nightText hover:text-sugar-orange font-bold">LinkedIn</a>
+        <span class="text-sugar-muted">•</span>
+        <a href="https://jainnishant779.github.io/" class="text-sugar-dark dark:text-sugar-nightText hover:text-sugar-orange font-bold">Portfolio Home</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       9. FOOTER
+       ===================================================================== -->
+  <footer class="py-10 px-6 sm:px-12 border-t border-sugar-border dark:border-sugar-nightBorder text-center text-xs font-mono text-sugar-muted dark:text-sugar-nightMuted space-y-2">
+    <div>
+      © 2026 Nishant Jain. Crafted with Japanese minimalist aesthetic inspired by <a href="https://mildsugardesign.jp/" target="_blank" class="text-sugar-orange hover:underline font-bold">mild sugar design</a>.
+    </div>
+    <div class="text-[11px] text-sugar-muted/70">
+      Built with pure Canvas, CSS tokens &amp; Web Audio API. Fast, lightweight, and accessible.
+    </div>
+  </footer>
+
+  <!-- =====================================================================
+       10. CASE STUDY DETAIL MODAL
+       ===================================================================== -->
+  <div id="case-modal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-md overflow-y-auto p-4 sm:p-8 flex items-center justify-center">
+    <div class="bg-sugar-card dark:bg-sugar-nightCard max-w-3xl w-full rounded-3xl p-6 sm:p-10 border border-sugar-border dark:border-sugar-nightBorder shadow-2xl relative my-8">
+      
+      <!-- Close Button -->
+      <button onclick="closeCaseModal()" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-sugar-cream dark:bg-sugar-nightBg border border-sugar-border dark:border-sugar-nightBorder flex items-center justify-center text-sugar-dark dark:text-sugar-nightText hover:border-sugar-orange text-sm font-bold">
+        ✕
+      </button>
+
+      <div id="case-modal-content" class="space-y-6">
+        <!-- Dynamically injected -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="sugar-toast" class="fixed bottom-6 right-6 z-50 pointer-events-none transform translate-y-20 opacity-0 transition-all duration-300 px-5 py-3 rounded-full bg-sugar-dark dark:bg-sugar-nightText text-sugar-white dark:text-sugar-nightBg text-xs font-mono font-bold shadow-xl flex items-center gap-2">
+    <span id="toast-icon">⚡</span>
+    <span id="toast-message">Message copied!</span>
+  </div>
+
+  <!-- =====================================================================
+       11. JAVASCRIPT: CHARACTER CANVAS, STALKER, TIME TOGGLE, AUDIO
+       ===================================================================== -->
+  <script>
+    /* =========================================================================
+       AUDIO FEEDBACK (Japanese Minimal Wooden Chimes via Web Audio)
+       ========================================================================= */
+    let audioCtx = null;
+    function getAudioCtx() {
+      if (!audioCtx) {
+        const AudioCtor = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtor) audioCtx = new AudioCtor();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playChime(freq = 520, duration = 0.08) {
+      try {
+        const ctx = getAudioCtx();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(0.04, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    /* =========================================================================
+       PRELOADER & AMBIENT TIME
+       ========================================================================= */
+    function dismissPreloader() {
+      playChime(660, 0.12);
+      const pre = document.getElementById('sugar-preloader');
+      if (pre) {
+        pre.classList.add('opacity-0', 'pointer-events-none');
+        setTimeout(() => { pre.remove(); }, 700);
+      }
+    }
+    // Auto dismiss after 2.2 seconds if user doesn't click
+    setTimeout(dismissPreloader, 2200);
+
+    let isNight = false;
+    function toggleDayNight() {
+      playChime(740, 0.09);
+      isNight = !isNight;
+      const html = document.documentElement;
+      const icon = document.getElementById('time-icon');
+      const celestial = document.getElementById('window-celestial');
+
+      if (isNight) {
+        html.classList.add('dark');
+        if (icon) icon.textContent = '🌙';
+        if (celestial) {
+          celestial.className = 'w-6 h-6 rounded-full bg-slate-100 shadow-[0_0_15px_rgba(255,255,255,0.9)] absolute top-3 left-3 transition-all duration-700';
+        }
+        showSpeech('“It’s late night in the lab! Testing TensorRT models...”');
+      } else {
+        html.classList.remove('dark');
+        if (icon) icon.textContent = '☀️';
+        if (celestial) {
+          celestial.className = 'w-7 h-7 rounded-full bg-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.8)] absolute top-3 left-3 transition-all duration-700';
+        }
+        showSpeech('“Good day! Ready to deploy edge computer vision!”');
+      }
+    }
+
+    /* =========================================================================
+       MENU DRAWER (3-Dots to X)
+       ========================================================================= */
+    let menuOpen = false;
+    function toggleMenu() {
+      playChime(580, 0.08);
+      menuOpen = !menuOpen;
+      const btn = document.getElementById('menu-button');
+      const drawer = document.getElementById('sugar-nav-drawer');
+
+      if (btn) {
+        btn.classList.toggle('is-active', menuOpen);
+        btn.setAttribute('aria-expanded', String(menuOpen));
+      }
+      if (drawer) {
+        if (menuOpen) {
+          drawer.classList.remove('opacity-0', 'pointer-events-none');
+        } else {
+          drawer.classList.add('opacity-0', 'pointer-events-none');
+        }
+      }
+    }
+
+    /* =========================================================================
+       STALKER CURSOR
+       ========================================================================= */
+    const stalker = document.getElementById('sugar-stalker');
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let stalkerX = mouseX;
+    let stalkerY = mouseY;
+
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      if (stalker && !stalker.classList.contains('is-visible')) {
+        stalker.classList.add('is-visible');
+      }
+    });
+
+    function updateStalker() {
+      stalkerX += (mouseX - stalkerX) * 0.15;
+      stalkerY += (mouseY - stalkerY) * 0.15;
+      if (stalker) {
+        stalker.style.transform = `translate(${stalkerX}px, ${stalkerY}px) translate(-50%, -50%)`;
+      }
+      requestAnimationFrame(updateStalker);
+    }
+    requestAnimationFrame(updateStalker);
+
+    // Stalker context triggers
+    document.querySelectorAll('[data-stalker-text]').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        if (stalker) {
+          stalker.textContent = el.getAttribute('data-stalker-text');
+          stalker.classList.add('is-hovering');
+        }
+      });
+      el.addEventListener('mouseleave', () => {
+        if (stalker) {
+          stalker.textContent = 'Hey!';
+          stalker.classList.remove('is-hovering');
+        }
+      });
+    });
+
+    /* =========================================================================
+       INTERACTIVE CHARACTER CANVAS (The Mild Sugar Signature)
+       ========================================================================= */
+    const canvas = document.getElementById('character-canvas');
+    let ctx = canvas ? canvas.getContext('2d') : null;
+
+    let charState = {
+      isWaving: false,
+      waveAngle: 0,
+      waveTimer: 0,
+      typingOffset: 0,
+      eyeLookX: 0,
+      eyeLookY: 0,
+      spinAngle: 0,
+      isSpinning: false
+    };
+
+    function drawCharacter() {
+      if (!ctx || !canvas) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2 + 30;
+
+      // Draw Workstation Desk
+      ctx.fillStyle = isNight ? '#2a2620' : '#e6e1d5';
+      ctx.beginPath();
+      ctx.roundRect(centerX - 170, centerY + 50, 340, 24, 8);
+      ctx.fill();
+
+      // Dual Computer Monitors
+      // Left Monitor (Terminal)
+      ctx.fillStyle = '#1e1c18';
+      ctx.fillRect(centerX - 150, centerY - 40, 95, 75);
+      ctx.strokeStyle = isNight ? '#fea831' : '#3c3728';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(centerX - 150, centerY - 40, 95, 75);
+      // Terminal text lines
+      ctx.fillStyle = '#00c2cb';
+      ctx.fillRect(centerX - 142, centerY - 28, 45, 3);
+      ctx.fillRect(centerX - 142, centerY - 20, 60, 3);
+      ctx.fillRect(centerX - 142, centerY - 12, 35, 3);
+      ctx.fillStyle = '#22c55e';
+      ctx.fillRect(centerX - 142, centerY - 4, 50, 3);
+
+      // Right Monitor (OpenCV Bounding Box view)
+      ctx.fillStyle = '#182024';
+      ctx.fillRect(centerX + 55, centerY - 40, 95, 75);
+      ctx.strokeRect(centerX + 55, centerY - 40, 95, 75);
+      // Bounding box overlay
+      ctx.strokeStyle = '#fea831';
+      ctx.lineWidth = 1.8;
+      ctx.strokeRect(centerX + 75, centerY - 25, 35, 45);
+      ctx.fillStyle = '#fea831';
+      ctx.fillRect(centerX + 75, centerY - 31, 28, 6);
+
+      // Coffee Mug on Desk with Steam
+      ctx.fillStyle = '#fea831';
+      ctx.beginPath();
+      ctx.roundRect(centerX + 120, centerY + 36, 16, 20, 4);
+      ctx.fill();
+      // Steam
+      ctx.strokeStyle = isNight ? 'rgba(255,255,255,0.4)' : 'rgba(60,55,40,0.3)';
+      ctx.lineWidth = 1.5;
+      const t = Date.now() * 0.003;
+      ctx.beginPath();
+      ctx.moveTo(centerX + 128, centerY + 32);
+      ctx.quadraticCurveTo(centerX + 125 + Math.sin(t) * 4, centerY + 24, centerX + 128, centerY + 18);
+      ctx.stroke();
+
+      // CHARACTER (Nishant Avatar)
+      ctx.save();
+      ctx.translate(centerX, centerY);
+
+      // Swivel Chair Base & Back
+      ctx.fillStyle = isNight ? '#39352c' : '#b8b2a3';
+      ctx.beginPath();
+      ctx.roundRect(-36, -55, 72, 85, 16);
+      ctx.fill();
+
+      // Character Torso (Warm hoodie)
+      ctx.fillStyle = isNight ? '#2e4c52' : '#3c3728';
+      ctx.beginPath();
+      ctx.roundRect(-28, -10, 56, 60, 14);
+      ctx.fill();
+
+      // Head
+      ctx.fillStyle = '#fcd0a1'; // Skin tone
+      ctx.beginPath();
+      ctx.arc(0, -42, 26, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Hair (Dark textured crop)
+      ctx.fillStyle = '#1c1a16';
+      ctx.beginPath();
+      ctx.arc(0, -46, 27, Math.PI * 0.85, Math.PI * 2.15);
+      ctx.fill();
+
+      // Glasses Frame
+      ctx.strokeStyle = '#1c1a16';
+      ctx.lineWidth = 2.5;
+      ctx.strokeRect(-16, -46, 12, 10);
+      ctx.strokeRect(4, -46, 12, 10);
+      ctx.beginPath(); ctx.moveTo(-4, -41); ctx.lineTo(4, -41); ctx.stroke();
+
+      // Eyes (Track Mouse!)
+      ctx.fillStyle = '#1c1a16';
+      const eyeDx = Math.max(-2.5, Math.min(2.5, charState.eyeLookX));
+      const eyeDy = Math.max(-2, Math.min(2, charState.eyeLookY));
+      ctx.beginPath();
+      ctx.arc(-10 + eyeDx, -41 + eyeDy, 2.2, 0, Math.PI * 2);
+      ctx.arc(10 + eyeDx, -41 + eyeDy, 2.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Friendly Smile
+      ctx.strokeStyle = '#c58352';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(0, -32, 7, 0.2, Math.PI - 0.2);
+      ctx.stroke();
+
+      // Arms & Hands
+      if (charState.isWaving) {
+        // Left arm typing
+        ctx.strokeStyle = isNight ? '#2e4c52' : '#3c3728';
+        ctx.lineWidth = 10;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(-22, 5);
+        ctx.lineTo(-45, 45);
+        ctx.stroke();
+
+        // Right arm WAVING!
+        const wave = Math.sin(Date.now() * 0.015) * 20;
+        ctx.beginPath();
+        ctx.moveTo(22, 5);
+        ctx.lineTo(45, -30 + wave);
+        ctx.stroke();
+        // Hand
+        ctx.fillStyle = '#fcd0a1';
+        ctx.beginPath();
+        ctx.arc(46, -35 + wave, 7, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        // Idle typing on keyboard
+        const typeL = Math.sin(Date.now() * 0.01) * 3;
+        const typeR = Math.cos(Date.now() * 0.01) * 3;
+        ctx.strokeStyle = isNight ? '#2e4c52' : '#3c3728';
+        ctx.lineWidth = 10;
+        ctx.lineCap = 'round';
+        // Left hand
+        ctx.beginPath(); ctx.moveTo(-22, 5); ctx.lineTo(-25, 45 + typeL); ctx.stroke();
+        // Right hand
+        ctx.beginPath(); ctx.moveTo(22, 5); ctx.lineTo(25, 45 + typeR); ctx.stroke();
+        // Hands
+        ctx.fillStyle = '#fcd0a1';
+        ctx.beginPath(); ctx.arc(-25, 47 + typeL, 6, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(25, 47 + typeR, 6, 0, Math.PI * 2); ctx.fill();
+      }
+
+      ctx.restore();
+      requestAnimationFrame(drawCharacter);
+    }
+    requestAnimationFrame(drawCharacter);
+
+    // Eye tracking logic
+    if (canvas) {
+      window.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const cX = rect.left + rect.width / 2;
+        const cY = rect.top + rect.height / 2;
+        charState.eyeLookX = (e.clientX - cX) * 0.015;
+        charState.eyeLookY = (e.clientY - cY) * 0.015;
+      });
+
+      // Interactive Click/Tap
+      canvas.addEventListener('click', () => {
+        playChime(880, 0.15);
+        charState.isWaving = true;
+        clearTimeout(charState.waveTimer);
+        showSpeech('“Hey! 🤝 Great to connect! Check out my case studies below!”');
+        charState.waveTimer = setTimeout(() => {
+          charState.isWaving = false;
+        }, 3000);
+      });
+
+      canvas.addEventListener('mouseenter', () => {
+        charState.isWaving = true;
+        showSpeech('“Hey there!”');
+      });
+
+      canvas.addEventListener('mouseleave', () => {
+        charState.isWaving = false;
+        hideSpeech();
+      });
+    }
+
+    function showSpeech(text) {
+      const bubble = document.getElementById('character-speech');
+      const el = document.getElementById('speech-text');
+      if (bubble && el) {
+        el.textContent = text;
+        bubble.classList.remove('scale-0', 'opacity-0');
+        bubble.classList.add('scale-100', 'opacity-100');
+      }
+    }
+
+    function hideSpeech() {
+      const bubble = document.getElementById('character-speech');
+      if (bubble) {
+        bubble.classList.remove('scale-100', 'opacity-100');
+        bubble.classList.add('scale-0', 'opacity-0');
+      }
+    }
+
+    /* =========================================================================
+       CASE STUDY DETAIL MODAL DATA & CONTROLLER
+       ========================================================================= */
+    const caseData = {
+      1: {
+        number: 'Case 01',
+        title: 'EdgeDesk: Secure Multi-Device Remote Access Platform',
+        badge: 'Patent Application Filed',
+        category: 'Edge AI / Remote Telemetry',
+        client: 'Synquic Labs Pvt. Ltd. (Indore, M.P.)',
+        date: 'Aug 2026 – Present',
+        summary: 'A low-latency, zero-trust remote desktop and edge management platform designed specifically for distributed NVIDIA Jetson and Linux hardware deployed in field settings behind cellular carrier-grade NATs.',
+        problem: 'Managing edge AI nodes in the field (agricultural farms, industrial plants, traffic towers) is notoriously difficult due to cellular firewalls, variable bandwidth, and high latency of traditional VPNs.',
+        solution: 'Architected a custom WebSocket-based encrypted broker with end-to-end TLS/WSS. Enabled sub-30ms remote frame streaming, encrypted file drag-and-drop, and hardware telemetry without exposing open incoming ports.',
+        impact: [
+          'Filed official Patent Application for the encrypted edge telemetry architecture.',
+          'Enabled multi-device management from a single responsive browser interface.',
+          'Zero-configuration setup running as a resilient Linux systemd daemon with auto-reconnect.'
+        ],
+        stack: ['Python', 'WebSockets', 'VNC / RFB', 'NVIDIA Jetson', 'Linux Systemd', 'TLS/AES-256']
+      },
+      2: {
+        number: 'Case 02',
+        title: 'Real-Time Stampede Detection & Crowd Analytics',
+        badge: 'Top Finalist — Mahakumbh Hackathon 2025',
+        category: 'Computer Vision / Edge GPU',
+        client: 'Cognicity Pvt. Ltd. / MPSEDC',
+        date: 'Sep 2025 – Aug 2026',
+        summary: 'GPU-accelerated multi-object tracking pipeline designed for large-scale religious and public gatherings to detect crowd surges, bottlenecks, and stampede risks before accidents happen.',
+        problem: 'Mass gathering bottlenecks require sub-50ms latency to alert security personnel. Standard cloud computer vision fails due to video upload lag and cellular congestion during mass events.',
+        solution: 'Engineered a localized edge AI pipeline combining YOLOv8 with ByteTrack, quantized to TensorRT FP16 on NVIDIA Jetson Orin. Computed optical flow velocity vectors to detect abnormal counter-flow movement.',
+        impact: [
+          'Recognized as Top Finalist among 200+ statewide teams at MPSEDC Mahakumbh Hackathon 2025.',
+          'Achieved stable sub-50ms end-to-end latency per camera feed on localized edge hardware.',
+          'Integrated automated buzzer and alert dispatcher over localized mesh.'
+        ],
+        stack: ['Python', 'YOLOv8', 'ByteTrack', 'NVIDIA Jetson Orin', 'TensorRT', 'OpenCV']
+      },
+      3: {
+        number: 'Case 03',
+        title: 'AI-Accelerated Facial Attendance System',
+        badge: 'AWS EC2 Production Pilot',
+        category: 'Computer Vision & Cloud',
+        client: 'Cognicity Pvt. Ltd. / DAVV Pilots',
+        date: 'Sep 2025 – Aug 2026',
+        summary: 'Automated face recognition and attendance logging platform deployed across 3-course academic university pilots, eliminating manual paper roll calls.',
+        problem: 'Manual university attendance wasted 15–20 minutes of lecture time and was prone to proxy attendance.',
+        solution: 'Developed a high-throughput facial detection and vector embedding comparison service deployed with Flask, dlib, and OpenCV on AWS EC2 with automated MySQL sync.',
+        impact: [
+          'Cut attendance verification time by ~90% (from 18 minutes to under 90 seconds).',
+          'Successfully piloted across multiple academic department lectures at DAVV.',
+          'Exported instant compliance reports and real-time attendance dashboards.'
+        ],
+        stack: ['Python', 'Flask', 'dlib', 'OpenCV', 'AWS EC2', 'MySQL', 'Nginx']
+      },
+      4: {
+        number: 'Case 04',
+        title: 'Autonomous Poultry Health & Thermal Vision Tracking',
+        badge: 'Commercial Client Deployment',
+        category: 'AgriTech AI & Edge CV',
+        client: 'Cognicity Pvt. Ltd.',
+        date: 'Aug 2025 – Sep 2025',
+        summary: 'Dual-camera (RGB + Thermal) edge computer vision monitoring system to track flock thermal patterns and alert operators to viral symptoms.',
+        problem: 'Avian diseases spread rapidly in commercial poultry farms. Manual observation fails until birds are already critically sick.',
+        solution: 'Calibrated dual thermal/optical sensors with lightweight YOLO models running on edge microcomputers, flagging temperature spikes above baseline.',
+        impact: [
+          'Delivered directly to a live farm operator client.',
+          'Owned full lifecycle: data collection, custom annotation, training, and edge deployment.',
+          'Reduced flock mortality risk through 24/7 automated thermal telemetry.'
+        ],
+        stack: ['Python', 'YOLO', 'Thermal CV', 'OpenCV', 'Edge Linux']
+      },
+      5: {
+        number: 'Case 05',
+        title: 'Adaptive LoRa Mesh Smart Traffic Signalling',
+        badge: 'Decentralized Edge IoT',
+        category: 'Embedded IoT & LoRaWAN',
+        client: 'DAVV IoT Lab Project',
+        date: '2024 – 2025',
+        summary: 'Decentralized multi-intersection traffic management protocol running on ESP32 microcontrollers communicating over LoRa radio mesh.',
+        problem: 'Centralized smart traffic signals fail during cellular network blackouts or server crashes, causing gridlocks.',
+        solution: 'Implemented peer-to-peer LoRa mesh consensus where adjacent intersections communicate queue lengths directly without internet dependency.',
+        impact: [
+          '100% cloud-independent resilient traffic balancing.',
+          'Reduced junction idle times by ~34% during simulated rush hour surges.',
+          'Ultra-low power consumption suitable for solar battery operation.'
+        ],
+        stack: ['C++', 'ESP32', 'LoRa / LoRaWAN', 'FreeRTOS', 'Mesh Consensus']
+      }
+    };
+
+    function openCaseModal(id) {
+      playChime(780, 0.08);
+      const data = caseData[id];
+      if (!data) return;
+
+      const modal = document.getElementById('case-modal');
+      const content = document.getElementById('case-modal-content');
+
+      content.innerHTML = `
+        <div class="space-y-4">
+          <div class="flex items-center justify-between border-b border-sugar-border dark:border-sugar-nightBorder pb-4">
+            <span class="font-display text-4xl text-sugar-orange">${data.number}</span>
+            <span class="px-3 py-1 rounded-full bg-sugar-orange text-white text-xs font-bold">${data.badge}</span>
+          </div>
+
+          <h3 class="font-display text-2xl sm:text-3xl text-sugar-dark dark:text-sugar-nightText">${data.title}</h3>
+
+          <div class="flex flex-wrap gap-x-6 gap-y-1 text-xs font-mono text-sugar-muted dark:text-sugar-nightMuted">
+            <div><strong>Client:</strong> ${data.client}</div>
+            <div><strong>Timeline:</strong> ${data.date}</div>
+          </div>
+
+          <p class="text-sm text-sugar-dark dark:text-sugar-nightText leading-relaxed">${data.summary}</p>
+
+          <div class="grid sm:grid-cols-2 gap-4 pt-2">
+            <div class="p-4 rounded-2xl bg-sugar-cream dark:bg-sugar-nightBg border border-sugar-border dark:border-sugar-nightBorder space-y-1">
+              <h5 class="text-xs font-bold font-mono text-sugar-orange uppercase">The Problem</h5>
+              <p class="text-xs text-sugar-muted leading-relaxed">${data.problem}</p>
+            </div>
+            <div class="p-4 rounded-2xl bg-sugar-cream dark:bg-sugar-nightBg border border-sugar-border dark:border-sugar-nightBorder space-y-1">
+              <h5 class="text-xs font-bold font-mono text-sugar-orange uppercase">The Solution</h5>
+              <p class="text-xs text-sugar-muted leading-relaxed">${data.solution}</p>
+            </div>
+          </div>
+
+          <div class="space-y-2 pt-2">
+            <h5 class="text-xs font-bold font-mono text-sugar-dark dark:text-sugar-nightText uppercase">Key Impact &amp; Results</h5>
+            <ul class="text-xs text-sugar-muted space-y-1 list-disc list-inside">
+              ${data.impact.map(i => `<li>${i}</li>`).join('')}
+            </ul>
+          </div>
+
+          <div class="pt-4 border-t border-sugar-border dark:border-sugar-nightBorder flex flex-wrap gap-2">
+            ${data.stack.map(s => `<span class="px-2.5 py-1 rounded-md bg-sugar-cream dark:bg-sugar-nightBg text-sugar-dark dark:text-sugar-nightText font-mono text-[11px] border border-sugar-border dark:border-sugar-nightBorder">${s}</span>`).join('')}
+          </div>
+        </div>
+      `;
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeCaseModal() {
+      playChime(480, 0.06);
+      const modal = document.getElementById('case-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    /* Close on Escape key */
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeCaseModal();
+        if (menuOpen) toggleMenu();
+      }
+    });
+
+    /* =========================================================================
+       COPY RECRUITER PITCH & TOAST
+       ========================================================================= */
+    function copyRecruiterPitch() {
+      playChime(920, 0.08);
+      const pitch = `Nishant Jain — AI/ML & Edge Systems Engineer
+Specialization: Production Edge AI, Computer Vision (YOLO), NVIDIA Jetson Fleets, Cloud Deployment.
+Credentials:
+• Winner — Sustainathon 2025 (NATRAX, Govt. of India).
+• Patent Application Filed: EdgeDesk secure remote telemetry platform across cellular NATs.
+• Top Finalist: MPSEDC Mahakumbh Hackathon 2025 (Sub-50ms Crowd Analytics on Jetson Orin).
+• 90% Manual Time Cut: Facial Attendance AI deployed on AWS EC2.
+Stack: Python, C++, PyTorch, TensorRT, YOLOv8/v11, Jetson, Docker, AWS EC2, FastAPI/Flask.
+Contact: +91-9098407353 | jainnishant779@gmail.com | https://jainnishant779.github.io/`;
+
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(pitch).then(() => {
+          showToast('⚡ ATS Recruiter Pitch copied to clipboard!');
+        }).catch(() => {
+          showToast('📋 Ready to copy.');
+        });
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('sugar-toast');
+      const msgEl = document.getElementById('toast-message');
+      if (toast && msgEl) {
+        msgEl.textContent = msg;
+        toast.classList.remove('translate-y-20', 'opacity-0');
+        setTimeout(() => {
+          toast.classList.add('translate-y-20', 'opacity-0');
+        }, 3200);
+      }
+    }
+  </script>
+</body>
+</html>

@@ -3,3 +3,5 @@ test_screenshots/
 *.log
 .DS_Store
 Thumbs.db
+nightfall-src/node_modules/
+nightfall-src/dist/

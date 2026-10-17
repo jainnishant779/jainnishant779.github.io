@@ -1,179 +1,210 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Canvas } from '@react-three/fiber';
 import { Link } from 'react-router-dom';
+import { useStore } from '../state/store';
+import { isWebGL2Available } from '../lib/webgl';
+import { TIER_CONFIGS, getInitialTier } from '../lib/quality';
+import { Experience } from '../experience/Experience';
+import { HudOverlay } from '../ui/HudOverlay';
+import { OSShell } from '../os/OSShell';
 import { getCVUrl } from '../lib/assets';
+import { getRawScrollProgress } from '../lib/scrollProgress';
 
 export const HomePage: React.FC = () => {
+  const [webglSupported, setWebglSupported] = useState<boolean>(true);
+  const tier = useStore((state) => state.tier);
+  const setTier = useStore((state) => state.setTier);
+  const osOpen = useStore((state) => state.osOpen);
+  const setOsOpen = useStore((state) => state.setOsOpen);
+
+  // Initialize hardware capabilities
+  useEffect(() => {
+    const supported = isWebGL2Available();
+    setWebglSupported(supported);
+    if (supported) {
+      setTier(getInitialTier());
+    }
+  }, [setTier]);
+
+  // Native scroll listener: updates progress state immediately on window scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const raw = getRawScrollProgress();
+      useStore.getState().setProgress(raw);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    // Initial sync
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Handle keyboard shortcuts (E to open OS when near computer)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'e' || e.key === 'E') {
+        const state = useStore.getState();
+        if (state.progress >= 0.85 && !state.osOpen) {
+          setOsOpen(true);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [setOsOpen]);
+
+  // Skip intro smooth scroll
+  const handleSkipIntro = useCallback(() => {
+    const doc = document.documentElement;
+    const scrollHeight = doc.scrollHeight - window.innerHeight;
+    window.scrollTo({
+      top: scrollHeight * 0.46,
+      behavior: 'smooth',
+    });
+  }, []);
+
+  const tierConfig = TIER_CONFIGS[tier];
   const cvUrl = getCVUrl();
 
-  return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        background: 'radial-gradient(circle at 50% 30%, #0e1217 0%, #07080a 75%)',
-        color: '#e6e2d8',
-        padding: '2rem',
-        textAlign: 'center',
-        position: 'relative',
-        boxSizing: 'border-box',
-      }}
-    >
-      {/* Facility Header */}
+  // WebGL Unsupported Fallback Screen
+  if (!webglSupported) {
+    return (
       <div
+        className="webgl-fallback-screen"
         style={{
-          fontFamily: "'JetBrains Mono', monospace",
-          fontSize: '0.8rem',
-          letterSpacing: '0.15em',
-          color: '#e8a23a',
-          marginBottom: '1rem',
-          textTransform: 'uppercase',
-          border: '1px solid rgba(232, 162, 58, 0.3)',
-          padding: '0.35rem 0.85rem',
-          borderRadius: '2px',
-          background: 'rgba(232, 162, 58, 0.05)',
-        }}
-      >
-        THE ENGINEER'S CAVE // PHASE 1 INITIALIZATION
-      </div>
-
-      <h1
-        style={{
-          fontFamily: "'Space Grotesk', sans-serif",
-          fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-          fontWeight: 700,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '100vh',
+          background: '#07080a',
           color: '#e6e2d8',
-          letterSpacing: '-0.02em',
-          marginBottom: '0.75rem',
+          padding: '2rem',
+          textAlign: 'center',
+          fontFamily: "'Space Grotesk', sans-serif",
         }}
       >
-        NISHANT JAIN
-      </h1>
-
-      <p
-        style={{
-          fontFamily: "'JetBrains Mono', monospace",
-          fontSize: 'clamp(0.85rem, 2vw, 1.05rem)',
-          color: '#7fb38a',
-          marginBottom: '1.5rem',
-          maxWidth: '680px',
-        }}
-      >
-        AI/ML Engineer · Computer Vision · Edge AI · IoT
-      </p>
-
-      <p
-        style={{
-          fontFamily: "'Inter', sans-serif",
-          fontSize: '0.95rem',
-          color: '#9e9a8e',
-          maxWidth: '560px',
-          lineHeight: '1.65',
-          marginBottom: '2.5rem',
-        }}
-      >
-        Production-grade Computer Vision and Edge AI systems on NVIDIA Jetson,
-        custom WebSockets, and AWS. Fully interactive NJ-OS command interface is online.
-      </p>
-
-      {/* Main Action CTAs */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '1rem',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          marginBottom: '3rem',
-        }}
-      >
-        <Link
-          to="/os"
+        <div
           style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.85rem 1.75rem',
-            background: '#e8a23a',
-            color: '#07080a',
-            borderRadius: '3px',
             fontFamily: "'JetBrains Mono', monospace",
-            fontWeight: 700,
-            fontSize: '0.9rem',
-            textDecoration: 'none',
-            boxShadow: '0 4px 20px rgba(232, 162, 58, 0.25)',
-          }}
-        >
-          ENTER NJ-OS COMMAND CENTER →
-        </Link>
-
-        <a
-          href={cvUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.85rem 1.5rem',
-            background: '#12161c',
-            border: '1px solid rgba(232, 162, 58, 0.4)',
+            fontSize: '0.8rem',
             color: '#e8a23a',
-            borderRadius: '3px',
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: '0.9rem',
-            textDecoration: 'none',
+            border: '1px solid rgba(232, 162, 58, 0.4)',
+            padding: '0.35rem 0.85rem',
+            borderRadius: '2px',
+            marginBottom: '1rem',
           }}
         >
-          VIEW CV (PDF) ↗
-        </a>
-      </div>
+          // GRAPHICS HARDWARE NOTICE
+        </div>
+        <h1 style={{ fontSize: '2rem', marginBottom: '1rem' }}>
+          3D ENGINE UNAVAILABLE
+        </h1>
+        <p
+          style={{
+            maxWidth: '520px',
+            color: '#9e9a8e',
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '0.95rem',
+            lineHeight: '1.65',
+            marginBottom: '2rem',
+          }}
+        >
+          WebGL2 acceleration is not supported on your current browser or hardware
+          configuration. The full engineering portfolio is accessible through the 2D
+          Command Center.
+        </p>
 
-      {/* Quick Navigation Links */}
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          <Link
+            to="/os"
+            style={{
+              padding: '0.75rem 1.5rem',
+              background: '#e8a23a',
+              color: '#07080a',
+              fontFamily: "'JetBrains Mono', monospace",
+              fontWeight: 700,
+              fontSize: '0.85rem',
+              borderRadius: '3px',
+              textDecoration: 'none',
+            }}
+          >
+            ENTER NJ-OS COMMAND CENTER →
+          </Link>
+
+          <a
+            href={cvUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              padding: '0.75rem 1.5rem',
+              background: '#12161c',
+              border: '1px solid #2a3038',
+              color: '#e8a23a',
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: '0.85rem',
+              borderRadius: '3px',
+              textDecoration: 'none',
+            }}
+          >
+            DOWNLOAD CV (PDF) ↗
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="home-experience-wrapper" style={{ position: 'relative' }}>
+      {/* 900vh Native Window Scroll Track */}
       <div
+        className="scroll-track"
         style={{
-          display: 'flex',
-          gap: '1.5rem',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          fontFamily: "'JetBrains Mono', monospace",
-          fontSize: '0.78rem',
-          borderTop: '1px solid #1e2228',
-          paddingTop: '1.5rem',
-          maxWidth: '600px',
+          height: '900vh',
           width: '100%',
+          pointerEvents: 'none',
+          position: 'relative',
         }}
-      >
-        <Link to="/about" style={{ color: '#9e9a8e' }}>
-          01 // ABOUT
-        </Link>
-        <Link to="/projects" style={{ color: '#9e9a8e' }}>
-          02 // PROJECTS
-        </Link>
-        <Link to="/experience" style={{ color: '#9e9a8e' }}>
-          03 // EXPERIENCE
-        </Link>
-        <Link to="/skills" style={{ color: '#9e9a8e' }}>
-          04 // SKILLS
-        </Link>
-        <Link to="/contact" style={{ color: '#9e9a8e' }}>
-          07 // CONTACT
-        </Link>
-      </div>
+      />
 
-      {/* 3D Experience Notice */}
+      {/* Fixed Fullscreen 3D Canvas */}
       <div
         style={{
-          position: 'absolute',
-          bottom: '1rem',
-          fontFamily: "'JetBrains Mono', monospace",
-          fontSize: '0.7rem',
-          color: '#6b675d',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: 10,
         }}
       >
-        [ 3D CAVE ENGINE COMING IN PHASE 2 ]
+        <Canvas
+          camera={{
+            position: [0, 1.6, 18],
+            fov: 60,
+            near: 0.1,
+            far: 200,
+          }}
+          dpr={tierConfig.dpr}
+          shadows={tierConfig.shadows}
+          gl={{
+            antialias: true,
+            powerPreference: 'high-performance',
+          }}
+        >
+          <Experience />
+        </Canvas>
       </div>
+
+      {/* Heads-Up Display Overlay */}
+      <HudOverlay
+        onOpenOS={() => setOsOpen(true)}
+        onSkipIntro={handleSkipIntro}
+      />
+
+      {/* Interactive OS Command Center Overlay */}
+      {osOpen && (
+        <OSShell mode="overlay" onClose={() => setOsOpen(false)} />
+      )}
     </div>
   );
 };

@@ -9,6 +9,8 @@ import {
   RapierRigidBody,
   RapierCollider,
 } from '@react-three/rapier';
+import { SCREEN_CAMERA_POSE } from '../../world/layout';
+import { useStore } from '../../state/store';
 
 export const FreeExplore: React.FC = () => {
   const { camera } = useThree();
@@ -142,6 +144,16 @@ export const FreeExplore: React.FC = () => {
 
     // Cap delta at 50ms to prevent physics tunneling
     const delta = Math.min(dt, 0.05);
+
+    // If OS is open, lock locomotion and smoothly focus camera on main screen
+    if (useStore.getState().osOpen) {
+      camera.position.lerp(
+        new THREE.Vector3(SCREEN_CAMERA_POSE.position.x, SCREEN_CAMERA_POSE.position.y, SCREEN_CAMERA_POSE.position.z),
+        Math.min(1, delta * 5)
+      );
+      camera.lookAt(SCREEN_CAMERA_POSE.lookAt.x, SCREEN_CAMERA_POSE.lookAt.y, SCREEN_CAMERA_POSE.lookAt.z);
+      return;
+    }
 
     // Camera horizontal forward direction (flattened to XZ plane)
     camera.getWorldDirection(forward);

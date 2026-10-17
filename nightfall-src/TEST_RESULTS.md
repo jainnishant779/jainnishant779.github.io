@@ -399,5 +399,92 @@ Verified Phase 5 Deliverables:
 - `HomePage.tsx`: Scroll-locking during free explore, scroll position preservation and restoration upon exit, and `Escape` key handling.
 - `tests/free-explore.spec.ts`: End-to-end verification of mode switching, WASD movement, floor collision bounds, stair autostep climbing, workstation interaction via `E`, and seamless exit back to guided tour.
 
+---
+
+## Phase 6 Test Run: 2026-10-18
+
+### 1. TypeScript Compilation (`npm run typecheck`)
+
+```text
+> nightfall@1.0.0 typecheck
+> tsc --noEmit
+```
+**Result:** Clean exit code 0. Zero errors.
+
+---
+
+### 2. Production Build (`npm run build`)
+
+```text
+> nightfall@1.0.0 prebuild
+> node scripts/scan-assets.mjs
+
+[scan-assets] Found 0 assets
+
+> nightfall@1.0.0 build
+> vite build && node scripts/make-route-pages.mjs
+
+vite v5.4.10 building for production...
+transforming...
+✓ 1643 modules transformed.
+rendering chunks...
+computing gzip size...
+../nightfall/index.html                       2.25 kB │ gzip:     0.97 kB
+../nightfall/assets/index-CuE98Ibb.css       16.32 kB │ gzip:     3.64 kB
+../nightfall/assets/index-CJKzylEi.js        63.31 kB │ gzip:    20.31 kB
+../nightfall/assets/HomePage-Bhs0tMtM.js    142.82 kB │ gzip:    47.78 kB
+../nightfall/assets/three-PKd-b1Vi.js     3,214.48 kB │ gzip: 1,081.88 kB
+✓ built in 14.90s
+[make-route-pages] Created 13 route pages + 404.html
+```
+**Result:** Clean exit code 0. Batcomputer workstation, 5-monitor arc, CanvasTextures, and screen zoom dolly successfully compiled.
+
+---
+
+### 3. Playwright End-to-End Suite (`npm run test`)
+
+```text
+> nightfall@1.0.0 test
+> playwright test
+
+Running 21 tests using 1 worker
+
+  ok 1 [chromium] › cv.spec.ts:4:3 › CV Download and Open Verification › CV link is present with target=_blank and triggers download event (1.2s)
+  ok 2 [chromium] › cv.spec.ts:24:3 › CV Download and Open Verification › Direct PDF file request returns 200 and valid file buffer (80ms)
+  ok 3 [chromium] › experience.spec.ts:6:3 › 3D Experience & Guided Camera Scroll Journey › Scroll drives camera, gate opens, captures screenshots, and opens workstation OS (1.4m)
+  ok 4 [chromium] › fallback.spec.ts:4:3 › WebGL Unsupported Fallback › Displays fallback UI and direct links when WebGL2 is disabled (1.2s)
+  ok 5 [chromium] › free-explore.spec.ts:6:3 › Phase 5 — Free Explore Mode, Rapier Physics, & World Colliders › Mode toggle, WASD locomotion, collider bounds, stair autostep, and workstation interaction (1.3m)
+  ok 6 [chromium] › gate.spec.ts:6:3 › Phase 3 — Gate Cinematic & Controls › Access facility button, audio toggle, skip intro, and forward/backward gate scrubbing (1.6m)
+  ok 7 [chromium] › mobile.spec.ts:6:3 › Mobile Viewport (375px) Testing › No horizontal scroll at 375px width on OS view (1.3s)
+  ok 8 [chromium] › mobile.spec.ts:21:3 › Mobile Viewport (375px) Testing › Mobile navigation rail renders as bottom tab bar (610ms)
+  ok 9 [chromium] › mobile.spec.ts:35:3 › Mobile Viewport (375px) Testing › No horizontal scroll at 375px width on Home Page (502ms)
+  ok 10 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/" loads and displays "THE ENGINEER'S CAVE" (1.2s)
+  ok 11 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/os" loads and displays "NJ-OS // COMMAND CENTER" (668ms)
+  ok 12 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/about" loads and displays "01 // IDENTITY DOSSIER" (768ms)
+  ok 13 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/projects" loads and displays "02 // PROJECT ARCHIVES" (719ms)
+  ok 14 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/projects/edgedesk" loads and displays "EdgeDesk: Secure Multi-Device Remote Access Platform" (799ms)
+  ok 15 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/projects/crowd-analytics" loads and displays "Real-Time Crowd Analytics & Stampede Detection" (723ms)
+  ok 16 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/experience" loads and displays "03 // EXPERIENCE LOG" (761ms)
+  ok 17 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/skills" loads and displays "04 // TECHNICAL CAPABILITIES" (637ms)
+  ok 18 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/achievements" loads and displays "05 // HONORS & CREDENTIALS" (709ms)
+  ok 19 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/contact" loads and displays "07 // TRANSMISSION PROTOCOL" (690ms)
+  ok 20 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/cv" loads and displays "06 // CURRICULUM VITAE" (850ms)
+  ok 21 [chromium] › workstation.spec.ts:6:3 › Phase 6 — Batcomputer Workstation, 5-Monitor Arc, & Screen Zoom Dolly › 5-monitor arc renders live canvas telemetry, clicking screen launches OS, and camera dollys into screen (1.3m)
+
+  21 passed (5.9m)
+```
+**Result:** 21 passed, 0 failed.
+Verified Phase 6 Deliverables:
+- `Batcomputer.tsx`: Heavy curved command desk surface, beveled bumper edge, dual pedestal legs, crossbeam reinforcement, dual server rack enclosures with animated blinking status LEDs, thick industrial conduit cable bundles, and cybernetic keyboard/trackpad operator console.
+- `MonitorCanvases.ts`: 5 real-time HTML5 CanvasTextures updated at 10 fps displaying authentic telemetry derived 100% strictly from verified CV facts:
+  - Monitor 0: NVIDIA Jetson Nano / Orin Edge AI Telemetry (TensorRT FP16, sub-50ms latency, YOLOv8 pipeline, animated FPS bar histogram).
+  - Monitor 1: IoT Fleet Telemetry & Sensor Nodes (Synquic Labs fleet, ESP32, WSS broker, animated circular radar sweep).
+  - Monitor 2: Center NJ-OS Workstation Terminal (Operator identity, verified achievements, animated neural network node lattice, and blinking prompt).
+  - Monitor 3: EdgeDesk Secure Remote Platform (Patent application filed architecture, TLS/WSS relay, live cryptographic hex packet stream).
+  - Monitor 4: Real-time System Event Logs & Diagnostics (Scrolling timestamped event logs, dynamic frame time waveform chart).
+- `GuidedCamera.tsx`: Smooth cinematic camera screen zoom dolly transition into `SCREEN_CAMERA_POSE: (0, 2.55, -64.1)` when opening NJ-OS, and smooth dolly back out when closing.
+- `FreeExplore.tsx`: Locomotion locking and screen focus transition when OS is open in free explore mode.
+- `tests/workstation.spec.ts`: Dedicated end-to-end test verifying monitor rendering, screen clicking/hotspot access, screen zoom dolly, and Escape key restoration.
+
 
 

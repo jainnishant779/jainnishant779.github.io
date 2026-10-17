@@ -31,16 +31,16 @@ export const Atmosphere: React.FC = () => {
 
   return (
     <group name="atmospheric-effects">
-      {/* 1. Additive Light Shaft Cone under Workstation Spotlight */}
+      {/* 1. Subtle Additive Light Shaft Cone over Workstation */}
       <mesh
-        position={[COMMAND_PLATFORM.centre.x, 3.2, COMMAND_PLATFORM.centre.z - 1]}
+        position={[COMMAND_PLATFORM.centre.x, 4.2, -65]}
         rotation={[Math.PI, 0, 0]}
       >
-        <coneGeometry args={[3.2, 5.0, 16, 1, true]} />
+        <coneGeometry args={[2.0, 3.6, 16, 1, true]} />
         <meshBasicMaterial
           color="#ffc575"
           transparent
-          opacity={0.07}
+          opacity={0.025}
           blending={THREE.AdditiveBlending}
           side={THREE.DoubleSide}
           depthWrite={false}

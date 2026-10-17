@@ -69,28 +69,27 @@ export const Interactions: React.FC = () => {
 
   return (
     <group name="interactive-world-hotspots">
-      {/* 1. Workstation 3D Clickable Hotspot */}
+      {/* 1. Workstation Overhead Status Tag */}
       {activeInteraction === 'workstation' && (
-        <Html position={[0, 2.8, -65]} center distanceFactor={14}>
-          <button
-            onClick={() => setOsOpen(true)}
-            aria-label="Access Computer Workstation"
+        <Html position={[0, 3.35, -66]} center distanceFactor={14}>
+          <div
+            aria-label="Workstation Console Online"
             style={{
-              background: 'rgba(7, 8, 10, 0.92)',
-              border: '2px solid #e8a23a',
+              background: 'rgba(7, 8, 10, 0.88)',
+              border: '1px solid rgba(232, 162, 58, 0.6)',
               color: '#e8a23a',
               fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '0.8rem',
+              fontSize: '0.72rem',
               fontWeight: 700,
-              padding: '0.45rem 0.95rem',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              boxShadow: '0 0 16px rgba(232, 162, 58, 0.4)',
+              padding: '0.3rem 0.75rem',
+              borderRadius: '3px',
+              boxShadow: '0 0 16px rgba(232, 162, 58, 0.35)',
               whiteSpace: 'nowrap',
+              letterSpacing: '0.06em',
             }}
           >
-            [E] NJ-OS CONSOLE →
-          </button>
+            // TERMINAL 01: NJ-OS ACTIVE
+          </div>
         </Html>
       )}
 

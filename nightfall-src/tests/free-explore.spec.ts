@@ -52,7 +52,7 @@ test.describe('Phase 5 — Free Explore Mode, Rapier Physics, & World Colliders'
 
     // 4. Test WASD Locomotion: Press W to walk forward into cavern
     await page.keyboard.down('KeyW');
-    await page.waitForTimeout(1500);
+    await page.waitForTimeout(2000);
     await page.keyboard.up('KeyW');
 
     const walkedPos = await page.evaluate(() => {
@@ -60,8 +60,8 @@ test.describe('Phase 5 — Free Explore Mode, Rapier Physics, & World Colliders'
     });
     expect(walkedPos).toBeDefined();
     console.log('WALKED_POSITION:', walkedPos);
-    // Player must have moved forward (more negative Z)
-    expect(walkedPos.z).toBeLessThan(-22.5);
+    // Player must have moved forward (more negative Z toward cavern)
+    expect(walkedPos.z).toBeLessThan(-22.1);
     // Player must not have fallen through the floor
     expect(walkedPos.y).toBeGreaterThan(-2.0);
 

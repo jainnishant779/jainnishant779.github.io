@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useStore } from '../../state/store';
 import { sampleCameraPose } from '../../world/cameraPath';
+import { SCREEN_CAMERA_POSE } from '../../world/layout';
 import { prefersReducedMotion } from '../../lib/reducedMotion';
 import { getRawScrollProgress, lerp } from '../../lib/scrollProgress';
 
@@ -14,6 +15,7 @@ export const GuidedCamera: React.FC<GuidedCameraProps> = () => {
   const { camera } = useThree();
   const setProgress = useStore((state) => state.setProgress);
   const mode = useStore((state) => state.mode);
+  const osOpen = useStore((state) => state.osOpen);
   const progressRef = useRef(0);
 
   // Target vectors for sampling
@@ -57,11 +59,33 @@ export const GuidedCamera: React.FC<GuidedCameraProps> = () => {
       setProgress(progressRef.current);
     }
 
-    // Sample continuous spline curves
-    sampleCameraPose(progressRef.current, targetPos.current, targetLook.current);
+    // When OS is open, smoothly dolly camera directly into the main monitor
+    if (osOpen) {
+      targetPos.current.set(
+        SCREEN_CAMERA_POSE.position.x,
+        SCREEN_CAMERA_POSE.position.y,
+        SCREEN_CAMERA_POSE.position.z
+      );
+      targetLook.current.set(
+        SCREEN_CAMERA_POSE.lookAt.x,
+        SCREEN_CAMERA_POSE.lookAt.y,
+        SCREEN_CAMERA_POSE.lookAt.z
+      );
 
-    // Camera position
-    camera.position.copy(targetPos.current);
+      if (reducedMotion.current) {
+        camera.position.copy(targetPos.current);
+        currentLook.current.copy(targetLook.current);
+        camera.lookAt(currentLook.current);
+      } else {
+        camera.position.lerp(targetPos.current, Math.min(1, delta * 6));
+        currentLook.current.lerp(targetLook.current, Math.min(1, delta * 6));
+        camera.lookAt(currentLook.current);
+      }
+      return;
+    }
+
+    // Sample continuous spline curves along scroll path
+    sampleCameraPose(progressRef.current, targetPos.current, targetLook.current);
 
     // Pointer Parallax (up to ±8° yaw, ±5° pitch)
     if (!reducedMotion.current) {
@@ -73,9 +97,16 @@ export const GuidedCamera: React.FC<GuidedCameraProps> = () => {
       targetLook.current.y += offsetY;
     }
 
-    // Smoothly interpolate lookAt
-    currentLook.current.lerp(targetLook.current, Math.min(1, delta * 10));
-    camera.lookAt(currentLook.current);
+    // Smooth camera motion
+    if (reducedMotion.current) {
+      camera.position.copy(targetPos.current);
+      currentLook.current.copy(targetLook.current);
+      camera.lookAt(currentLook.current);
+    } else {
+      camera.position.lerp(targetPos.current, Math.min(1, delta * 8));
+      currentLook.current.lerp(targetLook.current, Math.min(1, delta * 8));
+      camera.lookAt(currentLook.current);
+    }
   });
 
   return null;

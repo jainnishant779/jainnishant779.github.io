@@ -36,9 +36,8 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({
 
   const handleToggleAudio = () => {
     const nextState = !audioEnabled;
-    if (nextState) {
-      sound.initContext();
-    }
+    sound.initContext();
+    sound.playUiClick();
     setAudioEnabled(nextState);
   };
 
@@ -97,6 +96,7 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({
         <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center' }}>
           <button
             onClick={handleToggleAudio}
+            className="audio-toggle-btn"
             title={audioEnabled ? 'Mute audio' : 'Enable facility audio effects'}
             style={{
               background: audioEnabled ? 'rgba(232, 162, 58, 0.15)' : 'rgba(14, 17, 20, 0.85)',
@@ -114,7 +114,12 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({
           </button>
 
           <button
-            onClick={onOpenOS}
+            onClick={() => {
+              if (audioEnabled) sound.playBootHum();
+              onOpenOS();
+            }}
+            className="quick-portfolio-btn"
+            title="Open Quick Portfolio / NJ-OS Command Center"
             style={{
               background: 'rgba(232, 162, 58, 0.15)',
               border: '1px solid #e8a23a',
@@ -127,7 +132,7 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({
               fontWeight: 600,
             }}
           >
-            LAUNCH NJ-OS →
+            QUICK PORTFOLIO [OS] →
           </button>
 
           <a

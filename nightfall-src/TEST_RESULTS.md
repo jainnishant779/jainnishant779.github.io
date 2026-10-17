@@ -568,3 +568,92 @@ Verified Phase 7 Deliverables:
 - `store.ts` & `HomePage.tsx`: Added `previousMode` tracking, scroll-locking and preservation during inspection, and keyboard shortcut handler allowing `Escape` to cleanly exit inspection back to either Guided Mode or Free Explore mode.
 - `Interactions.tsx`: Proximity calculation in both Guided Mode (`progress: 0.65..0.76`) and Free Explore mode (`distSuit <= 3.0m`), 3D world interactive hotspot button `[E] INSPECT SUIT →`, and HUD CTA trigger `[E] INSPECT TACTICAL SUIT POD →`.
 - `tests/suit-inspect.spec.ts`: End-to-end verification of suit display case, proximity CTA button, orbit camera interaction, HUD card specs verification, exit button, keyboard `E` and `Escape` triggers in both Guided and Free Explore modes.
+
+---
+
+## Phase 8 Test Run: 2026-10-18
+
+### 1. TypeScript Compilation (`npm run typecheck`)
+
+```text
+> nightfall@1.0.0 typecheck
+> tsc --noEmit
+```
+**Result:** Clean exit code 0. Zero errors.
+
+---
+
+### 2. Production Build (`npm run build`)
+
+```text
+> nightfall@1.0.0 prebuild
+> node scripts/scan-assets.mjs
+
+[scan-assets] Found 0 assets
+
+> nightfall@1.0.0 build
+> vite build && node scripts/make-route-pages.mjs
+
+vite v5.4.10 building for production...
+transforming...
+✓ 1645 modules transformed.
+rendering chunks...
+computing gzip size...
+../nightfall/index.html                       3.05 kB │ gzip:     1.22 kB
+../nightfall/assets/index-CuE98Ibb.css       16.32 kB │ gzip:     3.64 kB
+../nightfall/assets/index-CdLahbh6.js        70.15 kB │ gzip:    22.11 kB
+../nightfall/assets/HomePage-DbxQ2iqe.js    151.72 kB │ gzip:    48.96 kB
+../nightfall/assets/three-BYWb07s-.js     3,229.47 kB │ gzip: 1,086.04 kB
+✓ built in 16.21s
+[make-route-pages] Created 13 route pages + 404.html
+```
+**Result:** Clean exit code 0. Polish, audio synthesizer, social metadata, and accessibility updates successfully bundled.
+
+---
+
+### 3. Playwright End-to-End Suite (`npm run test`)
+
+```text
+> nightfall@1.0.0 test
+> playwright test
+
+Running 26 tests using 1 worker
+
+  ok 1 [chromium] › audio-accessibility.spec.ts:4:3 › Phase 8 — Polish, Audio Synthesizer, & Accessibility › audio toggle defaults to muted, activates ambience on user interaction, and toggles state correctly (40.6s)
+  ok 2 [chromium] › audio-accessibility.spec.ts:34:3 › Phase 8 — Polish, Audio Synthesizer, & Accessibility › permanent HUD corner links are accessible on desktop (26.8s)
+  ok 3 [chromium] › audio-accessibility.spec.ts:63:3 › Phase 8 — Polish, Audio Synthesizer, & Accessibility › prefers-reduced-motion media query disables smooth transitions and accelerates facility entry (14.5s)
+  ok 4 [chromium] › audio-accessibility.spec.ts:86:3 › Phase 8 — Polish, Audio Synthesizer, & Accessibility › HTML meta tags, OG tags, and noscript fallback are present and valid (1.7s)
+  ok 5 [chromium] › cv.spec.ts:4:3 › CV Download and Open Verification › CV link is present with target=_blank and triggers download event (859ms)
+  ok 6 [chromium] › cv.spec.ts:24:3 › CV Download and Open Verification › Direct PDF file request returns 200 and valid file buffer (68ms)
+  ok 7 [chromium] › experience.spec.ts:6:3 › 3D Experience & Guided Camera Scroll Journey › Scroll drives camera, gate opens, captures screenshots, and opens workstation OS (1.4m)
+  ok 8 [chromium] › fallback.spec.ts:4:3 › WebGL Unsupported Fallback › Displays fallback UI and direct links when WebGL2 is disabled (644ms)
+  ok 9 [chromium] › free-explore.spec.ts:6:3 › Phase 5 — Free Explore Mode, Rapier Physics, & World Colliders › Mode toggle, WASD locomotion, collider bounds, stair autostep, and workstation interaction (1.3m)
+  ok 10 [chromium] › gate.spec.ts:6:3 › Phase 3 — Gate Cinematic & Controls › Access facility button, audio toggle, skip intro, and forward/backward gate scrubbing (1.6m)
+  ok 11 [chromium] › mobile.spec.ts:6:3 › Mobile Viewport (375px) Testing › No horizontal scroll at 375px width on OS view (810ms)
+  ok 12 [chromium] › mobile.spec.ts:21:3 › Mobile Viewport (375px) Testing › Mobile navigation rail renders as bottom tab bar (638ms)
+  ok 13 [chromium] › mobile.spec.ts:35:3 › Mobile Viewport (375px) Testing › No horizontal scroll at 375px width on Home Page (466ms)
+  ok 14 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/" loads and displays "THE ENGINEER'S CAVE" (789ms)
+  ok 15 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/os" loads and displays "NJ-OS // COMMAND CENTER" (719ms)
+  ok 16 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/about" loads and displays "01 // IDENTITY DOSSIER" (746ms)
+  ok 17 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/projects" loads and displays "02 // PROJECT ARCHIVES" (709ms)
+  ok 18 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/projects/edgedesk" loads and displays "EdgeDesk: Secure Multi-Device Remote Access Platform" (845ms)
+  ok 19 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/projects/crowd-analytics" loads and displays "Real-Time Crowd Analytics & Stampede Detection" (790ms)
+  ok 20 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/experience" loads and displays "03 // EXPERIENCE LOG" (776ms)
+  ok 21 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/skills" loads and displays "04 // TECHNICAL CAPABILITIES" (662ms)
+  ok 22 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/achievements" loads and displays "05 // HONORS & CREDENTIALS" (741ms)
+  ok 23 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/contact" loads and displays "07 // TRANSMISSION PROTOCOL" (720ms)
+  ok 24 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/cv" loads and displays "06 // CURRICULUM VITAE" (813ms)
+  ok 25 [chromium] › suit-inspect.spec.ts:6:3 › Phase 7 — Armored Tactical Suit Pod & Orbit Inspection › suit pod display renders, proximity CTA triggers orbit inspection, HUD card displays tactical specs, and ESC restores mode (1.3m)
+  ok 26 [chromium] › workstation.spec.ts:6:3 › Phase 6 — Batcomputer Workstation, 5-Monitor Arc, & Screen Zoom Dolly › 5-monitor arc renders live canvas telemetry, clicking screen launches OS, and camera dollys into screen (1.4m)
+
+  26 passed (8.7m)
+```
+**Result:** 26 passed, 0 failed.
+Verified Phase 8 Deliverables:
+- `sound.ts`: Complete Web Audio procedural sound synthesizer (zero external audio files). Continuous subterranean cavern atmospheric drone (54Hz & 55.4Hz binaural beating, brown noise air currents with 0.08Hz LFO filter sweep) playing only on explicit user click at volume 0.3; smooth fade-out on mute; footstep audio in Free Explore; UI click chimes; keyboard terminal typing ticks; cathode tube workstation boot hum.
+- `HudOverlay.tsx`: Permanent HUD corner navigation links ("QUICK PORTFOLIO [OS] →", "CV ↗", and "CONTACT"), dynamic audio status toggle button ("🔊 AUDIO ON" / "🔇 AUDIO OFF") with instant audio feedback.
+- `index.html`: Complete social metadata (Open Graph title, description, URL, image, type, and Twitter card summary_large_image), custom engineering portal SVG favicon, and accessible `<noscript>` fallback with verified contact info and direct CV download link.
+- `Exterior.tsx` & `GuidedCamera.tsx`: Full `prefers-reduced-motion` compliance (rain fall speed scaled by 0.3, pointer parallax disabled, instantaneous fade transitions on facility access).
+- Resource Disposal: Explicit geometry disposal on unmount (`cavernGeometry.dispose()`, `boulderGeom.dispose()`, `stalactiteGeom.dispose()`, `cliffGeometry.dispose()`, `canvasManager.dispose()`) avoiding WebGL memory leaks.
+- `tests/audio-accessibility.spec.ts`: Dedicated test suite verifying default muted audio state, ambience toggle, permanent HUD links, `prefers-reduced-motion` facility jump, and HTML/OG/noscript metadata.
+

@@ -11,6 +11,7 @@ import {
 } from '@react-three/rapier';
 import { SCREEN_CAMERA_POSE } from '../../world/layout';
 import { useStore } from '../../state/store';
+import { sound } from '../../lib/sound';
 
 export const FreeExplore: React.FC = () => {
   const { camera } = useThree();
@@ -173,6 +174,9 @@ export const FreeExplore: React.FC = () => {
     const speed = keys.current.sprint ? 6.0 : 3.5;
     if (moveVec.lengthSq() > 0) {
       moveVec.normalize().multiplyScalar(speed * delta);
+      if (useStore.getState().audioEnabled) {
+        sound.playFootstep();
+      }
     }
 
     // Apply gravity (-9.8 m/s²)

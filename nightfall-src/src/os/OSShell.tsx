@@ -9,6 +9,7 @@ import { Dossier } from './modules/Dossier';
 import { Contact } from './modules/Contact';
 import { Architecture } from './modules/Architecture';
 import { OSHome } from './OSHome';
+import { sound } from '../lib/sound';
 
 export type OSModuleId =
   | 'home'
@@ -82,6 +83,7 @@ export const OSShell: React.FC<OSShellProps> = ({
 
   const navigateTo = useCallback(
     (moduleId: OSModuleId, slug?: string) => {
+      sound.playUiClick();
       setActiveModule(moduleId);
       setSelectedProjectSlug(slug);
 
@@ -117,6 +119,7 @@ export const OSShell: React.FC<OSShellProps> = ({
       }
 
       if (e.key === 'Escape') {
+        sound.playUiClick();
         if (selectedProjectSlug) {
           setSelectedProjectSlug(undefined);
         } else if (mode === 'overlay' && onClose) {
@@ -128,6 +131,7 @@ export const OSShell: React.FC<OSShellProps> = ({
       const match = MODULES.find((m) => m.key === e.key);
       if (match) {
         e.preventDefault();
+        sound.playTerminalKey();
         navigateTo(match.id);
       }
     };

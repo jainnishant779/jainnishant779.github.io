@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import * as THREE from 'three';
 import { createNoise3D } from 'simplex-noise';
 import { CAVERN } from '../../world/layout';
@@ -144,6 +144,15 @@ export const Cavern: React.FC = () => {
 
     return { stalactiteMatrices: matrices, stalactiteGeom: geom };
   }, []);
+
+  // Phase 8: Dispose procedural geometries on unmount
+  useEffect(() => {
+    return () => {
+      cavernGeometry.dispose();
+      boulderGeom.dispose();
+      stalactiteGeom.dispose();
+    };
+  }, [cavernGeometry, boulderGeom, stalactiteGeom]);
 
   return (
     <group name="main-cavern" position={[CAVERN.centre.x, CAVERN.centre.y, CAVERN.centre.z]}>

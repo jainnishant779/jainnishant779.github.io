@@ -83,11 +83,26 @@ export const HomePage: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [setOsOpen]);
 
-  // Access the facility handler (Phase 3)
-  const handleAccessFacility = useCallback(() => {
-    if (useStore.getState().audioEnabled) {
-      sound.initContext();
+  const audioEnabled = useStore((state) => state.audioEnabled);
+
+  // Phase 8: Continuous subterranean cavern ambience lifecycle
+  useEffect(() => {
+    if (audioEnabled) {
+      sound.startAmbience();
+    } else {
+      sound.stopAmbience();
     }
+    return () => {
+      sound.stopAmbience();
+    };
+  }, [audioEnabled]);
+
+  // Access the facility handler (Phase 3 & Phase 8)
+  const handleAccessFacility = useCallback(() => {
+    sound.initContext();
+    sound.playAccessBeep();
+    useStore.getState().setAudioEnabled(true);
+
     const doc = document.documentElement;
     const scrollHeight = Math.max(doc.scrollHeight, document.body.scrollHeight) - window.innerHeight;
 
@@ -109,6 +124,14 @@ export const HomePage: React.FC = () => {
       });
     }
   }, []);
+
+  // Handle open NJ-OS with cathode boot hum
+  const handleOpenOS = useCallback(() => {
+    if (useStore.getState().audioEnabled) {
+      sound.playBootHum();
+    }
+    setOsOpen(true);
+  }, [setOsOpen]);
 
   // Skip intro smooth scroll
   const handleSkipIntro = useCallback(() => {
@@ -262,7 +285,7 @@ export const HomePage: React.FC = () => {
 
       {/* Heads-Up Display Overlay */}
       <HudOverlay
-        onOpenOS={() => setOsOpen(true)}
+        onOpenOS={handleOpenOS}
         onSkipIntro={handleSkipIntro}
         onAccessFacility={handleAccessFacility}
       />

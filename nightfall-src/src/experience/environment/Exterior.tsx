@@ -1,10 +1,12 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useEffect } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import { MeshReflectorMaterial } from '@react-three/drei';
 import { createNoise3D } from 'simplex-noise';
 import { useStore } from '../../state/store';
 import { usePBR } from '../../lib/assets';
+
+import { prefersReducedMotion } from '../../lib/reducedMotion';
 
 export const Exterior: React.FC = () => {
   const tier = useStore((state) => state.tier);
@@ -31,6 +33,13 @@ export const Exterior: React.FC = () => {
     return geom;
   }, []);
 
+  // Phase 8: Dispose procedural cliff geometry on unmount
+  useEffect(() => {
+    return () => {
+      cliffGeometry.dispose();
+    };
+  }, [cliffGeometry]);
+
   // Rain streak count: Low: 400, Med: 1200, High: 2500
   const rainCount = tier === 'high' ? 2500 : tier === 'medium' ? 1200 : 400;
 
@@ -49,12 +58,13 @@ export const Exterior: React.FC = () => {
 
   const rainRef = useRef<THREE.Points>(null);
 
-  // Fast procedural rain fall animation
+  // Fast procedural rain fall animation (scaled by 0.3 under reduced motion)
   useFrame((state) => {
     if (!rainRef.current) return;
     const posAttr = rainRef.current.geometry.getAttribute('position') as THREE.BufferAttribute;
     const arr = posAttr.array as Float32Array;
-    const time = state.clock.elapsedTime * 28; // fall speed
+    const baseSpeed = prefersReducedMotion() ? 8.4 : 28; // fall speed scaled by 0.3 under reduced motion
+    const time = state.clock.elapsedTime * baseSpeed;
 
     for (let i = 0; i < rainCount; i++) {
       // Wrap smoothly around 0..24

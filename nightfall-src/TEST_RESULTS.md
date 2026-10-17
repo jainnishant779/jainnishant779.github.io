@@ -657,3 +657,91 @@ Verified Phase 8 Deliverables:
 - Resource Disposal: Explicit geometry disposal on unmount (`cavernGeometry.dispose()`, `boulderGeom.dispose()`, `stalactiteGeom.dispose()`, `cliffGeometry.dispose()`, `canvasManager.dispose()`) avoiding WebGL memory leaks.
 - `tests/audio-accessibility.spec.ts`: Dedicated test suite verifying default muted audio state, ambience toggle, permanent HUD links, `prefers-reduced-motion` facility jump, and HTML/OG/noscript metadata.
 
+---
+
+## Phase 9 & 10 Test Run & Delivery: 2026-10-18
+
+### 1. TypeScript Compilation (`npm run typecheck`)
+
+```text
+> nightfall@1.0.0 typecheck
+> tsc --noEmit
+```
+**Result:** Clean exit code 0. Zero errors.
+
+---
+
+### 2. Production Build (`npm run build`)
+
+```text
+> nightfall@1.0.0 prebuild
+> node scripts/scan-assets.mjs
+
+[scan-assets] Found 0 assets
+
+> nightfall@1.0.0 build
+> vite build && node scripts/make-route-pages.mjs
+
+vite v5.4.10 building for production...
+transforming...
+✓ 1645 modules transformed.
+rendering chunks...
+computing gzip size...
+../nightfall/index.html                       3.05 kB │ gzip:     1.22 kB
+../nightfall/assets/index-CuE98Ibb.css       16.32 kB │ gzip:     3.64 kB
+../nightfall/assets/index-BczmyNe2.js        70.15 kB │ gzip:    22.11 kB
+../nightfall/assets/HomePage-BK0H3kjx.js    151.99 kB │ gzip:    49.05 kB
+../nightfall/assets/three-ClIVrDd1.js     3,301.11 kB │ gzip: 1,107.02 kB
+✓ built in 16.32s
+[make-route-pages] Created 13 route pages + 404.html
+```
+**Result:** Clean exit code 0. All 13 route pages and 404.html generated.
+
+---
+
+### 3. Playwright End-to-End Suite (`npm run test`)
+
+```text
+> nightfall@1.0.0 test
+> playwright test
+
+Running 27 tests using 1 worker
+
+  ok 1 [chromium] › audio-accessibility.spec.ts:4:3 › Phase 8 — Polish, Audio Synthesizer, & Accessibility › audio toggle defaults to muted, activates ambience on user interaction, and toggles state correctly (45.0s)
+  ok 2 [chromium] › audio-accessibility.spec.ts:34:3 › Phase 8 — Polish, Audio Synthesizer, & Accessibility › permanent HUD corner links are accessible on desktop (40.8s)
+  ok 3 [chromium] › audio-accessibility.spec.ts:63:3 › Phase 8 — Polish, Audio Synthesizer, & Accessibility › prefers-reduced-motion media query disables smooth transitions and accelerates facility entry (19.0s)
+  ok 4 [chromium] › audio-accessibility.spec.ts:86:3 › Phase 8 — Polish, Audio Synthesizer, & Accessibility › HTML meta tags, OG tags, and noscript fallback are present and valid (1.4s)
+  ok 5 [chromium] › cv.spec.ts:4:3 › CV Download and Open Verification › CV link is present with target=_blank and triggers download event (999ms)
+  ok 6 [chromium] › cv.spec.ts:24:3 › CV Download and Open Verification › Direct PDF file request returns 200 and valid file buffer (72ms)
+  ok 7 [chromium] › experience.spec.ts:6:3 › 3D Experience & Guided Camera Scroll Journey › Scroll drives camera, gate opens, captures screenshots, and opens workstation OS (1.4m)
+  ok 8 [chromium] › fallback.spec.ts:4:3 › WebGL Unsupported Fallback › Displays fallback UI and direct links when WebGL2 is disabled (997ms)
+  ok 9 [chromium] › free-explore.spec.ts:6:3 › Phase 5 — Free Explore Mode, Rapier Physics, & World Colliders › Mode toggle, WASD locomotion, collider bounds, stair autostep, and workstation interaction (1.2m)
+  ok 10 [chromium] › gate.spec.ts:6:3 › Phase 3 — Gate Cinematic & Controls › Access facility button, audio toggle, skip intro, and forward/backward gate scrubbing (1.7m)
+  ok 11 [chromium] › mobile.spec.ts:6:3 › Mobile Viewport (375px) Testing › No horizontal scroll at 375px width on OS view (664ms)
+  ok 12 [chromium] › mobile.spec.ts:21:3 › Mobile Viewport (375px) Testing › Mobile navigation rail renders as bottom tab bar (660ms)
+  ok 13 [chromium] › mobile.spec.ts:35:3 › Mobile Viewport (375px) Testing › No horizontal scroll at 375px width on Home Page (443ms)
+  ok 14 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/" loads and displays "THE ENGINEER'S CAVE" (780ms)
+  ok 15 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/os" loads and displays "NJ-OS // COMMAND CENTER" (676ms)
+  ok 16 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/about" loads and displays "01 // IDENTITY DOSSIER" (795ms)
+  ok 17 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/projects" loads and displays "02 // PROJECT ARCHIVES" (820ms)
+  ok 18 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/projects/edgedesk" loads and displays "EdgeDesk: Secure Multi-Device Remote Access Platform" (874ms)
+  ok 19 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/projects/crowd-analytics" loads and displays "Real-Time Crowd Analytics & Stampede Detection" (692ms)
+  ok 20 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/experience" loads and displays "03 // EXPERIENCE LOG" (760ms)
+  ok 21 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/skills" loads and displays "04 // TECHNICAL CAPABILITIES" (696ms)
+  ok 22 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/achievements" loads and displays "05 // HONORS & CREDENTIALS" (620ms)
+  ok 23 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/contact" loads and displays "07 // TRANSMISSION PROTOCOL" (800ms)
+  ok 24 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/cv" loads and displays "06 // CURRICULUM VITAE" (742ms)
+  ok 25 [chromium] › routes.spec.ts:33:3 › Phase 1 Routes & Deep Links › Phase 9 Link check: all external links in the OS are strictly Section 6 verified URLs (642ms)
+  ok 26 [chromium] › suit-inspect.spec.ts:6:3 › Phase 7 — Armored Tactical Suit Pod & Orbit Inspection › suit pod display renders, proximity CTA triggers orbit inspection, HUD card displays tactical specs, and ESC restores mode (1.3m)
+  ok 27 [chromium] › workstation.spec.ts:6:3 › Phase 6 — Batcomputer Workstation, 5-Monitor Arc, & Screen Zoom Dolly › 5-monitor arc renders live canvas telemetry, clicking screen launches OS, and camera dollys into screen (1.4m)
+
+  27 passed (9.0m)
+```
+**Result:** 27 passed, 0 failed.
+Verified Phase 9 & Phase 10 Deliverables:
+- Phase 9 Link Check: All external links across the entire OS are strictly validated against Section 6 verified profiles (`github.com/jainnishant779`, `linkedin.com/in/nishujain02`, `jainnishant779.github.io`).
+- Phase 10 Blender GLB Override: `Cavern.tsx` integrates `isAssetAvailable('assets/models/cavern.glb')` with `<BlenderCavern />` hook, enabling zero-code drop-in replacement for custom 3D models.
+- Documentation: `README.md` and `ASSETS.md` created with architecture overview, developer commands, asset pipeline guidelines, and CC0 licenses.
+- Delivery Archive: Packaged clean `nightfall-delivery.zip` (4.96 MB) omitting `node_modules` and git metadata into `scratch/nightfall-delivery.zip`.
+
+

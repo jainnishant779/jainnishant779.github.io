@@ -1,9 +1,19 @@
 import React, { useMemo, useEffect } from 'react';
 import * as THREE from 'three';
+import { useGLTF } from '@react-three/drei';
 import { createNoise3D } from 'simplex-noise';
 import { CAVERN } from '../../world/layout';
-import { usePBR } from '../../lib/assets';
+import { isAssetAvailable, getAssetUrl, usePBR } from '../../lib/assets';
 import { applyBoxUV } from '../../lib/boxUV';
+
+/**
+ * Custom Blender GLB Cavern Model Hook (Phase 10)
+ * Swaps in external GLB if present in public/assets/models/cavern.glb
+ */
+const BlenderCavern: React.FC<{ url: string }> = ({ url }) => {
+  const gltf = useGLTF(url);
+  return <primitive object={gltf.scene} receiveShadow />;
+};
 
 export const Cavern: React.FC = () => {
   const rockPBR = usePBR('rock');
@@ -145,7 +155,7 @@ export const Cavern: React.FC = () => {
     return { stalactiteMatrices: matrices, stalactiteGeom: geom };
   }, []);
 
-  // Phase 8: Dispose procedural geometries on unmount
+  // Clean up procedural geometries on unmount (Phase 8 resource disposal)
   useEffect(() => {
     return () => {
       cavernGeometry.dispose();
@@ -154,20 +164,32 @@ export const Cavern: React.FC = () => {
     };
   }, [cavernGeometry, boulderGeom, stalactiteGeom]);
 
+  const hasCustomCavern =
+    isAssetAvailable('assets/models/cavern.glb') || isAssetAvailable('models/cavern.glb');
+  const customCavernUrl = getAssetUrl(
+    isAssetAvailable('assets/models/cavern.glb')
+      ? 'assets/models/cavern.glb'
+      : 'models/cavern.glb'
+  );
+
   return (
     <group name="main-cavern" position={[CAVERN.centre.x, CAVERN.centre.y, CAVERN.centre.z]}>
-      {/* Massive Displaced Cavern Shell */}
-      <mesh geometry={cavernGeometry} receiveShadow>
-        <meshStandardMaterial
-          color="#16181d"
-          roughness={0.9}
-          metalness={0.12}
-          side={THREE.BackSide}
-          map={rockPBR.map || undefined}
-          normalMap={rockPBR.normalMap || undefined}
-          roughnessMap={rockPBR.roughnessMap || undefined}
-        />
-      </mesh>
+      {/* Massive Displaced Cavern Shell or Custom Blender GLB (Phase 10 Override Hook) */}
+      {hasCustomCavern ? (
+        <BlenderCavern url={customCavernUrl} />
+      ) : (
+        <mesh geometry={cavernGeometry} receiveShadow>
+          <meshStandardMaterial
+            color="#16181d"
+            roughness={0.9}
+            metalness={0.12}
+            side={THREE.BackSide}
+            map={rockPBR.map || undefined}
+            normalMap={rockPBR.normalMap || undefined}
+            roughnessMap={rockPBR.roughnessMap || undefined}
+          />
+        </mesh>
+      )}
 
       {/* Instanced Boulders along Cavern Floor */}
       <instancedMesh

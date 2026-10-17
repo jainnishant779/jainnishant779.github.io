@@ -29,4 +29,22 @@ test.describe('Phase 1 Routes & Deep Links', () => {
       await expect(page.locator('body')).toContainText(heading);
     });
   }
+
+  test('Phase 9 Link check: all external links in the OS are strictly Section 6 verified URLs', async ({ page }) => {
+    await page.goto('os');
+    const hrefs = await page.$$eval('a[href^="http"]', (elements) =>
+      elements.map((el) => (el as HTMLAnchorElement).href)
+    );
+
+    const allowedDomains = [
+      'https://github.com/jainnishant779',
+      'https://linkedin.com/in/nishujain02',
+      'https://jainnishant779.github.io',
+    ];
+
+    for (const href of hrefs) {
+      const isAllowed = allowedDomains.some((domain) => href.startsWith(domain));
+      expect(isAllowed).toBeTruthy();
+    }
+  });
 });

@@ -11,7 +11,7 @@ export const SkipButton: React.FC<SkipButtonProps> = ({ onSkip }) => {
       className="skip-intro-btn"
       style={{
         position: 'fixed',
-        bottom: '1.5rem',
+        bottom: '3.6rem',
         right: '1.5rem',
         zIndex: 50,
         background: 'rgba(14, 17, 20, 0.85)',
@@ -22,6 +22,7 @@ export const SkipButton: React.FC<SkipButtonProps> = ({ onSkip }) => {
         padding: '0.45rem 0.85rem',
         borderRadius: '3px',
         cursor: 'pointer',
+        pointerEvents: 'auto',
         backdropFilter: 'blur(4px)',
         transition: 'all 0.2s ease',
       }}

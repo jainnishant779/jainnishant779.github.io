@@ -27,6 +27,10 @@ export interface AppState {
   audioEnabled: boolean;
   setAudioEnabled: (enabled: boolean) => void;
 
+  // Gate state (Phase 3)
+  gateOpen: boolean;
+  setGateOpen: (open: boolean) => void;
+
   // Loading
   loaded: boolean;
   setLoaded: (loaded: boolean) => void;
@@ -50,6 +54,9 @@ export const useStore = create<AppState>((set) => ({
 
   audioEnabled: false,
   setAudioEnabled: (audioEnabled) => set({ audioEnabled }),
+
+  gateOpen: false,
+  setGateOpen: (gateOpen) => set({ gateOpen }),
 
   loaded: false,
   setLoaded: (loaded) => set({ loaded }),

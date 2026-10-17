@@ -148,3 +148,89 @@ Visual snapshots generated and verified at all 5 waypoints:
 - `waypoint-03-cavern.png` (progress: 0.65)
 - `waypoint-04-workstation.png` (progress: 1.0)
 
+---
+
+## Phase 3 Test Run: 2026-10-18
+
+### 1. TypeScript Compilation (`npm run typecheck`)
+
+```text
+> nightfall@1.0.0 typecheck
+> tsc --noEmit
+```
+**Result:** Clean exit code 0. Zero errors.
+
+---
+
+### 2. Production Build (`npm run build`)
+
+```text
+> nightfall@1.0.0 prebuild
+> node scripts/scan-assets.mjs
+
+[scan-assets] Found 0 assets
+
+> nightfall@1.0.0 build
+> vite build && node scripts/make-route-pages.mjs
+
+vite v5.4.10 building for production...
+transforming...
+✓ 682 modules transformed.
+rendering chunks...
+computing gzip size...
+../nightfall/index.html                     2.25 kB │ gzip:   0.97 kB
+../nightfall/assets/index-CuE98Ibb.css     16.32 kB │ gzip:   3.64 kB
+../nightfall/assets/index-CMcIcgQ9.js      60.18 kB │ gzip:  19.20 kB
+../nightfall/assets/HomePage-Dnjwt56_.js  105.90 kB │ gzip:  37.17 kB
+../nightfall/assets/three-nE_TIwTj.js     966.04 kB │ gzip: 267.91 kB
+✓ built in 17.88s
+[make-route-pages] Created 13 route pages + 404.html
+```
+**Result:** Clean exit code 0. Chunking maintained across all routes.
+
+---
+
+### 3. Playwright End-to-End Suite (`npm run test`)
+
+```text
+> nightfall@1.0.0 test
+> playwright test
+
+Running 19 tests using 1 worker
+
+  ok 1 [chromium] › cv.spec.ts:4:3 › CV Download and Open Verification › CV link is present with target=_blank and triggers download event (1.6s)
+  ok 2 [chromium] › cv.spec.ts:24:3 › CV Download and Open Verification › Direct PDF file request returns 200 and valid file buffer (97ms)
+  ok 3 [chromium] › experience.spec.ts:6:3 › 3D Experience & Guided Camera Scroll Journey › Scroll drives camera, gate opens, captures screenshots, and opens workstation OS (2.3m)
+  ok 4 [chromium] › fallback.spec.ts:4:3 › WebGL Unsupported Fallback › Displays fallback UI and direct links when WebGL2 is disabled (1.1s)
+  ok 5 [chromium] › gate.spec.ts:6:3 › Phase 3 — Gate Cinematic & Controls › Access facility button, audio toggle, skip intro, and forward/backward gate scrubbing (1.1m)
+  ok 6 [chromium] › mobile.spec.ts:6:3 › Mobile Viewport (375px) Testing › No horizontal scroll at 375px width on OS view (699ms)
+  ok 7 [chromium] › mobile.spec.ts:21:3 › Mobile Viewport (375px) Testing › Mobile navigation rail renders as bottom tab bar (791ms)
+  ok 8 [chromium] › mobile.spec.ts:35:3 › Mobile Viewport (375px) Testing › No horizontal scroll at 375px width on Home Page (537ms)
+  ok 9 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/" loads and displays "THE ENGINEER'S CAVE" (2.2s)
+  ok 10 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/os" loads and displays "NJ-OS // COMMAND CENTER" (732ms)
+  ok 11 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/about" loads and displays "01 // IDENTITY DOSSIER" (944ms)
+  ok 12 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/projects" loads and displays "02 // PROJECT ARCHIVES" (952ms)
+  ok 13 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/projects/edgedesk" loads and displays "EdgeDesk: Secure Multi-Device Remote Access Platform" (786ms)
+  ok 14 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/projects/crowd-analytics" loads and displays "Real-Time Crowd Analytics & Stampede Detection" (778ms)
+  ok 15 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/experience" loads and displays "03 // EXPERIENCE LOG" (757ms)
+  ok 16 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/skills" loads and displays "04 // TECHNICAL CAPABILITIES" (740ms)
+  ok 17 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/achievements" loads and displays "05 // HONORS & CREDENTIALS" (708ms)
+  ok 18 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/contact" loads and displays "07 // TRANSMISSION PROTOCOL" (790ms)
+  ok 19 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/cv" loads and displays "06 // CURRICULUM VITAE" (978ms)
+
+  19 passed (3.8m)
+```
+**Result:** 19 passed, 0 failed.
+Verified Phase 3 Deliverables:
+- GSAP timeline mapped to scroll progress `[0.12..0.30]`:
+  - Panel illumination and red to amber status lamp transition (0.00–0.15)
+  - 3 locking bars retracting along X axis into door leaf casing (0.15–0.40)
+  - Status lamp turning vibrant green and interior spill light initiating (0.40–0.50)
+  - Two beveled RoundedBox door leaves sliding ±4.5 m with `power2.inOut` while 4 hydraulic chrome pistons extend (0.50–0.95)
+  - Interior spill light reaching full intensity cutting through the portal (0.95–1.00)
+- "ACCESS THE FACILITY ▾" button smoothly scrolls past the gate to 0.31 (or 300ms fade jump to 0.45 under `prefers-reduced-motion`)
+- "SKIP INTRO ⏭" button scrolls smoothly to 0.45
+- Web Audio procedural sound synthesizer module with clunk at 0.15, hiss at 0.50, and HUD audio toggle button
+- Visual snapshots: `gate_phase3_closed.png` and `gate_phase3_opened.png`
+
+

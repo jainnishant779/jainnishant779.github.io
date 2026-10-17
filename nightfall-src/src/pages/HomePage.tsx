@@ -9,9 +9,12 @@ import { HudOverlay } from '../ui/HudOverlay';
 import { OSShell } from '../os/OSShell';
 import { getCVUrl } from '../lib/assets';
 import { getRawScrollProgress } from '../lib/scrollProgress';
+import { prefersReducedMotion } from '../lib/reducedMotion';
+import { sound } from '../lib/sound';
 
 export const HomePage: React.FC = () => {
   const [webglSupported, setWebglSupported] = useState<boolean>(true);
+  const [fadeScreen, setFadeScreen] = useState<boolean>(false);
   const tier = useStore((state) => state.tier);
   const setTier = useStore((state) => state.setTier);
   const osOpen = useStore((state) => state.osOpen);
@@ -52,14 +55,48 @@ export const HomePage: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [setOsOpen]);
 
+  // Access the facility handler (Phase 3)
+  const handleAccessFacility = useCallback(() => {
+    if (useStore.getState().audioEnabled) {
+      sound.initContext();
+    }
+    const doc = document.documentElement;
+    const scrollHeight = Math.max(doc.scrollHeight, document.body.scrollHeight) - window.innerHeight;
+
+    if (prefersReducedMotion()) {
+      setFadeScreen(true);
+      setTimeout(() => {
+        window.scrollTo({
+          top: scrollHeight * 0.45,
+          behavior: 'auto',
+        });
+        setTimeout(() => {
+          setFadeScreen(false);
+        }, 150);
+      }, 150);
+    } else {
+      window.scrollTo({
+        top: scrollHeight * 0.31,
+        behavior: 'smooth',
+      });
+    }
+  }, []);
+
   // Skip intro smooth scroll
   const handleSkipIntro = useCallback(() => {
     const doc = document.documentElement;
-    const scrollHeight = doc.scrollHeight - window.innerHeight;
-    window.scrollTo({
-      top: scrollHeight * 0.46,
-      behavior: 'smooth',
-    });
+    const scrollHeight = Math.max(doc.scrollHeight, document.body.scrollHeight) - window.innerHeight;
+    if (prefersReducedMotion()) {
+      window.scrollTo({
+        top: scrollHeight * 0.45,
+        behavior: 'auto',
+      });
+    } else {
+      window.scrollTo({
+        top: scrollHeight * 0.45,
+        behavior: 'smooth',
+      });
+    }
   }, []);
 
   const tierConfig = TIER_CONFIGS[tier];
@@ -199,7 +236,24 @@ export const HomePage: React.FC = () => {
       <HudOverlay
         onOpenOS={() => setOsOpen(true)}
         onSkipIntro={handleSkipIntro}
+        onAccessFacility={handleAccessFacility}
       />
+
+      {/* Reduced-motion transition fade overlay */}
+      {fadeScreen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: '#07080a',
+            zIndex: 100,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
 
       {/* Interactive OS Command Center Overlay */}
       {osOpen && (

@@ -3,20 +3,37 @@ import { Link } from 'react-router-dom';
 import { useStore } from '../state/store';
 import { getActiveHint } from '../world/cameraPath';
 import { getCVUrl } from '../lib/assets';
+import { sound } from '../lib/sound';
 import { SkipButton } from './SkipButton';
 
 interface HudOverlayProps {
   onOpenOS: () => void;
   onSkipIntro: () => void;
+  onAccessFacility: () => void;
 }
 
-export const HudOverlay: React.FC<HudOverlayProps> = ({ onOpenOS, onSkipIntro }) => {
+export const HudOverlay: React.FC<HudOverlayProps> = ({
+  onOpenOS,
+  onSkipIntro,
+  onAccessFacility,
+}) => {
   const progress = useStore((state) => state.progress);
+  const audioEnabled = useStore((state) => state.audioEnabled);
+  const setAudioEnabled = useStore((state) => state.setAudioEnabled);
   const activeHint = getActiveHint(progress);
   const cvUrl = getCVUrl();
 
   const isNearComputer = progress >= 0.85;
   const isNearSuit = progress >= 0.65 && progress <= 0.76;
+  const showAccessButton = progress < 0.12;
+
+  const handleToggleAudio = () => {
+    const nextState = !audioEnabled;
+    if (nextState) {
+      sound.initContext();
+    }
+    setAudioEnabled(nextState);
+  };
 
   return (
     <div
@@ -69,8 +86,26 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({ onOpenOS, onSkipIntro })
           </div>
         </div>
 
-        {/* Permanent Quick Navigation Shortcuts */}
-        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+        {/* Permanent Quick Navigation Shortcuts & Audio Toggle */}
+        <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center' }}>
+          <button
+            onClick={handleToggleAudio}
+            title={audioEnabled ? 'Mute audio' : 'Enable facility audio effects'}
+            style={{
+              background: audioEnabled ? 'rgba(232, 162, 58, 0.15)' : 'rgba(14, 17, 20, 0.85)',
+              border: `1px solid ${audioEnabled ? '#e8a23a' : '#2a3038'}`,
+              color: audioEnabled ? '#e8a23a' : '#9e9a8e',
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: '0.76rem',
+              padding: '0.4rem 0.65rem',
+              borderRadius: '3px',
+              cursor: 'pointer',
+              fontWeight: 600,
+            }}
+          >
+            {audioEnabled ? '🔊 AUDIO ON' : '🔇 AUDIO OFF'}
+          </button>
+
           <button
             onClick={onOpenOS}
             style={{
@@ -124,15 +159,39 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({ onOpenOS, onSkipIntro })
         </div>
       </div>
 
-      {/* Center Dynamic Interaction Prompt */}
+      {/* Center Dynamic Interaction Prompt / Access Facility Button */}
       <div
         style={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          pointerEvents: isNearComputer || isNearSuit ? 'auto' : 'none',
+          pointerEvents: showAccessButton || isNearComputer || isNearSuit ? 'auto' : 'none',
         }}
       >
+        {/* Phase 3 "ACCESS THE FACILITY" Button */}
+        {showAccessButton && (
+          <button
+            onClick={onAccessFacility}
+            className="access-facility-btn"
+            style={{
+              background: 'rgba(7, 8, 10, 0.92)',
+              border: '2px solid #e8a23a',
+              color: '#e8a23a',
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: '0.92rem',
+              fontWeight: 700,
+              letterSpacing: '0.08em',
+              padding: '0.85rem 2.2rem',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              boxShadow: '0 0 25px rgba(232, 162, 58, 0.35)',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            ACCESS THE FACILITY ▾
+          </button>
+        )}
+
         {isNearComputer && (
           <button
             onClick={onOpenOS}
@@ -217,7 +276,7 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({ onOpenOS, onSkipIntro })
       </div>
 
       {/* Skip button for intro phase */}
-      {progress < 0.4 && <SkipButton onSkip={onSkipIntro} />}
+      {progress < 0.45 && <SkipButton onSkip={onSkipIntro} />}
     </div>
   );
 };

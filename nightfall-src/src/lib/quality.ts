@@ -84,3 +84,16 @@ export function getInitialTier(): QualityTier {
 
   return 'medium';
 }
+
+/**
+ * Check whether the current device is a mobile or small touch screen
+ */
+export function isMobileDevice(): boolean {
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+    return false;
+  }
+  return (
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+    window.innerWidth < 768
+  );
+}

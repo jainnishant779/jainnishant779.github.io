@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Link } from 'react-router-dom';
 import { useStore } from '../state/store';
@@ -16,6 +16,7 @@ import { LoadingScreen } from '../ui/LoadingScreen';
 export const HomePage: React.FC = () => {
   const [webglSupported, setWebglSupported] = useState<boolean>(true);
   const [fadeScreen, setFadeScreen] = useState<boolean>(false);
+  const mode = useStore((state) => state.mode);
   const tier = useStore((state) => state.tier);
   const setTier = useStore((state) => state.setTier);
   const osOpen = useStore((state) => state.osOpen);
@@ -30,11 +31,30 @@ export const HomePage: React.FC = () => {
     }
   }, [setTier]);
 
-  // Native scroll listener: updates progress state immediately on window scroll
+  // Lock window scroll and manage scroll restoration when in free explore mode
+  const savedScrollY = useRef<number>(0);
+  useEffect(() => {
+    if (mode === 'free') {
+      savedScrollY.current = window.scrollY || document.documentElement.scrollTop;
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+      if (savedScrollY.current > 0) {
+        window.scrollTo({ top: savedScrollY.current, behavior: 'auto' });
+      }
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mode]);
+
+  // Native scroll listener: updates progress state immediately on window scroll (guided mode)
   useEffect(() => {
     const handleScroll = () => {
-      const raw = getRawScrollProgress();
-      useStore.getState().setProgress(raw);
+      if (useStore.getState().mode === 'guided') {
+        const raw = getRawScrollProgress();
+        useStore.getState().setProgress(raw);
+      }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     // Initial sync
@@ -42,13 +62,15 @@ export const HomePage: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Handle keyboard shortcuts (E to open OS when near computer)
+  // Handle keyboard shortcuts (Escape to close OS or exit Free Explore)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'e' || e.key === 'E') {
+      if (e.key === 'Escape') {
         const state = useStore.getState();
-        if (state.progress >= 0.85 && !state.osOpen) {
-          setOsOpen(true);
+        if (state.osOpen) {
+          setOsOpen(false);
+        } else if (state.mode === 'free') {
+          state.setMode('guided');
         }
       }
     };

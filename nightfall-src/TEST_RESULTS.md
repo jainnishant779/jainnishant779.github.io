@@ -233,4 +233,90 @@ Verified Phase 3 Deliverables:
 - Web Audio procedural sound synthesizer module with clunk at 0.15, hiss at 0.50, and HUD audio toggle button
 - Visual snapshots: `gate_phase3_closed.png` and `gate_phase3_opened.png`
 
+---
+
+## Phase 4 Test Run: 2026-10-18
+
+### 1. TypeScript Compilation (`npm run typecheck`)
+
+```text
+> nightfall@1.0.0 typecheck
+> tsc --noEmit
+```
+**Result:** Clean exit code 0. Zero errors.
+
+---
+
+### 2. Production Build (`npm run build`)
+
+```text
+> nightfall@1.0.0 prebuild
+> node scripts/scan-assets.mjs
+
+[scan-assets] Found 0 assets
+
+> nightfall@1.0.0 build
+> vite build && node scripts/make-route-pages.mjs
+
+vite v5.4.10 building for production...
+transforming...
+✓ 757 modules transformed.
+rendering chunks...
+computing gzip size...
+../nightfall/index.html                       2.25 kB │ gzip:   0.97 kB
+../nightfall/assets/index-CuE98Ibb.css       16.32 kB │ gzip:   3.64 kB
+../nightfall/assets/index-BkR1QkdI.js        63.31 kB │ gzip:  20.31 kB
+../nightfall/assets/HomePage-DWitMQ8p.js    117.05 kB │ gzip:  40.90 kB
+../nightfall/assets/three-CLm-eWLV.js     1,107.84 kB │ gzip: 308.34 kB
+✓ built in 13.77s
+[make-route-pages] Created 13 route pages + 404.html
+```
+**Result:** Clean exit code 0. Post-processing, simplex-noise displacement, and procedural PBR modules bundled cleanly.
+
+---
+
+### 3. Playwright End-to-End Suite (`npm run test`)
+
+```text
+> nightfall@1.0.0 test
+> playwright test
+
+Running 19 tests using 1 worker
+
+  ok 1 [chromium] › cv.spec.ts:4:3 › CV Download and Open Verification › CV link is present with target=_blank and triggers download event (1.2s)
+  ok 2 [chromium] › cv.spec.ts:24:3 › CV Download and Open Verification › Direct PDF file request returns 200 and valid file buffer (65ms)
+  ok 3 [chromium] › experience.spec.ts:6:3 › 3D Experience & Guided Camera Scroll Journey › Scroll drives camera, gate opens, captures screenshots, and opens workstation OS (1.5m)
+  ok 4 [chromium] › fallback.spec.ts:4:3 › WebGL Unsupported Fallback › Displays fallback UI and direct links when WebGL2 is disabled (666ms)
+  ok 5 [chromium] › gate.spec.ts:6:3 › Phase 3 — Gate Cinematic & Controls › Access facility button, audio toggle, skip intro, and forward/backward gate scrubbing (1.8m)
+  ok 6 [chromium] › mobile.spec.ts:6:3 › Mobile Viewport (375px) Testing › No horizontal scroll at 375px width on OS view (688ms)
+  ok 7 [chromium] › mobile.spec.ts:21:3 › Mobile Viewport (375px) Testing › Mobile navigation rail renders as bottom tab bar (677ms)
+  ok 8 [chromium] › mobile.spec.ts:35:3 › Mobile Viewport (375px) Testing › No horizontal scroll at 375px width on Home Page (454ms)
+  ok 9 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/" loads and displays "THE ENGINEER'S CAVE" (804ms)
+  ok 10 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/os" loads and displays "NJ-OS // COMMAND CENTER" (714ms)
+  ok 11 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/about" loads and displays "01 // IDENTITY DOSSIER" (724ms)
+  ok 12 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/projects" loads and displays "02 // PROJECT ARCHIVES" (718ms)
+  ok 13 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/projects/edgedesk" loads and displays "EdgeDesk: Secure Multi-Device Remote Access Platform" (735ms)
+  ok 14 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/projects/crowd-analytics" loads and displays "Real-Time Crowd Analytics & Stampede Detection" (727ms)
+  ok 15 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/experience" loads and displays "03 // EXPERIENCE LOG" (668ms)
+  ok 16 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/skills" loads and displays "04 // TECHNICAL CAPABILITIES" (684ms)
+  ok 17 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/achievements" loads and displays "05 // HONORS & CREDENTIALS" (651ms)
+  ok 18 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/contact" loads and displays "07 // TRANSMISSION PROTOCOL" (675ms)
+  ok 19 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/cv" loads and displays "06 // CURRICULUM VITAE" (721ms)
+
+  19 passed (3.6m)
+```
+**Result:** 19 passed, 0 failed.
+Verified Phase 4 Deliverables:
+- `lib/assets.ts` & `materials/procedural.ts`: `usePBR(name)` with automatic procedural canvas textures for rock, concrete, grating, and water. Box-projection UV mapping (`boxUV.ts`) applied at 0.25 repeat/m.
+- `Cavern.tsx`: Inverted sphere (160x96) displaced with 3-octave simplex noise (2.5m amplitude, 0.4m detail), flattened floor (y < -3), 50 instanced displaced icosahedron boulders, and 70 instanced ceiling stalactites away from walkways.
+- `Exterior.tsx`: Displaced cliff portal frame, wet ground with reflections, falling rain particle streaks scaled by tier (400 / 1200 / 2500), and FogExp2.
+- `Tunnel.tsx`: Concrete PBR walls, overhead industrial pipes, and caged emissive warm lamps every 5m.
+- `Walkways.tsx`: Grating deck with `alphaTest: 0.5`, structural steel I-beam columns descending into darkness, instanced baluster handrails, and stepped stair treads.
+- `Water.tsx`: Channel plane with animated scrolling normal map, waterfall column, and 200 animated spray mist particles.
+- `Atmosphere.tsx`: Additive volumetric light shaft cones under key lamps and drifting cavern dust motes.
+- `Lighting.tsx`: Physical decay 2, tuned spot and point intensities, and HDRI environment detection.
+- `PostFX.tsx`: Tier-gated Bloom and Vignette via `@react-three/postprocessing`.
+- `LoadingScreen.tsx`: Drei `useProgress` integration with amber progress line and percentage counter.
+
+
 

@@ -9,8 +9,10 @@ import { Tunnel } from './environment/Tunnel';
 import { Cavern } from './environment/Cavern';
 import { Walkways } from './environment/Walkways';
 import { Water } from './environment/Water';
+import { Atmosphere } from './environment/Atmosphere';
 import { Batcomputer } from './objects/Batcomputer';
 import { SuitDisplay } from './objects/SuitDisplay';
+import { PostFX } from './PostFX';
 
 export const Experience: React.FC = () => {
   const setTier = useStore((state) => state.setTier);
@@ -40,7 +42,11 @@ export const Experience: React.FC = () => {
         <Water />
         <SuitDisplay />
         <Batcomputer />
+        <Atmosphere />
       </group>
+
+      {/* Tier-Gated Post Processing */}
+      <PostFX />
     </Suspense>
   );
 };

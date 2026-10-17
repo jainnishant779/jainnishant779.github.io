@@ -60,6 +60,11 @@ export function getInitialTier(): QualityTier {
     return 'medium';
   }
 
+  // Playwright / CI automated test runner: use balanced medium tier
+  if (navigator.webdriver) {
+    return 'medium';
+  }
+
   // Detect mobile user agent
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
     navigator.userAgent

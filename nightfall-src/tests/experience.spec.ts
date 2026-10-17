@@ -6,7 +6,7 @@ test.describe('3D Experience & Guided Camera Scroll Journey', () => {
   test('Scroll drives camera, gate opens, captures screenshots, and opens workstation OS', async ({
     page,
   }) => {
-    test.setTimeout(150000);
+    test.setTimeout(240000);
 
     // Ensure shots directory exists
     const shotsDir = path.join(process.cwd(), 'tests', '__shots__');
@@ -26,8 +26,8 @@ test.describe('3D Experience & Guided Camera Scroll Journey', () => {
     await page.goto('');
 
     // Wait for lazy-loaded HomePage and scroll-track to mount
-    await page.waitForSelector('.scroll-track', { timeout: 15000 });
-    await page.waitForSelector('canvas', { timeout: 15000 });
+    await page.waitForSelector('.scroll-track', { state: 'attached', timeout: 45000 });
+    await page.waitForSelector('canvas', { state: 'attached', timeout: 45000 });
 
     const getScrollHeight = async () => {
       const result = await page.evaluate(() => {

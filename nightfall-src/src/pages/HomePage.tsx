@@ -11,6 +11,7 @@ import { getCVUrl } from '../lib/assets';
 import { getRawScrollProgress } from '../lib/scrollProgress';
 import { prefersReducedMotion } from '../lib/reducedMotion';
 import { sound } from '../lib/sound';
+import { LoadingScreen } from '../ui/LoadingScreen';
 
 export const HomePage: React.FC = () => {
   const [webglSupported, setWebglSupported] = useState<boolean>(true);
@@ -238,6 +239,9 @@ export const HomePage: React.FC = () => {
         onSkipIntro={handleSkipIntro}
         onAccessFacility={handleAccessFacility}
       />
+
+      {/* 3D Asset Loading Indicator */}
+      <LoadingScreen />
 
       {/* Reduced-motion transition fade overlay */}
       {fadeScreen && (

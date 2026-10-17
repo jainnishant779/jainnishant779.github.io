@@ -6,6 +6,8 @@ export interface AppState {
   // Scene state
   mode: AppMode;
   setMode: (mode: AppMode) => void;
+  previousMode: AppMode;
+  setPreviousMode: (mode: AppMode) => void;
 
   // Scroll progress (0..1)
   progress: number;
@@ -39,6 +41,8 @@ export interface AppState {
 export const useStore = create<AppState>((set) => ({
   mode: 'guided',
   setMode: (mode) => set({ mode }),
+  previousMode: 'guided',
+  setPreviousMode: (previousMode) => set({ previousMode }),
 
   progress: 0,
   setProgress: (progress) => set({ progress }),

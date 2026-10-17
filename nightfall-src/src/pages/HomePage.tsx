@@ -31,16 +31,19 @@ export const HomePage: React.FC = () => {
     }
   }, [setTier]);
 
-  // Lock window scroll and manage scroll restoration when in free explore mode
+  // Lock window scroll and manage scroll restoration when in free explore or suit-inspect mode
   const savedScrollY = useRef<number>(0);
   useEffect(() => {
-    if (mode === 'free') {
-      savedScrollY.current = window.scrollY || document.documentElement.scrollTop;
+    if (mode === 'free' || mode === 'suit-inspect') {
+      if (savedScrollY.current === 0) {
+        savedScrollY.current = window.scrollY || document.documentElement.scrollTop;
+      }
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
       if (savedScrollY.current > 0) {
         window.scrollTo({ top: savedScrollY.current, behavior: 'auto' });
+        savedScrollY.current = 0;
       }
     }
     return () => {
@@ -62,13 +65,15 @@ export const HomePage: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Handle keyboard shortcuts (Escape to close OS or exit Free Explore)
+  // Handle keyboard shortcuts (Escape to close OS, exit Suit Inspect, or exit Free Explore)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         const state = useStore.getState();
         if (state.osOpen) {
           setOsOpen(false);
+        } else if (state.mode === 'suit-inspect') {
+          state.setMode(state.previousMode || 'guided');
         } else if (state.mode === 'free') {
           state.setMode('guided');
         }

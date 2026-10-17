@@ -4,6 +4,7 @@ import { Physics } from '@react-three/rapier';
 import { useStore } from '../state/store';
 import { GuidedCamera } from './controls/GuidedCamera';
 import { FreeExplore } from './controls/FreeExplore';
+import { SuitOrbitCamera } from './controls/SuitOrbitCamera';
 import { Colliders } from './Colliders';
 import { Interactions } from './Interactions';
 import { Lighting } from './Lighting';
@@ -34,7 +35,13 @@ export const Experience: React.FC = () => {
       {/* Physics Simulation World & Invisible Boundary Colliders */}
       <Physics gravity={[0, -9.8, 0]}>
         <Colliders />
-        {mode === 'free' ? <FreeExplore /> : <GuidedCamera />}
+        {mode === 'free' ? (
+          <FreeExplore />
+        ) : mode === 'suit-inspect' ? (
+          <SuitOrbitCamera />
+        ) : (
+          <GuidedCamera />
+        )}
       </Physics>
 
       {/* Interactive World Proximity & Hotspots */}

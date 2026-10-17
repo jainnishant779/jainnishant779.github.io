@@ -57,9 +57,12 @@ export const Interactions: React.FC = () => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'e' || e.key === 'E') {
-        const current = useStore.getState().activeInteraction;
-        if (current === 'workstation') {
+        const state = useStore.getState();
+        if (state.activeInteraction === 'workstation' && !state.osOpen) {
           setOsOpen(true);
+        } else if (state.activeInteraction === 'suit' && state.mode !== 'suit-inspect') {
+          state.setPreviousMode(state.mode);
+          state.setMode('suit-inspect');
         }
       }
     };
@@ -96,23 +99,29 @@ export const Interactions: React.FC = () => {
       {/* 2. Tactical Suit 3D Clickable Hotspot */}
       {activeInteraction === 'suit' && (
         <Html position={[-16, 2.2, -42]} center distanceFactor={14}>
-          <div
+          <button
+            onClick={() => {
+              const state = useStore.getState();
+              state.setPreviousMode(state.mode);
+              state.setMode('suit-inspect');
+            }}
             aria-label="Inspect Tactical Suit Pod"
             style={{
-              background: 'rgba(7, 8, 10, 0.88)',
-              border: '1px solid #7fb38a',
+              background: 'rgba(7, 8, 10, 0.92)',
+              border: '2px solid #7fb38a',
               color: '#7fb38a',
               fontFamily: "'JetBrains Mono', monospace",
               fontSize: '0.78rem',
-              fontWeight: 600,
-              padding: '0.4rem 0.85rem',
-              borderRadius: '3px',
-              boxShadow: '0 0 14px rgba(127, 179, 138, 0.35)',
+              fontWeight: 700,
+              padding: '0.45rem 0.95rem',
+              borderRadius: '4px',
+              boxShadow: '0 0 16px rgba(127, 179, 138, 0.4)',
               whiteSpace: 'nowrap',
+              cursor: 'pointer',
             }}
           >
-            TACTICAL SUIT // WARDEN ARMOR
-          </div>
+            [E] INSPECT SUIT →
+          </button>
         </Html>
       )}
     </group>

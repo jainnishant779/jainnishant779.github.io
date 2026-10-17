@@ -485,6 +485,86 @@ Verified Phase 6 Deliverables:
 - `GuidedCamera.tsx`: Smooth cinematic camera screen zoom dolly transition into `SCREEN_CAMERA_POSE: (0, 2.55, -64.1)` when opening NJ-OS, and smooth dolly back out when closing.
 - `FreeExplore.tsx`: Locomotion locking and screen focus transition when OS is open in free explore mode.
 - `tests/workstation.spec.ts`: Dedicated end-to-end test verifying monitor rendering, screen clicking/hotspot access, screen zoom dolly, and Escape key restoration.
+---
 
+## Phase 7 Test Run: 2026-10-18
 
+### 1. TypeScript Compilation (`npm run typecheck`)
 
+```text
+> nightfall@1.0.0 typecheck
+> tsc --noEmit
+```
+**Result:** Clean exit code 0. Zero errors.
+
+---
+
+### 2. Production Build (`npm run build`)
+
+```text
+> nightfall@1.0.0 prebuild
+> node scripts/scan-assets.mjs
+
+[scan-assets] Found 0 assets
+
+> nightfall@1.0.0 build
+> vite build && node scripts/make-route-pages.mjs
+
+vite v5.4.10 building for production...
+transforming...
+✓ 1645 modules transformed.
+rendering chunks...
+computing gzip size...
+../nightfall/index.html                       2.25 kB │ gzip:     0.97 kB
+../nightfall/assets/index-CuE98Ibb.css       16.32 kB │ gzip:     3.64 kB
+../nightfall/assets/index-BHBRnTQJ.js        63.37 kB │ gzip:    20.32 kB
+../nightfall/assets/HomePage-BF4k2tyL.js    153.83 kB │ gzip:    49.56 kB
+../nightfall/assets/three-BYWb07s-.js     3,229.47 kB │ gzip: 1,086.04 kB
+✓ built in 16.14s
+[make-route-pages] Created 13 route pages + 404.html
+```
+**Result:** Clean exit code 0. SuitOrbitCamera, Warden Exoskeleton MK-IV 3D pod, and SuitHudCard bundled cleanly into production.
+
+---
+
+### 3. Playwright End-to-End Suite (`npm run test`)
+
+```text
+> nightfall@1.0.0 test
+> playwright test
+
+Running 22 tests using 1 worker
+
+  ok 1 [chromium] › cv.spec.ts:4:3 › CV Download and Open Verification › CV link is present with target=_blank and triggers download event (1.2s)
+  ok 2 [chromium] › cv.spec.ts:24:3 › CV Download and Open Verification › Direct PDF file request returns 200 and valid file buffer (74ms)
+  ok 3 [chromium] › experience.spec.ts:6:3 › 3D Experience & Guided Camera Scroll Journey › Scroll drives camera, gate opens, captures screenshots, and opens workstation OS (1.5m)
+  ok 4 [chromium] › fallback.spec.ts:4:3 › WebGL Unsupported Fallback › Displays fallback UI and direct links when WebGL2 is disabled (1.1s)
+  ok 5 [chromium] › free-explore.spec.ts:6:3 › Phase 5 — Free Explore Mode, Rapier Physics, & World Colliders › Mode toggle, WASD locomotion, collider bounds, stair autostep, and workstation interaction (1.2m)
+  ok 6 [chromium] › gate.spec.ts:6:3 › Phase 3 — Gate Cinematic & Controls › Access facility button, audio toggle, skip intro, and forward/backward gate scrubbing (1.6m)
+  ok 7 [chromium] › mobile.spec.ts:6:3 › Mobile Viewport (375px) Testing › No horizontal scroll at 375px width on OS view (1.2s)
+  ok 8 [chromium] › mobile.spec.ts:21:3 › Mobile Viewport (375px) Testing › Mobile navigation rail renders as bottom tab bar (646ms)
+  ok 9 [chromium] › mobile.spec.ts:35:3 › Mobile Viewport (375px) Testing › No horizontal scroll at 375px width on Home Page (511ms)
+  ok 10 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/" loads and displays "THE ENGINEER'S CAVE" (1.2s)
+  ok 11 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/os" loads and displays "NJ-OS // COMMAND CENTER" (684ms)
+  ok 12 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/about" loads and displays "01 // IDENTITY DOSSIER" (758ms)
+  ok 13 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/projects" loads and displays "02 // PROJECT ARCHIVES" (744ms)
+  ok 14 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/projects/edgedesk" loads and displays "EdgeDesk: Secure Multi-Device Remote Access Platform" (840ms)
+  ok 15 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/projects/crowd-analytics" loads and displays "Real-Time Crowd Analytics & Stampede Detection" (771ms)
+  ok 16 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/experience" loads and displays "03 // EXPERIENCE LOG" (768ms)
+  ok 17 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/skills" loads and displays "04 // TECHNICAL CAPABILITIES" (714ms)
+  ok 18 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/achievements" loads and displays "05 // HONORS & CREDENTIALS" (769ms)
+  ok 19 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/contact" loads and displays "07 // TRANSMISSION PROTOCOL" (686ms)
+  ok 20 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/cv" loads and displays "06 // CURRICULUM VITAE" (923ms)
+  ok 21 [chromium] › suit-inspect.spec.ts:6:3 › Phase 7 — Armored Tactical Suit Pod & Orbit Inspection › suit pod display renders, proximity CTA triggers orbit inspection, HUD card displays tactical specs, and ESC restores mode (1.3m)
+  ok 22 [chromium] › workstation.spec.ts:6:3 › Phase 6 — Batcomputer Workstation, 5-Monitor Arc, & Screen Zoom Dolly › 5-monitor arc renders live canvas telemetry, clicking screen launches OS, and camera dollys into screen (1.4m)
+
+  22 passed (7.3m)
+```
+**Result:** 22 passed, 0 failed.
+Verified Phase 7 Deliverables:
+- `SuitDisplay.tsx`: High-detail Warden Exoskeleton MK-IV model situated on the West Platform `(-16, -1, -42)` facing +X toward the walkway. Heavy steel plinth with beveled rim, illuminated cyan uplight base ring (`#48cae4`), four vertical support posts, top cap with downlight emitter, articulated pectoral armor plates, pulsating arc reactor chest core, spinal vertebrae, tactical helmet with glowing cyan visor slit, hydraulic pistons, forearm gauntlet wrist terminal, and protective safety glass case.
+- `SuitOrbitCamera.tsx`: `@react-three/drei` OrbitControls camera rig constrained strictly to `SUIT_ORBIT` parameters (`target: (-16, 0.6, -42)`, `minDistance: 3.2`, `maxDistance: 5.0`, `minPolarAngle: 60°`, `maxPolarAngle: 95°`, damping enabled).
+- `SuitHudCard.tsx`: Tactical telemetry glassmorphic HUD card displaying authentic engineering specs (Titanium-Carbon Fiber chassis, NVIDIA Jetson Core CUDA, 48V Li-Ion + Supercap power, Stereo Vision & Thermal IR sensors, YOLO real-time AI pipeline, LoRa Mesh + TLS telemetry) with interactive "EXIT INSPECTION [ESC] ✕" button.
+- `store.ts` & `HomePage.tsx`: Added `previousMode` tracking, scroll-locking and preservation during inspection, and keyboard shortcut handler allowing `Escape` to cleanly exit inspection back to either Guided Mode or Free Explore mode.
+- `Interactions.tsx`: Proximity calculation in both Guided Mode (`progress: 0.65..0.76`) and Free Explore mode (`distSuit <= 3.0m`), 3D world interactive hotspot button `[E] INSPECT SUIT →`, and HUD CTA trigger `[E] INSPECT TACTICAL SUIT POD →`.
+- `tests/suit-inspect.spec.ts`: End-to-end verification of suit display case, proximity CTA button, orbit camera interaction, HUD card specs verification, exit button, keyboard `E` and `Escape` triggers in both Guided and Free Explore modes.

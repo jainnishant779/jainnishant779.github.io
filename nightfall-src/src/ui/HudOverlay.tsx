@@ -6,6 +6,7 @@ import { getCVUrl } from '../lib/assets';
 import { isMobileDevice } from '../lib/quality';
 import { sound } from '../lib/sound';
 import { SkipButton } from './SkipButton';
+import { SuitHudCard } from './SuitHudCard';
 
 interface HudOverlayProps {
   onOpenOS: () => void;
@@ -20,6 +21,7 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({
 }) => {
   const mode = useStore((state) => state.mode);
   const setMode = useStore((state) => state.setMode);
+  const setPreviousMode = useStore((state) => state.setPreviousMode);
   const progress = useStore((state) => state.progress);
   const activeInteraction = useStore((state) => state.activeInteraction);
   const audioEnabled = useStore((state) => state.audioEnabled);
@@ -279,69 +281,83 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({
           </button>
         )}
 
-        {isNearSuit && (
-          <div
+        {isNearSuit && mode !== 'suit-inspect' && (
+          <button
+            onClick={() => {
+              setPreviousMode(mode);
+              setMode('suit-inspect');
+            }}
+            className="inspect-suit-btn"
             style={{
-              background: 'rgba(7, 8, 10, 0.88)',
-              border: '1px solid #7fb38a',
+              background: 'rgba(7, 8, 10, 0.92)',
+              border: '2px solid #7fb38a',
               color: '#7fb38a',
               fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '0.85rem',
-              padding: '0.55rem 1.25rem',
-              borderRadius: '3px',
+              fontSize: '0.95rem',
+              fontWeight: 700,
+              padding: '0.85rem 2rem',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              boxShadow: '0 0 25px rgba(127, 179, 138, 0.35)',
+              animation: 'pulse 2s infinite',
             }}
           >
-            INSPECTING TACTICAL ARMOR POD
-          </div>
+            [E] INSPECT TACTICAL SUIT POD →
+          </button>
         )}
       </div>
 
-      {/* Bottom HUD Bar & Progress */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0.5rem',
-          pointerEvents: 'auto',
-        }}
-      >
+      {/* Suit Inspection Floating HUD Telemetry Card */}
+      {mode === 'suit-inspect' && <SuitHudCard />}
+
+      {/* Bottom HUD Bar & Progress (hidden in suit inspection mode) */}
+      {mode !== 'suit-inspect' && (
         <div
           style={{
             display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: '0.72rem',
-            color: '#9e9a8e',
-          }}
-        >
-          <span>{mode === 'free' ? 'FREE EXPLORE MODE // MANUAL LOCOMOTION ACTIVE' : activeHint}</span>
-          <span style={{ color: '#e8a23a' }}>
-            {mode === 'free' ? 'CAVERN INTERIOR' : `${Math.round(progress * 100)}% FACILITY DEPTH`}
-          </span>
-        </div>
-
-        {/* Thin amber progress line */}
-        <div
-          style={{
-            width: '100%',
-            height: '2px',
-            background: 'rgba(30, 34, 40, 0.8)',
-            position: 'relative',
-            borderRadius: '1px',
-            overflow: 'hidden',
+            flexDirection: 'column',
+            gap: '0.5rem',
+            pointerEvents: 'auto',
           }}
         >
           <div
             style={{
-              width: `${mode === 'free' ? 100 : Math.round(progress * 100)}%`,
-              height: '100%',
-              background: '#e8a23a',
-              transition: 'width 0.1s linear',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: '0.72rem',
+              color: '#9e9a8e',
             }}
-          />
+          >
+            <span>{mode === 'free' ? 'FREE EXPLORE MODE // MANUAL LOCOMOTION ACTIVE' : activeHint}</span>
+            <span style={{ color: '#e8a23a' }}>
+              {mode === 'free' ? 'CAVERN INTERIOR' : `${Math.round(progress * 100)}% FACILITY DEPTH`}
+            </span>
+          </div>
+
+          {/* Thin amber progress line */}
+          <div
+            style={{
+              width: '100%',
+              height: '2px',
+              background: 'rgba(30, 34, 40, 0.8)',
+              position: 'relative',
+              borderRadius: '1px',
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              style={{
+                width: `${mode === 'free' ? 100 : Math.round(progress * 100)}%`,
+                height: '100%',
+                background: '#e8a23a',
+                transition: 'width 0.1s linear',
+              }}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Skip button for intro phase (guided mode only) */}
       {mode === 'guided' && progress < 0.45 && <SkipButton onSkip={onSkipIntro} />}

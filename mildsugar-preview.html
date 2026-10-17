@@ -317,7 +317,7 @@
   <!-- =====================================================================
        3. SITE HEADER (Mild Sugar Japanese Layout)
        ===================================================================== -->
-  <header class="fixed top-0 left-0 right-0 z-40 px-6 sm:px-12 py-6 flex items-start justify-between pointer-events-none">
+  <header id="main-header" class="fixed top-0 left-0 right-0 z-40 px-6 sm:px-12 py-5 flex items-start justify-between transition-all duration-300">
     <!-- Left Logo & Specializations -->
     <div class="pointer-events-auto">
       <a href="#home" class="font-display text-xl sm:text-2xl text-sugar-dark dark:text-sugar-nightText tracking-tight block hover:text-sugar-orange transition-colors">
@@ -1121,6 +1121,19 @@
         showSpeech('“Good day! Ready to deploy edge computer vision!”');
       }
     }
+
+    /* Header Scroll Backdrop */
+    window.addEventListener('scroll', () => {
+      const header = document.getElementById('main-header');
+      if (!header) return;
+      if (window.scrollY > 30) {
+        header.classList.add('bg-sugar-cream/90', 'dark:bg-sugar-nightBg/90', 'backdrop-blur-md', 'border-b', 'border-sugar-border/60', 'dark:border-sugar-nightBorder/60', 'shadow-sm', 'py-3.5');
+        header.classList.remove('py-5');
+      } else {
+        header.classList.remove('bg-sugar-cream/90', 'dark:bg-sugar-nightBg/90', 'backdrop-blur-md', 'border-b', 'border-sugar-border/60', 'dark:border-sugar-nightBorder/60', 'shadow-sm', 'py-3.5');
+        header.classList.add('py-5');
+      }
+    });
 
     /* =========================================================================
        MENU DRAWER (3-Dots to X)

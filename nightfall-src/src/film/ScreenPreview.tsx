@@ -2,11 +2,13 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { getQuadMatrix3d, getCoverQuadInViewport, type Quad } from './quad';
 import { prefersReducedMotion } from '../lib/reducedMotion';
 import { sound } from '../lib/sound';
+import { projects } from '../content/projects';
+import { getCVUrl } from '../lib/assets';
 import type { OSModuleId } from '../os/OSShell';
 
 interface TacticalMonitor {
   id: string;
-  slug?: string;
+  slug: string;
   module: OSModuleId;
   name: string;
   category: string;
@@ -43,26 +45,6 @@ const TACTICAL_MONITORS: TacticalMonitor[] = [
     subtitle: 'Encrypted multi-node VPN remote desktop & custom WebSocket broker managing Jetson fleet.',
     tech: ['Python', 'WebSocket', 'VNC', 'Jetson Nano', 'TLS/WSS'],
     bounds: { x: 0.00, y: 0.46, w: 0.16, h: 0.36 },
-  },
-  {
-    id: 'master-terminal',
-    module: 'identity',
-    name: 'NISHANT JAIN // PRIMARY COMMAND TERMINAL',
-    category: 'MASTER CONSOLE',
-    badge: 'AI/ML · COMPUTER VISION · EDGE AI · IOT',
-    subtitle: 'Production-grade Computer Vision and Edge AI systems with Python, YOLO, AWS, and NVIDIA Jetson.',
-    tech: ['Python', 'YOLOv8', 'OpenCV', 'AWS EC2', 'NVIDIA Jetson'],
-    bounds: { x: 0.28, y: 0.65, w: 0.21, h: 0.10 },
-  },
-  {
-    id: 'dossier-intro',
-    module: 'dossier',
-    name: 'VERIFIED CREDENTIALS // DOSSIER & CV',
-    category: 'VERIFIED CREDENTIALS',
-    badge: 'B.TECH + M.TECH IOT // DAVV',
-    subtitle: 'Comprehensive engineering dossier, verified work history, patent applications, and certifications.',
-    tech: ['DAVV', 'Cognicity', 'Synquic Labs', 'AWS', 'CUDA'],
-    bounds: { x: 0.51, y: 0.65, w: 0.21, h: 0.10 },
   },
   {
     id: 'facial-attendance',
@@ -119,7 +101,9 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
     h: typeof window !== 'undefined' ? window.innerHeight : 900,
   });
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [selectedProjectSlug, setSelectedProjectSlug] = useState<string | null>(null);
   const [isZooming, setIsZooming] = useState(false);
+  const cvUrl = getCVUrl();
 
   // Resize listener
   useEffect(() => {
@@ -154,41 +138,93 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
     return getQuadMatrix3d(srcW, srcH, quadInViewport);
   }, [rawQuad, nativeWidth, nativeHeight, viewport]);
 
-  // Handle click on any monitor
-  const handleSelectMonitor = useCallback(
-    (monitor: TacticalMonitor) => {
+  // Currently active project details
+  const activeProject = useMemo(() => {
+    if (!selectedProjectSlug) return null;
+    return projects.find((p) => p.slug === selectedProjectSlug) || null;
+  }, [selectedProjectSlug]);
+
+  const activeMonitor = useMemo(() => {
+    if (!selectedProjectSlug) return null;
+    return TACTICAL_MONITORS.find((m) => m.slug === selectedProjectSlug) || null;
+  }, [selectedProjectSlug]);
+
+  // Cycle to next / prev project
+  const handleCycleProject = useCallback((direction: number) => {
+    sound.playAccessBeep();
+    const slugs = TACTICAL_MONITORS.map((m) => m.slug);
+    setSelectedProjectSlug((current) => {
+      if (!current) return slugs[0];
+      const idx = slugs.indexOf(current);
+      const nextIdx = (idx + direction + slugs.length) % slugs.length;
+      return slugs[nextIdx];
+    });
+  }, []);
+
+  // Handle select monitor in-place (keeps user in the cavern scene!)
+  const handleSelectMonitorInPlace = useCallback((monitor: TacticalMonitor) => {
+    sound.playAccessBeep();
+    setSelectedProjectSlug((prev) => (prev === monitor.slug ? null : monitor.slug));
+  }, []);
+
+  // Handle launching full OS shell
+  const handleTriggerEnterOS = useCallback(
+    (module?: OSModuleId, slug?: string) => {
       if (isZooming) return;
       sound.initContext();
       sound.playBootHum();
 
       if (prefersReducedMotion()) {
-        onOpenOS(monitor.module, monitor.slug);
+        onOpenOS(module, slug);
         return;
       }
 
       setIsZooming(true);
       setTimeout(() => {
-        onOpenOS(monitor.module, monitor.slug);
+        onOpenOS(module, slug);
         setIsZooming(false);
       }, 750);
     },
     [isZooming, onOpenOS]
   );
 
-  // Keyboard shortcut: Pressing Enter or Space triggers main terminal
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (visible && (e.key === 'Enter' || e.key === ' ')) {
+      if (!visible) return;
+      if (e.key === 'Escape') {
+        if (selectedProjectSlug) {
+          e.preventDefault();
+          setSelectedProjectSlug(null);
+        }
+      } else if (e.key === 'ArrowRight') {
+        if (selectedProjectSlug) {
+          e.preventDefault();
+          handleCycleProject(1);
+        }
+      } else if (e.key === 'ArrowLeft') {
+        if (selectedProjectSlug) {
+          e.preventDefault();
+          handleCycleProject(-1);
+        }
+      } else if (e.key === 'Enter' && !selectedProjectSlug) {
         e.preventDefault();
-        const main = TACTICAL_MONITORS.find((m) => m.id === 'master-terminal');
-        if (main) handleSelectMonitor(main);
+        handleTriggerEnterOS('identity');
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [visible, handleSelectMonitor]);
+  }, [visible, selectedProjectSlug, handleCycleProject, handleTriggerEnterOS]);
 
   if (!visible && !isZooming) return null;
+
+  // Center monitor bounding box (in pixels)
+  const centerScreenRect = {
+    x: coverMetrics.offsetX + 0.17 * coverMetrics.drawW,
+    y: coverMetrics.offsetY + 0.10 * coverMetrics.drawH,
+    w: 0.66 * coverMetrics.drawW,
+    h: 0.72 * coverMetrics.drawH,
+  };
 
   return (
     <>
@@ -225,19 +261,21 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
           <span>NJ-OS</span>
         </div>
 
-        {/* 7 Tactical Screen Touch & Click Targets */}
+        {/* =========================================================
+            SIDE MONITORS: Clicking loads project intel IN-PLACE!
+            ========================================================= */}
         {TACTICAL_MONITORS.map((mon) => {
           const x = coverMetrics.offsetX + mon.bounds.x * coverMetrics.drawW;
           const y = coverMetrics.offsetY + mon.bounds.y * coverMetrics.drawH;
           const w = mon.bounds.w * coverMetrics.drawW;
           const h = mon.bounds.h * coverMetrics.drawH;
           const isHovered = hoveredId === mon.id;
-          const isCenterAction = mon.id === 'master-terminal' || mon.id === 'dossier-intro';
+          const isSelected = selectedProjectSlug === mon.slug;
 
           return (
             <div
               key={mon.id}
-              onClick={() => handleSelectMonitor(mon)}
+              onClick={() => handleSelectMonitorInPlace(mon)}
               onMouseEnter={() => {
                 setHoveredId(mon.id);
                 sound.playAccessBeep();
@@ -245,7 +283,7 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
               onMouseLeave={() => setHoveredId(null)}
               role="button"
               tabIndex={0}
-              aria-label={`Inspect ${mon.name}`}
+              aria-label={`Inspect ${mon.name} on main screen`}
               style={{
                 position: 'absolute',
                 left: `${x}px`,
@@ -253,39 +291,40 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
                 width: `${w}px`,
                 height: `${h}px`,
                 cursor: 'pointer',
-                borderRadius: isCenterAction ? '28px' : '4px',
-                border: isHovered
+                borderRadius: '4px',
+                border: isSelected
                   ? '2px solid #00e5ff'
-                  : isCenterAction
-                  ? '1px solid rgba(232, 162, 58, 0.4)'
+                  : isHovered
+                  ? '2px solid rgba(0, 229, 255, 0.8)'
                   : '1px solid rgba(0, 229, 255, 0.2)',
-                boxShadow: isHovered
-                  ? '0 0 25px rgba(0, 229, 255, 0.5), inset 0 0 30px rgba(0, 229, 255, 0.15)'
-                  : isCenterAction
-                  ? '0 0 15px rgba(232, 162, 58, 0.2)'
+                boxShadow: isSelected
+                  ? '0 0 35px rgba(0, 229, 255, 0.7), inset 0 0 30px rgba(0, 229, 255, 0.25)'
+                  : isHovered
+                  ? '0 0 25px rgba(0, 229, 255, 0.5), inset 0 0 20px rgba(0, 229, 255, 0.15)'
                   : 'none',
-                backgroundColor: isHovered
+                backgroundColor: isSelected
+                  ? 'rgba(0, 229, 255, 0.12)'
+                  : isHovered
                   ? 'rgba(0, 229, 255, 0.08)'
-                  : isCenterAction
-                  ? 'rgba(7, 10, 14, 0.35)'
                   : 'transparent',
                 transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
+                justifyContent: 'flex-start',
+                alignItems: 'flex-start',
+                padding: '0.5rem',
                 boxSizing: 'border-box',
-                backdropFilter: isHovered ? 'blur(2px)' : 'none',
+                backdropFilter: isHovered || isSelected ? 'blur(2px)' : 'none',
               }}
             >
-              {/* Tactical Corner Targeting Reticles on Hover (for monitors) */}
-              {isHovered && !isCenterAction && (
+              {/* Tactical Corner Targeting Reticles */}
+              {(isHovered || isSelected) && (
                 <>
                   <div
                     style={{
                       position: 'absolute',
-                      top: 4,
-                      left: 4,
+                      top: 3,
+                      left: 3,
                       width: 14,
                       height: 14,
                       borderTop: '2px solid #00e5ff',
@@ -295,8 +334,8 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
                   <div
                     style={{
                       position: 'absolute',
-                      top: 4,
-                      right: 4,
+                      top: 3,
+                      right: 3,
                       width: 14,
                       height: 14,
                       borderTop: '2px solid #00e5ff',
@@ -306,8 +345,8 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
                   <div
                     style={{
                       position: 'absolute',
-                      bottom: 4,
-                      left: 4,
+                      bottom: 3,
+                      left: 3,
                       width: 14,
                       height: 14,
                       borderBottom: '2px solid #00e5ff',
@@ -317,8 +356,8 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
                   <div
                     style={{
                       position: 'absolute',
-                      bottom: 4,
-                      right: 4,
+                      bottom: 3,
+                      right: 3,
                       width: 14,
                       height: 14,
                       borderBottom: '2px solid #00e5ff',
@@ -328,12 +367,28 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
                 </>
               )}
 
+              {/* Status Tag on Monitor */}
+              <div
+                style={{
+                  backgroundColor: isSelected ? '#00e5ff' : 'rgba(7, 10, 14, 0.85)',
+                  color: isSelected ? '#07080a' : '#00e5ff',
+                  border: '1px solid #00e5ff',
+                  borderRadius: '2px',
+                  padding: '0.15rem 0.4rem',
+                  fontSize: '0.62rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.04em',
+                }}
+              >
+                {isSelected ? '● ACTIVE FEED' : isHovered ? 'CLICK TO LOAD' : 'LIVE'}
+              </div>
+
               {/* Floating Tactical HUD Pill on Hover */}
-              {isHovered && (
+              {isHovered && !isSelected && (
                 <div
                   style={{
                     position: 'absolute',
-                    top: isCenterAction ? '-38px' : '8px',
+                    top: '-32px',
                     left: '50%',
                     transform: 'translateX(-50%)',
                     backgroundColor: 'rgba(7, 10, 14, 0.95)',
@@ -350,38 +405,126 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
                     letterSpacing: '0.04em',
                   }}
                 >
-                  <span style={{ color: '#7fb38a', marginRight: '6px' }}>● ACTIVE</span>
+                  <span style={{ color: '#7fb38a', marginRight: '6px' }}>●</span>
                   <span>{mon.badge}</span>
-                  <span style={{ color: '#e8a23a', marginLeft: '6px' }}>[CLICK TO INSPECT ↵]</span>
+                  <span style={{ color: '#e8a23a', marginLeft: '6px' }}>[CLICK TO LOAD IN-PLACE]</span>
                 </div>
               )}
+            </div>
+          );
+        })}
 
-              {/* Interactive Buttons for Center Console Actions */}
-              {mon.id === 'master-terminal' && (
+        {/* =========================================================
+            CENTER MAIN MONITOR: In-Place Interactive Display
+            ========================================================= */}
+        <div
+          style={{
+            position: 'absolute',
+            left: `${centerScreenRect.x}px`,
+            top: `${centerScreenRect.y}px`,
+            width: `${centerScreenRect.w}px`,
+            height: `${centerScreenRect.h}px`,
+            pointerEvents: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            boxSizing: 'border-box',
+            padding: '1.2rem',
+          }}
+        >
+          {/* STATE A: NO PROJECT SELECTED -> Master Controls on Screen */}
+          {!activeProject ? (
+            <div
+              style={{
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              {/* Subtle top HUD status banner */}
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '0.3rem 0.75rem',
+                  backgroundColor: 'rgba(7, 10, 14, 0.55)',
+                  border: '1px solid rgba(0, 229, 255, 0.25)',
+                  borderRadius: '3px',
+                  fontSize: '0.70rem',
+                  color: '#9e9a8e',
+                  backdropFilter: 'blur(2px)',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span
+                    style={{
+                      width: '7px',
+                      height: '7px',
+                      borderRadius: '50%',
+                      backgroundColor: '#7fb38a',
+                      boxShadow: '0 0 8px #7fb38a',
+                    }}
+                  />
+                  <span style={{ color: '#00e5ff', fontWeight: 700 }}>
+                    PRIMARY COMMAND TERMINAL // 5 FEEDS SYNCHRONIZED
+                  </span>
+                </div>
+                <div>CLICK ANY MONITOR (LEFT OR RIGHT) TO LOAD PROJECT INTEL</div>
+              </div>
+
+              {/* Center Hint Prompt */}
+              <div
+                style={{
+                  alignSelf: 'center',
+                  backgroundColor: 'rgba(7, 10, 14, 0.75)',
+                  border: '1px solid rgba(232, 162, 58, 0.4)',
+                  padding: '0.5rem 1.25rem',
+                  borderRadius: '24px',
+                  boxShadow: '0 0 20px rgba(0, 0, 0, 0.8)',
+                  backdropFilter: 'blur(4px)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                }}
+              >
+                <span style={{ color: '#00e5ff', fontSize: '0.8rem' }}>◄</span>
+                <span style={{ fontSize: '0.76rem', color: '#e6e2d8', letterSpacing: '0.05em' }}>
+                  SELECT ANY SIDE MONITOR TO LOAD LIVE PROJECT INTEL IN-PLACE
+                </span>
+                <span style={{ color: '#00e5ff', fontSize: '0.8rem' }}>►</span>
+              </div>
+
+              {/* Bottom Interactive Action Buttons (mapped over the screen buttons) */}
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  gap: '1.5rem',
+                  marginBottom: '1rem',
+                }}
+              >
+                {/* Left Button: Enter NJ-OS */}
                 <button
                   type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleSelectMonitor(mon);
-                  }}
+                  onClick={() => handleTriggerEnterOS('identity')}
                   className="workstation-access-btn"
                   style={{
-                    width: '92%',
-                    height: '75%',
-                    backgroundColor: isHovered ? '#00e5ff' : '#e8a23a',
+                    padding: '0.7rem 1.6rem',
+                    backgroundColor: '#e8a23a',
                     color: '#07080a',
                     fontWeight: 700,
-                    fontSize: '0.80rem',
+                    fontSize: '0.84rem',
                     borderRadius: '24px',
                     cursor: 'pointer',
                     border: 'none',
-                    boxShadow: isHovered
-                      ? '0 0 25px rgba(0, 229, 255, 0.6)'
-                      : '0 0 16px rgba(232, 162, 58, 0.45)',
+                    boxShadow: '0 0 25px rgba(232, 162, 58, 0.55)',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.35rem',
+                    gap: '0.4rem',
                     fontFamily: 'inherit',
                     transition: 'all 0.2s ease',
                   }}
@@ -389,44 +532,279 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
                   <span>[ ACCESS COMPUTER WORKSTATION / INITIALIZE NJ-OS ]</span>
                   <span className="terminal-cursor">_</span>
                 </button>
-              )}
 
-              {mon.id === 'dossier-intro' && (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleSelectMonitor(mon);
-                  }}
+                {/* Right Button: Direct CV Access */}
+                <a
+                  href={cvUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   style={{
-                    width: '92%',
-                    height: '75%',
-                    backgroundColor: isHovered ? 'rgba(0, 229, 255, 0.2)' : 'rgba(14, 17, 20, 0.65)',
-                    color: isHovered ? '#00e5ff' : '#e6e2d8',
-                    border: `1px solid ${isHovered ? '#00e5ff' : 'rgba(232, 162, 58, 0.5)'}`,
+                    padding: '0.65rem 1.4rem',
+                    backgroundColor: 'rgba(14, 17, 20, 0.75)',
+                    color: '#00e5ff',
+                    border: '1px solid rgba(0, 229, 255, 0.5)',
                     fontWeight: 700,
-                    fontSize: '0.80rem',
+                    fontSize: '0.82rem',
                     borderRadius: '24px',
                     cursor: 'pointer',
-                    boxShadow: isHovered
-                      ? '0 0 20px rgba(0, 229, 255, 0.4)'
-                      : '0 0 10px rgba(0,0,0,0.5)',
+                    textDecoration: 'none',
+                    boxShadow: '0 0 15px rgba(0, 229, 255, 0.35)',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
                     gap: '0.35rem',
-                    fontFamily: 'inherit',
+                    backdropFilter: 'blur(3px)',
                     transition: 'all 0.2s ease',
                   }}
                 >
                   <span>[ VIEW VERIFIED DOSSIER / CV ↗ ]</span>
-                </button>
-              )}
+                </a>
+              </div>
             </div>
-          );
-        })}
+          ) : (
+            /* STATE B: PROJECT SELECTED -> In-Place Cybernetic Intel Card right on the Center Screen! */
+            <div
+              style={{
+                width: '100%',
+                height: '100%',
+                backgroundColor: 'rgba(7, 10, 14, 0.90)',
+                border: '2px solid #00e5ff',
+                boxShadow: '0 0 40px rgba(0, 229, 255, 0.45), inset 0 0 40px rgba(0, 0, 0, 0.9)',
+                borderRadius: '6px',
+                padding: '1.25rem 1.6rem',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                backdropFilter: 'blur(8px)',
+                animation: 'intelCardFadeIn 0.25s ease-out',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              <style>{`
+                @keyframes intelCardFadeIn {
+                  from { opacity: 0; transform: scale(0.98); }
+                  to { opacity: 1; transform: scale(1); }
+                }
+              `}</style>
 
-        {/* Bottom Floating Tactical Status Bar */}
+              {/* Scanline Sweep Effect */}
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  pointerEvents: 'none',
+                  background:
+                    'repeating-linear-gradient(0deg, rgba(0, 229, 255, 0.03) 0px, rgba(0, 229, 255, 0.03) 2px, transparent 2px, transparent 4px)',
+                }}
+              />
+
+              {/* Header */}
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  borderBottom: '1px solid rgba(0, 229, 255, 0.35)',
+                  paddingBottom: '0.65rem',
+                  zIndex: 2,
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <span
+                    style={{
+                      width: '9px',
+                      height: '9px',
+                      borderRadius: '50%',
+                      backgroundColor: '#00e5ff',
+                      boxShadow: '0 0 10px #00e5ff',
+                    }}
+                  />
+                  <span style={{ fontSize: '0.86rem', color: '#00e5ff', fontWeight: 700 }}>
+                    // PRIMARY DISPLAY: IN-PLACE PROJECT INTEL FILE
+                  </span>
+                  <span
+                    style={{
+                      fontSize: '0.72rem',
+                      color: '#e8a23a',
+                      backgroundColor: 'rgba(232, 162, 58, 0.12)',
+                      padding: '0.15rem 0.5rem',
+                      borderRadius: '2px',
+                    }}
+                  >
+                    {activeMonitor?.badge}
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedProjectSlug(null)}
+                  style={{
+                    padding: '0.3rem 0.75rem',
+                    backgroundColor: 'rgba(232, 162, 58, 0.15)',
+                    border: '1px solid #e8a23a',
+                    color: '#e8a23a',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    borderRadius: '3px',
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                  }}
+                >
+                  RETURN TO WORLD MAP ✕
+                </button>
+              </div>
+
+              {/* Body: Project Specs & Description */}
+              <div style={{ zIndex: 2, display: 'flex', flexDirection: 'column', gap: '0.75rem', margin: '0.5rem 0' }}>
+                <div>
+                  <div
+                    style={{
+                      fontSize: '1.65rem',
+                      fontWeight: 700,
+                      color: '#e6e2d8',
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {activeProject.title}
+                  </div>
+                  <div style={{ fontSize: '0.82rem', color: '#e8a23a', marginTop: '0.2rem' }}>
+                    {activeMonitor?.category} // {activeProject.badge}
+                  </div>
+                </div>
+
+                {/* Tech Stack Pills */}
+                <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                  {activeProject.stack.map((tech) => (
+                    <span
+                      key={tech}
+                      style={{
+                        fontSize: '0.70rem',
+                        backgroundColor: 'rgba(0, 229, 255, 0.12)',
+                        border: '1px solid rgba(0, 229, 255, 0.35)',
+                        color: '#00e5ff',
+                        padding: '0.2rem 0.55rem',
+                        borderRadius: '2px',
+                        fontWeight: 600,
+                      }}
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Engineering Descriptions */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                  {activeProject.description.map((desc, idx) => (
+                    <p
+                      key={idx}
+                      style={{
+                        fontSize: '0.84rem',
+                        color: '#c2beb4',
+                        lineHeight: 1.5,
+                        margin: 0,
+                      }}
+                    >
+                      {desc}
+                    </p>
+                  ))}
+                </div>
+              </div>
+
+              {/* Footer Controls: Cycle projects & full deep-dive */}
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  borderTop: '1px solid rgba(0, 229, 255, 0.35)',
+                  paddingTop: '0.75rem',
+                  zIndex: 2,
+                }}
+              >
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button
+                    type="button"
+                    onClick={() => handleCycleProject(-1)}
+                    style={{
+                      padding: '0.4rem 0.85rem',
+                      backgroundColor: 'rgba(0, 229, 255, 0.15)',
+                      border: '1px solid rgba(0, 229, 255, 0.4)',
+                      color: '#00e5ff',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      borderRadius: '3px',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                    }}
+                  >
+                    ← PREV PROJECT
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleCycleProject(1)}
+                    style={{
+                      padding: '0.4rem 0.85rem',
+                      backgroundColor: 'rgba(0, 229, 255, 0.15)',
+                      border: '1px solid rgba(0, 229, 255, 0.4)',
+                      color: '#00e5ff',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      borderRadius: '3px',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                    }}
+                  >
+                    NEXT PROJECT →
+                  </button>
+                </div>
+
+                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                  <button
+                    type="button"
+                    onClick={() => handleTriggerEnterOS('projects', activeProject.slug)}
+                    style={{
+                      padding: '0.4rem 1rem',
+                      backgroundColor: '#e8a23a',
+                      color: '#07080a',
+                      border: 'none',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      borderRadius: '3px',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                      boxShadow: '0 0 15px rgba(232, 162, 58, 0.4)',
+                    }}
+                  >
+                    EXPAND IN FULL OS SHELL ↗
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedProjectSlug(null)}
+                    style={{
+                      padding: '0.4rem 0.75rem',
+                      backgroundColor: 'transparent',
+                      border: '1px solid #6b675d',
+                      color: '#9e9a8e',
+                      fontSize: '0.75rem',
+                      borderRadius: '3px',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                    }}
+                  >
+                    CLOSE [ESC]
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* =========================================================
+            BOTTOM FLOATING TACTICAL STATUS BAR
+            ========================================================= */}
         <div
           style={{
             position: 'absolute',
@@ -456,34 +834,51 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
               }}
             />
             <span style={{ fontSize: '0.78rem', color: '#e8a23a', fontWeight: 700 }}>
-              TACTICAL MONITORS ACTIVE
+              IN-PLACE WORKSTATION CONSOLE
             </span>
           </div>
 
           <div style={{ fontSize: '0.74rem', color: '#9e9a8e' }}>
-            HOVER ANY SCREEN TO TARGET // CLICK TO INSPECT // PRESS [ENTER] TO LAUNCH
+            CLICK ANY PHYSICAL MONITOR TO INSPECT PROJECT ON-SCREEN // NEVER LEAVES THE CAVE
           </div>
 
-          <button
-            type="button"
-            onClick={() => {
-              const main = TACTICAL_MONITORS.find((m) => m.id === 'master-terminal');
-              if (main) handleSelectMonitor(main);
-            }}
-            style={{
-              padding: '0.35rem 0.85rem',
-              backgroundColor: 'rgba(232, 162, 58, 0.15)',
-              border: '1px solid #e8a23a',
-              color: '#e8a23a',
-              fontSize: '0.72rem',
-              fontWeight: 700,
-              borderRadius: '2px',
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-            }}
-          >
-            BOOT NJ-OS ↵
-          </button>
+          {selectedProjectSlug ? (
+            <button
+              type="button"
+              onClick={() => setSelectedProjectSlug(null)}
+              style={{
+                padding: '0.35rem 0.85rem',
+                backgroundColor: 'rgba(232, 162, 58, 0.15)',
+                border: '1px solid #e8a23a',
+                color: '#e8a23a',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                borderRadius: '2px',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+              }}
+            >
+              CLOSE INTEL (ESC)
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setSelectedProjectSlug('crowd-analytics')}
+              style={{
+                padding: '0.35rem 0.85rem',
+                backgroundColor: 'rgba(0, 229, 255, 0.15)',
+                border: '1px solid #00e5ff',
+                color: '#00e5ff',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                borderRadius: '2px',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+              }}
+            >
+              LOAD PROJECT INTEL ↵
+            </button>
+          )}
         </div>
       </div>
 

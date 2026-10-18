@@ -73,7 +73,7 @@ export const Interactions: React.FC = () => {
   return (
     <group name="interactive-world-hotspots">
       {/* 1. Workstation Overhead Status Tag */}
-      {activeInteraction === 'workstation' && (
+      {activeInteraction === 'workstation' && !useStore.getState().osOpen && (
         <Html position={[0, 3.35, -66]} center distanceFactor={14}>
           <div
             aria-label="Workstation Console Online"
@@ -97,7 +97,7 @@ export const Interactions: React.FC = () => {
       )}
 
       {/* 2. Tactical Suit 3D Clickable Hotspot */}
-      {activeInteraction === 'suit' && (
+      {activeInteraction === 'suit' && mode !== 'suit-inspect' && (
         <Html position={[-16, 2.2, -42]} center distanceFactor={14}>
           <button
             onClick={() => {

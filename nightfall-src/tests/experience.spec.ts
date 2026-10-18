@@ -49,7 +49,7 @@ test.describe('3D Experience & Guided Camera Scroll Journey', () => {
       { progress: 0.0, name: 'progress_0_0_exterior' },
       { progress: 0.3, name: 'progress_0_3_gate_open' },
       { progress: 0.5, name: 'progress_0_5_cavern_reveal' },
-      { progress: 0.65, name: 'progress_0_65_suit_platform' },
+      { progress: 0.65, name: 'progress_0_65_catwalk_approach' },
       { progress: 1.0, name: 'progress_1_0_workstation' },
     ];
 

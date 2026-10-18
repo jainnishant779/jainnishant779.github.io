@@ -2,8 +2,8 @@ import { test, expect } from '@playwright/test';
 import * as path from 'path';
 import * as fs from 'fs';
 
-test.describe('Phase 6 — Batcomputer Workstation, 5-Monitor Arc, & Screen Zoom Dolly', () => {
-  test('5-monitor arc renders live canvas telemetry, clicking screen launches OS, and camera dollys into screen', async ({
+test.describe('Workstation Primary Terminal & Perspective Quad Screen', () => {
+  test('Workstation renders live terminal screen, clicking button launches OS with zoom, and Escape returns', async ({
     page,
   }) => {
     test.setTimeout(180000);
@@ -43,12 +43,12 @@ test.describe('Phase 6 — Batcomputer Workstation, 5-Monitor Arc, & Screen Zoom
     );
     await page.waitForTimeout(1500);
 
-    // 2. Capture high-fidelity screenshot of the 5-monitor arc and desk
-    const shotMonitors = path.join(shotsDir, 'workstation_phase6_monitors.png');
+    // 2. Capture high-fidelity screenshot of the terminal workstation
+    const shotMonitors = path.join(shotsDir, 'workstation_terminal.png');
     await page.screenshot({ path: shotMonitors });
     expect(fs.existsSync(shotMonitors)).toBeTruthy();
 
-    // 3. Contextual workstation access button is visible
+    // 3. Workstation access button is visible on the perspective screen quad
     const workstationBtn = page.locator('button:has-text("ACCESS COMPUTER WORKSTATION")');
     await expect(workstationBtn).toBeVisible({ timeout: 10000 });
 
@@ -62,43 +62,12 @@ test.describe('Phase 6 — Batcomputer Workstation, 5-Monitor Arc, & Screen Zoom
     await expect(osOverlay).toContainText('NJ-OS');
 
     // Screenshot of screen zoom transition
-    const shotZoomed = path.join(shotsDir, 'workstation_phase6_screen_zoomed.png');
+    const shotZoomed = path.join(shotsDir, 'workstation_screen_zoomed.png');
     await page.screenshot({ path: shotZoomed });
     expect(fs.existsSync(shotZoomed)).toBeTruthy();
 
     // 5. Close OS overlay via Escape key
     await page.keyboard.press('Escape');
     await expect(osOverlay).not.toBeVisible({ timeout: 5000 });
-
-    // Wait for camera to dolly back out to resting pose
-    await page.waitForTimeout(600);
-
-    // 6. Test Free Explore mode near workstation:
-    // Switch to Free Explore mode
-    const freeToggleBtn = page.locator('.free-explore-toggle-btn');
-    await freeToggleBtn.click();
-    await page.waitForTimeout(300);
-
-    // Teleport directly to workstation desk in free explore
-    await page.evaluate(() => {
-      (window as any).__NIGHTFALL_EXPLORE__?.teleport(0, 1.9, -63.5);
-    });
-    await page.waitForTimeout(300);
-
-    // Workstation prompt must be visible
-    await expect(page.locator('button:has-text("ACCESS COMPUTER WORKSTATION")')).toBeVisible({ timeout: 5000 });
-
-    // Press E to open OS from free explore
-    await page.keyboard.press('KeyE');
-    await expect(osOverlay).toBeVisible({ timeout: 5000 });
-
-    // Press Escape to close OS and return to Free Explore
-    await page.keyboard.press('Escape');
-    await expect(osOverlay).not.toBeVisible({ timeout: 5000 });
-
-    // Press Escape again to return to Guided Tour
-    await page.keyboard.press('Escape');
-    await page.waitForTimeout(300);
-    await expect(page.locator('text=FACILITY DEPTH')).toBeVisible();
   });
 });

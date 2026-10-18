@@ -744,4 +744,110 @@ Verified Phase 9 & Phase 10 Deliverables:
 - Documentation: `README.md` and `ASSETS.md` created with architecture overview, developer commands, asset pipeline guidelines, and CC0 licenses.
 - Delivery Archive: Packaged clean `nightfall-delivery.zip` (4.96 MB) omitting `node_modules` and git metadata into `scratch/nightfall-delivery.zip`.
 
+---
+
+## NIGHTFALL v2 — Scroll Film & Perspective Screen Quad Test Run: 2026-10-18
+
+### 1. TypeScript Compilation (`npm run typecheck`)
+
+```text
+> nightfall@1.0.0 typecheck
+> tsc --noEmit
+```
+**Result:** Clean exit code 0. Zero errors.
+
+---
+
+### 2. Film Sequence Build (`npm run film`)
+
+```text
+> nightfall@1.0.0 film
+> node scripts/build-film.mjs
+
+[build-film] Raw clips not found in raw/clips. Using fallback frames from ../assets/cave_frames...
+[build-film] Processing 239 frames to desktop (1600x900 @ q72) and mobile (960x540 @ q65)...
+[build-film] Completed 50 / 239 frames
+[build-film] Completed 100 / 239 frames
+[build-film] Completed 150 / 239 frames
+[build-film] Completed 200 / 239 frames
+[build-film] Completed 239 / 239 frames
+[build-film] Manifest written to public/film/manifest.json
+[build-film] Film build completed successfully from fallback frames!
+```
+**Result:**
+- Desktop film: 11.97 MB (budget < 25 MB)
+- Mobile film: 6.23 MB (budget < 10 MB)
+- Manifest generated with frame count, 4 segments (gate, walk, approach, terminal), and calibrated perspective screen quad `[[360, 182], [1240, 182], [1240, 677], [360, 677]]`.
+
+---
+
+### 3. Production Build (`npm run build`)
+
+```text
+> nightfall@1.0.0 prebuild
+> node scripts/scan-assets.mjs
+
+[scan-assets] Found 0 assets
+
+> nightfall@1.0.0 build
+> vite build && node scripts/make-route-pages.mjs
+
+vite v5.4.10 building for production...
+transforming...
+✓ 85 modules transformed.
+rendering chunks...
+computing gzip size...
+../nightfall/index.html                     3.05 kB │ gzip:  1.22 kB
+../nightfall/assets/index-CuE98Ibb.css     16.32 kB │ gzip:  3.64 kB
+../nightfall/assets/HomePage-DKdgouts.js   18.40 kB │ gzip:  6.16 kB
+../nightfall/assets/index-BfxZ2Gny.js      67.41 kB │ gzip: 21.16 kB
+../nightfall/assets/three-BJy_qw3f.js     146.86 kB │ gzip: 47.57 kB
+✓ built in 14.91s
+[make-route-pages] Created 13 route pages + 404.html
+```
+**Result:** Clean exit code 0. Zero WebGL overhead on root `/`. `HomePage` JS bundle reduced from 151 kB down to 18.40 kB (6.16 kB gzipped).
+
+---
+
+### 4. Playwright End-to-End Suite (`npm run test`)
+
+```text
+> nightfall@1.0.0 test
+> playwright test
+
+Running 28 tests using 1 worker
+
+  ok 1 [chromium] › audio-accessibility.spec.ts:4:3 › Phase 8 — Polish, Audio Synthesizer, & Accessibility › audio toggle defaults to muted, activates ambience on user interaction, and toggles state correctly (1.7s)
+  ok 2 [chromium] › audio-accessibility.spec.ts:34:3 › Phase 8 — Polish, Audio Synthesizer, & Accessibility › permanent HUD corner links are accessible on desktop (1.0s)
+  ok 3 [chromium] › audio-accessibility.spec.ts:63:3 › Phase 8 — Polish, Audio Synthesizer, & Accessibility › prefers-reduced-motion media query disables smooth transitions and accelerates facility entry (1.6s)
+  ok 4 [chromium] › audio-accessibility.spec.ts:86:3 › Phase 8 — Polish, Audio Synthesizer, & Accessibility › HTML meta tags, OG tags, and noscript fallback are present and valid (1.3s)
+  ok 5 [chromium] › cv.spec.ts:4:3 › CV Download and Open Verification › CV link is present with target=_blank and triggers download event (1.2s)
+  ok 6 [chromium] › cv.spec.ts:24:3 › CV Download and Open Verification › Direct PDF file request returns 200 and valid file buffer (204ms)
+  ok 7 [chromium] › experience.spec.ts:6:3 › 3D Experience & Guided Camera Scroll Journey › Scroll drives camera, gate opens, captures screenshots, and opens workstation OS (9.0s)
+  ok 8 [chromium] › fallback.spec.ts:4:3 › WebGL Unsupported Fallback › Displays fallback UI and direct links when WebGL2 is disabled (2.1s)
+  ok 9 [chromium] › film.spec.ts:4:3 › Photorealistic Scroll Film Engine & Perspective Quad › Manifest loads with valid structure and initial frames return 200 OK (94ms)
+  ok 10 [chromium] › film.spec.ts:28:3 › Photorealistic Scroll Film Engine & Perspective Quad › Canvas mounts, scrolls smoothly, and renders non-blank frames on scroll (1.8s)
+  ok 11 [chromium] › film.spec.ts:63:3 › Photorealistic Scroll Film Engine & Perspective Quad › Scrolling to terminal displays matrix3d ScreenPreview with interactive profile (3.7s)
+  ok 12 [chromium] › gate.spec.ts:6:3 › Phase 3 — Gate Cinematic & Controls › Access facility button, audio toggle, skip intro, and forward/backward gate scrubbing (9.1s)
+  ok 13 [chromium] › mobile.spec.ts:6:3 › Mobile Viewport (375px) Testing › No horizontal scroll at 375px width on OS view (1.8s)
+  ok 14 [chromium] › mobile.spec.ts:21:3 › Mobile Viewport (375px) Testing › Mobile navigation rail renders as bottom tab bar (1.0s)
+  ok 15 [chromium] › mobile.spec.ts:35:3 › Mobile Viewport (375px) Testing › No horizontal scroll at 375px width on Home Page (604ms)
+  ok 16 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/" loads and displays "THE ENGINEER'S CAVE" (957ms)
+  ok 17 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/os" loads and displays "NJ-OS // COMMAND CENTER" (989ms)
+  ok 18 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/about" loads and displays "01 // IDENTITY DOSSIER" (959ms)
+  ok 19 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/projects" loads and displays "02 // PROJECT ARCHIVES" (1.0s)
+  ok 20 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/projects/edgedesk" loads and displays "EdgeDesk: Secure Multi-Device Remote Access Platform" (1.0s)
+  ok 21 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/projects/crowd-analytics" loads and displays "Real-Time Crowd Analytics & Stampede Detection" (1.1s)
+  ok 22 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/experience" loads and displays "03 // EXPERIENCE LOG" (880ms)
+  ok 23 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/skills" loads and displays "04 // TECHNICAL CAPABILITIES" (878ms)
+  ok 24 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/achievements" loads and displays "05 // HONORS & CREDENTIALS" (921ms)
+  ok 25 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/contact" loads and displays "07 // TRANSMISSION PROTOCOL" (1.1s)
+  ok 26 [chromium] › routes.spec.ts:19:5 › Phase 1 Routes & Deep Links › route "/cv" loads and displays "06 // CURRICULUM VITAE" (1.1s)
+  ok 27 [chromium] › routes.spec.ts:33:3 › Phase 1 Routes & Deep Links › Phase 9 Link check: all external links in the OS are strictly Section 6 verified URLs (819ms)
+  ok 28 [chromium] › workstation.spec.ts:6:3 › Workstation Primary Terminal & Perspective Quad Screen › Workstation renders live terminal screen, clicking button launches OS with zoom, and Escape returns (4.6s)
+
+  28 passed (56.3s)
+```
+**Result:** 28 passed, 0 failed. Total test duration dropped from 9.0m down to 56.3s!
+
 

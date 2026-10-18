@@ -1,12 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from '../state/store';
-import { getActiveHint } from '../world/cameraPath';
 import { getCVUrl } from '../lib/assets';
-import { isMobileDevice } from '../lib/quality';
 import { sound } from '../lib/sound';
 import { SkipButton } from './SkipButton';
-import { SuitHudCard } from './SuitHudCard';
 
 interface HudOverlayProps {
   onOpenOS: () => void;
@@ -14,25 +11,26 @@ interface HudOverlayProps {
   onAccessFacility: () => void;
 }
 
+function getFilmHint(progress: number): string {
+  if (progress < 0.15) return 'VAULT BLAST GATE // SEALED — SCROLL TO OPEN';
+  if (progress < 0.35) return 'TRANSIT CORRIDOR // HYDRAULIC LOCKS DISENGAGED';
+  if (progress < 0.65) return 'SUBTERRANEAN CAVERN // CATWALK PASSAGE & WATERFALL';
+  if (progress < 0.88) return 'APPROACHING COMMAND WORKSTATION PLATFORM';
+  return 'WORKSTATION PRIMARY TERMINAL // STANDBY READY';
+}
+
 export const HudOverlay: React.FC<HudOverlayProps> = ({
   onOpenOS,
   onSkipIntro,
   onAccessFacility,
 }) => {
-  const mode = useStore((state) => state.mode);
-  const setMode = useStore((state) => state.setMode);
-  const setPreviousMode = useStore((state) => state.setPreviousMode);
   const progress = useStore((state) => state.progress);
-  const activeInteraction = useStore((state) => state.activeInteraction);
   const audioEnabled = useStore((state) => state.audioEnabled);
   const setAudioEnabled = useStore((state) => state.setAudioEnabled);
-  const activeHint = getActiveHint(progress);
   const cvUrl = getCVUrl();
-  const isMobile = isMobileDevice();
 
-  const isNearComputer = activeInteraction === 'workstation' || (mode === 'guided' && progress >= 0.85);
-  const isNearSuit = activeInteraction === 'suit' || (mode === 'guided' && progress >= 0.65 && progress <= 0.76);
-  const showAccessButton = mode === 'guided' && progress < 0.12;
+  const showAccessButton = progress < 0.1;
+  const activeHint = getFilmHint(progress);
 
   const handleToggleAudio = () => {
     const nextState = !audioEnabled;
@@ -67,6 +65,8 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({
           justifyContent: 'space-between',
           alignItems: 'center',
           pointerEvents: 'auto',
+          flexWrap: 'wrap',
+          gap: '0.75rem',
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
@@ -93,7 +93,7 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({
         </div>
 
         {/* Permanent Quick Navigation Shortcuts & Audio Toggle */}
-        <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center', flexWrap: 'wrap' }}>
           <button
             onClick={handleToggleAudio}
             className="audio-toggle-btn"
@@ -168,69 +168,8 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({
           >
             CONTACT
           </Link>
-
-          {!isMobile && (
-            <button
-              onClick={() => setMode(mode === 'free' ? 'guided' : 'free')}
-              className="free-explore-toggle-btn"
-              title={mode === 'free' ? 'Return to guided camera tour (ESC)' : 'Explore cave freely with WASD'}
-              style={{
-                background: mode === 'free' ? 'rgba(232, 162, 58, 0.25)' : 'rgba(14, 17, 20, 0.85)',
-                border: `1px solid ${mode === 'free' ? '#e8a23a' : '#2a3038'}`,
-                color: mode === 'free' ? '#e8a23a' : '#e6e2d8',
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: '0.78rem',
-                padding: '0.4rem 0.85rem',
-                borderRadius: '3px',
-                cursor: 'pointer',
-                fontWeight: 600,
-              }}
-            >
-              {mode === 'free' ? '✕ EXIT FREE EXPLORE [ESC]' : 'FREE EXPLORE [WASD]'}
-            </button>
-          )}
         </div>
       </div>
-
-      {/* Free Explore Top Instruction Banner */}
-      {mode === 'free' && (
-        <div
-          className="free-explore-banner"
-          style={{
-            position: 'fixed',
-            top: '4.8rem',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            background: 'rgba(7, 8, 10, 0.92)',
-            border: '1px solid rgba(232, 162, 58, 0.5)',
-            color: '#e6e2d8',
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: '0.78rem',
-            padding: '0.45rem 1.25rem',
-            borderRadius: '4px',
-            pointerEvents: 'auto',
-            zIndex: 50,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
-          }}
-        >
-          <span>WASD to walk · Click to look · ESC / Click to return</span>
-          <span style={{ color: '#e8a23a' }}>·</span>
-          <button
-            onClick={() => setMode('guided')}
-            style={{
-              color: '#e8a23a',
-              textDecoration: 'underline',
-              cursor: 'pointer',
-              fontWeight: 600,
-            }}
-          >
-            Return to Tour
-          </button>
-        </div>
-      )}
 
       {/* Center Dynamic Interaction Prompt / Access Facility Button */}
       <div
@@ -238,10 +177,9 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          pointerEvents: showAccessButton || isNearComputer || isNearSuit ? 'auto' : 'none',
+          pointerEvents: showAccessButton ? 'auto' : 'none',
         }}
       >
-        {/* Phase 3 "ACCESS THE FACILITY" Button */}
         {showAccessButton && (
           <button
             onClick={onAccessFacility}
@@ -264,108 +202,57 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({
             ACCESS THE FACILITY ▾
           </button>
         )}
-
-        {isNearComputer && (
-          <button
-            onClick={onOpenOS}
-            style={{
-              background: 'rgba(7, 8, 10, 0.92)',
-              border: '2px solid #e8a23a',
-              color: '#e8a23a',
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '1rem',
-              fontWeight: 700,
-              padding: '0.85rem 2rem',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              boxShadow: '0 0 25px rgba(232, 162, 58, 0.35)',
-              animation: 'pulse 2s infinite',
-            }}
-          >
-            [E] ACCESS COMPUTER WORKSTATION →
-          </button>
-        )}
-
-        {isNearSuit && mode !== 'suit-inspect' && (
-          <button
-            onClick={() => {
-              setPreviousMode(mode);
-              setMode('suit-inspect');
-            }}
-            className="inspect-suit-btn"
-            style={{
-              background: 'rgba(7, 8, 10, 0.92)',
-              border: '2px solid #7fb38a',
-              color: '#7fb38a',
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '0.95rem',
-              fontWeight: 700,
-              padding: '0.85rem 2rem',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              boxShadow: '0 0 25px rgba(127, 179, 138, 0.35)',
-              animation: 'pulse 2s infinite',
-            }}
-          >
-            [E] INSPECT TACTICAL SUIT POD →
-          </button>
-        )}
       </div>
 
-      {/* Suit Inspection Floating HUD Telemetry Card */}
-      {mode === 'suit-inspect' && <SuitHudCard />}
-
-      {/* Bottom HUD Bar & Progress (hidden in suit inspection mode) */}
-      {mode !== 'suit-inspect' && (
+      {/* Bottom HUD Bar & Progress */}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.5rem',
+          pointerEvents: 'auto',
+        }}
+      >
         <div
           style={{
             display: 'flex',
-            flexDirection: 'column',
-            gap: '0.5rem',
-            pointerEvents: 'auto',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: '0.72rem',
+            color: '#9e9a8e',
+          }}
+        >
+          <span>{activeHint}</span>
+          <span style={{ color: '#e8a23a' }}>
+            {`${Math.round(progress * 100)}% FACILITY DEPTH`}
+          </span>
+        </div>
+
+        {/* Thin amber progress line */}
+        <div
+          style={{
+            width: '100%',
+            height: '2px',
+            background: 'rgba(30, 34, 40, 0.8)',
+            position: 'relative',
+            borderRadius: '1px',
+            overflow: 'hidden',
           }}
         >
           <div
             style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '0.72rem',
-              color: '#9e9a8e',
+              width: `${Math.round(progress * 100)}%`,
+              height: '100%',
+              background: '#e8a23a',
+              transition: 'width 0.1s linear',
             }}
-          >
-            <span>{mode === 'free' ? 'FREE EXPLORE MODE // MANUAL LOCOMOTION ACTIVE' : activeHint}</span>
-            <span style={{ color: '#e8a23a' }}>
-              {mode === 'free' ? 'CAVERN INTERIOR' : `${Math.round(progress * 100)}% FACILITY DEPTH`}
-            </span>
-          </div>
-
-          {/* Thin amber progress line */}
-          <div
-            style={{
-              width: '100%',
-              height: '2px',
-              background: 'rgba(30, 34, 40, 0.8)',
-              position: 'relative',
-              borderRadius: '1px',
-              overflow: 'hidden',
-            }}
-          >
-            <div
-              style={{
-                width: `${mode === 'free' ? 100 : Math.round(progress * 100)}%`,
-                height: '100%',
-                background: '#e8a23a',
-                transition: 'width 0.1s linear',
-              }}
-            />
-          </div>
+          />
         </div>
-      )}
+      </div>
 
-      {/* Skip button for intro phase (guided mode only) */}
-      {mode === 'guided' && progress < 0.45 && <SkipButton onSkip={onSkipIntro} />}
+      {/* Skip button for intro phase */}
+      {progress < 0.85 && <SkipButton onSkip={onSkipIntro} />}
     </div>
   );
 };

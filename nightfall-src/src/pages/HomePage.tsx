@@ -1,81 +1,41 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Canvas } from '@react-three/fiber';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from '../state/store';
-import { isWebGL2Available } from '../lib/webgl';
-import { TIER_CONFIGS, getInitialTier } from '../lib/quality';
-import { Experience } from '../experience/Experience';
+import { FilmPlayer } from '../film/FilmPlayer';
 import { HudOverlay } from '../ui/HudOverlay';
 import { OSShell } from '../os/OSShell';
-import { getCVUrl } from '../lib/assets';
-import { getRawScrollProgress } from '../lib/scrollProgress';
 import { prefersReducedMotion } from '../lib/reducedMotion';
 import { sound } from '../lib/sound';
-import { LoadingScreen } from '../ui/LoadingScreen';
+import { getCVUrl } from '../lib/assets';
 
 export const HomePage: React.FC = () => {
-  const [webglSupported, setWebglSupported] = useState<boolean>(true);
+  const [engineSupported, setEngineSupported] = useState<boolean>(true);
   const [fadeScreen, setFadeScreen] = useState<boolean>(false);
-  const mode = useStore((state) => state.mode);
-  const tier = useStore((state) => state.tier);
-  const setTier = useStore((state) => state.setTier);
   const osOpen = useStore((state) => state.osOpen);
   const setOsOpen = useStore((state) => state.setOsOpen);
+  const audioEnabled = useStore((state) => state.audioEnabled);
+  const cvUrl = getCVUrl();
 
-  // Initialize hardware capabilities
+  // Hardware capability check
   useEffect(() => {
-    const supported = isWebGL2Available();
-    setWebglSupported(supported);
-    if (supported) {
-      setTier(getInitialTier());
+    try {
+      const c = document.createElement('canvas');
+      const ctx = c.getContext('2d');
+      if (!ctx) {
+        setEngineSupported(false);
+      }
+    } catch {
+      setEngineSupported(false);
     }
-  }, [setTier]);
-
-  // Lock window scroll and manage scroll restoration when in free explore or suit-inspect mode
-  const savedScrollY = useRef<number>(0);
-  useEffect(() => {
-    if (mode === 'free' || mode === 'suit-inspect') {
-      if (savedScrollY.current === 0) {
-        savedScrollY.current = window.scrollY || document.documentElement.scrollTop;
-      }
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-      if (savedScrollY.current > 0) {
-        window.scrollTo({ top: savedScrollY.current, behavior: 'auto' });
-        savedScrollY.current = 0;
-      }
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [mode]);
-
-  // Native scroll listener: updates progress state immediately on window scroll (guided mode)
-  useEffect(() => {
-    const handleScroll = () => {
-      if (useStore.getState().mode === 'guided') {
-        const raw = getRawScrollProgress();
-        useStore.getState().setProgress(raw);
-      }
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    // Initial sync
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Handle keyboard shortcuts (Escape to close OS, exit Suit Inspect, or exit Free Explore)
+  // Keyboard shortcut: Escape to close OS overlay
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         const state = useStore.getState();
         if (state.osOpen) {
           setOsOpen(false);
-        } else if (state.mode === 'suit-inspect') {
-          state.setMode(state.previousMode || 'guided');
-        } else if (state.mode === 'free') {
-          state.setMode('guided');
         }
       }
     };
@@ -83,9 +43,7 @@ export const HomePage: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [setOsOpen]);
 
-  const audioEnabled = useStore((state) => state.audioEnabled);
-
-  // Phase 8: Continuous subterranean cavern ambience lifecycle
+  // Ambient sound lifecycle
   useEffect(() => {
     if (audioEnabled) {
       sound.startAmbience();
@@ -97,7 +55,15 @@ export const HomePage: React.FC = () => {
     };
   }, [audioEnabled]);
 
-  // Access the facility handler (Phase 3 & Phase 8)
+  // Open NJ-OS handler
+  const handleOpenOS = useCallback(() => {
+    if (useStore.getState().audioEnabled) {
+      sound.playBootHum();
+    }
+    setOsOpen(true);
+  }, [setOsOpen]);
+
+  // Access facility handler: scrolls into the cavern
   const handleAccessFacility = useCallback(() => {
     sound.initContext();
     sound.playAccessBeep();
@@ -110,7 +76,7 @@ export const HomePage: React.FC = () => {
       setFadeScreen(true);
       setTimeout(() => {
         window.scrollTo({
-          top: scrollHeight * 0.45,
+          top: scrollHeight * 0.35,
           behavior: 'auto',
         });
         setTimeout(() => {
@@ -119,42 +85,31 @@ export const HomePage: React.FC = () => {
       }, 150);
     } else {
       window.scrollTo({
-        top: scrollHeight * 0.31,
+        top: scrollHeight * 0.35,
         behavior: 'smooth',
       });
     }
   }, []);
 
-  // Handle open NJ-OS with cathode boot hum
-  const handleOpenOS = useCallback(() => {
-    if (useStore.getState().audioEnabled) {
-      sound.playBootHum();
-    }
-    setOsOpen(true);
-  }, [setOsOpen]);
-
-  // Skip intro smooth scroll
+  // Skip to terminal workstation handler
   const handleSkipIntro = useCallback(() => {
     const doc = document.documentElement;
     const scrollHeight = Math.max(doc.scrollHeight, document.body.scrollHeight) - window.innerHeight;
     if (prefersReducedMotion()) {
       window.scrollTo({
-        top: scrollHeight * 0.45,
+        top: scrollHeight * 0.96,
         behavior: 'auto',
       });
     } else {
       window.scrollTo({
-        top: scrollHeight * 0.45,
+        top: scrollHeight * 0.96,
         behavior: 'smooth',
       });
     }
   }, []);
 
-  const tierConfig = TIER_CONFIGS[tier];
-  const cvUrl = getCVUrl();
-
-  // WebGL Unsupported Fallback Screen
-  if (!webglSupported) {
+  // Fallback screen for unsupported environments
+  if (!engineSupported) {
     return (
       <div
         className="webgl-fallback-screen"
@@ -197,9 +152,8 @@ export const HomePage: React.FC = () => {
             marginBottom: '2rem',
           }}
         >
-          WebGL2 acceleration is not supported on your current browser or hardware
-          configuration. The full engineering portfolio is accessible through the 2D
-          Command Center.
+          Hardware acceleration is not supported on your current browser or configuration.
+          The complete engineering portfolio is accessible through the 2D Command Center.
         </p>
 
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
@@ -243,45 +197,8 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className="home-experience-wrapper" style={{ position: 'relative' }}>
-      {/* 900vh Native Window Scroll Track */}
-      <div
-        className="scroll-track"
-        style={{
-          height: '900vh',
-          width: '100%',
-          pointerEvents: 'none',
-          position: 'relative',
-        }}
-      />
-
-      {/* Fixed Fullscreen 3D Canvas */}
-      <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          zIndex: 10,
-        }}
-      >
-        <Canvas
-          camera={{
-            position: [0, 1.6, 18],
-            fov: 60,
-            near: 0.1,
-            far: 200,
-          }}
-          dpr={tierConfig.dpr}
-          shadows={tierConfig.shadows}
-          gl={{
-            antialias: true,
-            powerPreference: 'high-performance',
-          }}
-        >
-          <Experience />
-        </Canvas>
-      </div>
+      {/* Photorealistic Scroll Film Player & Perspective Screen Quad */}
+      <FilmPlayer onOpenOS={handleOpenOS} />
 
       {/* Heads-Up Display Overlay */}
       <HudOverlay
@@ -290,18 +207,12 @@ export const HomePage: React.FC = () => {
         onAccessFacility={handleAccessFacility}
       />
 
-      {/* 3D Asset Loading Indicator */}
-      <LoadingScreen />
-
       {/* Reduced-motion transition fade overlay */}
       {fadeScreen && (
         <div
           style={{
             position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
+            inset: 0,
             backgroundColor: '#07080a',
             zIndex: 100,
             pointerEvents: 'none',

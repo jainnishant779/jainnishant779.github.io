@@ -1,0 +1,54 @@
+{
+  "count": 239,
+  "fps": 12,
+  "desktop": {
+    "width": 1600,
+    "height": 900,
+    "pattern": "film/desktop/f_%04d.webp"
+  },
+  "mobile": {
+    "width": 960,
+    "height": 540,
+    "pattern": "film/mobile/f_%04d.webp"
+  },
+  "segments": [
+    {
+      "id": "gate",
+      "start": 0,
+      "end": 47
+    },
+    {
+      "id": "walk",
+      "start": 47,
+      "end": 143
+    },
+    {
+      "id": "approach",
+      "start": 143,
+      "end": 191
+    },
+    {
+      "id": "terminal",
+      "start": 191,
+      "end": 238
+    }
+  ],
+  "screenQuad": [
+    [
+      360,
+      182
+    ],
+    [
+      1240,
+      182
+    ],
+    [
+      1240,
+      677
+    ],
+    [
+      360,
+      677
+    ]
+  ]
+}

@@ -91,10 +91,10 @@ async function processFrames(sourceFiles, isTemp = false) {
     ],
     // Calibrated monitor quad in 1600x900 coordinate space (top-left, top-right, bottom-right, bottom-left)
     screenQuad: [
-      [360, 182],
-      [1240, 182],
-      [1240, 677],
-      [360, 677],
+      [219, 81],
+      [1381, 81],
+      [1381, 781],
+      [219, 781],
     ],
   };
 

@@ -116,10 +116,10 @@ export const FilmPlayer: React.FC<FilmPlayerProps> = ({ onOpenOS }) => {
     };
   }, [ready, totalFrames, getFrame, setStoreProgress]);
 
-  // Terminal screen preview visibility threshold
+  // Terminal screen preview visibility threshold (active from 80% facility depth onward)
   const isTerminalVisible = Boolean(
     manifest &&
-    (currentFrameIndex >= totalFrames - 16 || currentProgressRef.current >= 0.92)
+    (currentFrameIndex >= totalFrames - 40 || currentProgressRef.current >= 0.80)
   );
 
   const nativeDims = manifest

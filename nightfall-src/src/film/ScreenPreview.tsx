@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { getQuadMatrix3d, getCoverQuadInViewport, type Quad } from './quad';
 import { prefersReducedMotion } from '../lib/reducedMotion';
 import { sound } from '../lib/sound';
+import { projects } from '../content/projects';
 
 interface ScreenPreviewProps {
   visible: boolean;
@@ -205,6 +206,77 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
               Building production-grade Computer Vision and Edge AI systems with Python,
               YOLO, OpenCV, AWS, and NVIDIA Jetson. Patent applicant with verified production
               deliveries.
+            </div>
+
+            {/* Verified Production Projects Showcase */}
+            <div
+              style={{
+                marginTop: '1.25rem',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '1rem',
+              }}
+            >
+              {projects.slice(0, 3).map((proj) => (
+                <div
+                  key={proj.slug}
+                  style={{
+                    backgroundColor: 'rgba(14, 17, 20, 0.85)',
+                    border: '1px solid rgba(232, 162, 58, 0.3)',
+                    borderRadius: '3px',
+                    padding: '0.85rem 1rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        fontSize: '0.68rem',
+                        color: '#e8a23a',
+                        marginBottom: '0.35rem',
+                        fontWeight: 600,
+                      }}
+                    >
+                      {proj.badge}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '0.92rem',
+                        fontWeight: 700,
+                        color: '#e6e2d8',
+                        lineHeight: 1.3,
+                      }}
+                    >
+                      {proj.title}
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      marginTop: '0.5rem',
+                      display: 'flex',
+                      gap: '0.35rem',
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    {proj.stack.slice(0, 3).map((tech) => (
+                      <span
+                        key={tech}
+                        style={{
+                          fontSize: '0.68rem',
+                          backgroundColor: 'rgba(232, 162, 58, 0.12)',
+                          color: '#c4872e',
+                          padding: '0.15rem 0.4rem',
+                          borderRadius: '2px',
+                        }}
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 

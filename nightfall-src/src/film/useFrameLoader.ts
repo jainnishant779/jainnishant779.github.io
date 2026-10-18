@@ -122,11 +122,11 @@ export function useFrameLoader() {
       });
     };
 
-    // Stage 1: Load Poster (frame 0) immediately
-    await loadSingleFrame(0);
+    // Stage 1: Load Poster (frame 0) and Workstation Terminal (final frame) immediately
+    await Promise.all([loadSingleFrame(0), loadSingleFrame(data.count - 1)]);
     if (abortedRef.current) return;
     setReady(true);
-    setLoadProgress(1 / data.count);
+    setLoadProgress(2 / data.count);
 
     // Stage 2: Load every 8th frame
     const stage2Indices: number[] = [];

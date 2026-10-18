@@ -70,4 +70,51 @@ test.describe('Workstation Primary Terminal & Perspective Quad Screen', () => {
     await page.keyboard.press('Escape');
     await expect(osOverlay).not.toBeVisible({ timeout: 5000 });
   });
+
+  test('Clicking a tactical monitor opens the Project Intel Dossier directly on the center screen in-place without page jump', async ({
+    page,
+  }) => {
+    test.setTimeout(180000);
+    const shotsDir = path.join(process.cwd(), 'tests', '__shots__');
+    await page.goto('');
+    await page.waitForSelector('.scroll-track', { state: 'attached', timeout: 45000 });
+
+    const maxScroll = await page.evaluate(() => document.documentElement.scrollHeight - window.innerHeight);
+    await page.evaluate(
+      ({ targetY }) => {
+        window.scrollTo(0, targetY);
+        document.documentElement.scrollTop = targetY;
+        document.body.scrollTop = targetY;
+      },
+      { targetY: maxScroll * 1.0 }
+    );
+    await page.waitForTimeout(1500);
+
+    // Click [1] POULTRY HEALTH AI quick selector button
+    const poultryBtn = page.locator('button:has-text("[1] POULTRY HEALTH AI")');
+    await expect(poultryBtn).toBeVisible({ timeout: 10000 });
+    await poultryBtn.click();
+    await page.waitForTimeout(600);
+
+    // Verify In-Place Dossier is mounted on the main center screen
+    const dossierHeader = page.locator('text=COMMAND WORKSTATION INTEL DOSSIER');
+    await expect(dossierHeader).toBeVisible({ timeout: 5000 });
+
+    // Capture screenshot of the in-place project dossier
+    const shotProject = path.join(shotsDir, 'workstation_project_selected.png');
+    await page.screenshot({ path: shotProject });
+    expect(fs.existsSync(shotProject)).toBeTruthy();
+
+    // Verify Next Project button cycles
+    const nextBtn = page.locator('button:has-text("NEXT PROJECT →")');
+    await expect(nextBtn).toBeVisible();
+    await nextBtn.click();
+    await page.waitForTimeout(400);
+
+    // Press Escape to return to master view
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(400);
+    await expect(dossierHeader).not.toBeVisible({ timeout: 5000 });
+  });
 });
+

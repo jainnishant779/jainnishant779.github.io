@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useStore } from '../state/store';
 import { FilmPlayer } from '../film/FilmPlayer';
 import { HudOverlay } from '../ui/HudOverlay';
-import { OSShell } from '../os/OSShell';
+import { OSShell, type OSModuleId } from '../os/OSShell';
 import { prefersReducedMotion } from '../lib/reducedMotion';
 import { sound } from '../lib/sound';
 import { getCVUrl } from '../lib/assets';
@@ -11,6 +11,8 @@ import { getCVUrl } from '../lib/assets';
 export const HomePage: React.FC = () => {
   const [engineSupported, setEngineSupported] = useState<boolean>(true);
   const [fadeScreen, setFadeScreen] = useState<boolean>(false);
+  const [osModule, setOsModule] = useState<OSModuleId>('identity');
+  const [osSlug, setOsSlug] = useState<string | undefined>(undefined);
   const osOpen = useStore((state) => state.osOpen);
   const setOsOpen = useStore((state) => state.setOsOpen);
   const audioEnabled = useStore((state) => state.audioEnabled);
@@ -55,11 +57,13 @@ export const HomePage: React.FC = () => {
     };
   }, [audioEnabled]);
 
-  // Open NJ-OS handler
-  const handleOpenOS = useCallback(() => {
+  // Open NJ-OS handler with optional module and project slug
+  const handleOpenOS = useCallback((module: OSModuleId = 'identity', slug?: string) => {
     if (useStore.getState().audioEnabled) {
       sound.playBootHum();
     }
+    setOsModule(module);
+    setOsSlug(slug);
     setOsOpen(true);
   }, [setOsOpen]);
 
@@ -222,7 +226,12 @@ export const HomePage: React.FC = () => {
 
       {/* Interactive OS Command Center Overlay */}
       {osOpen && (
-        <OSShell mode="overlay" onClose={() => setOsOpen(false)} />
+        <OSShell
+          mode="overlay"
+          initialModule={osModule}
+          initialSlug={osSlug}
+          onClose={() => setOsOpen(false)}
+        />
       )}
     </div>
   );

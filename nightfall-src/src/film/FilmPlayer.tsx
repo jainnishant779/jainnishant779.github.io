@@ -5,8 +5,10 @@ import { getRawScrollProgress, lerp } from '../lib/scrollProgress';
 import { useStore } from '../state/store';
 import { prefersReducedMotion } from '../lib/reducedMotion';
 
+import type { OSModuleId } from '../os/OSShell';
+
 interface FilmPlayerProps {
-  onOpenOS: () => void;
+  onOpenOS: (module?: OSModuleId, slug?: string) => void;
 }
 
 export const FilmPlayer: React.FC<FilmPlayerProps> = ({ onOpenOS }) => {

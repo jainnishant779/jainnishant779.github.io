@@ -17,6 +17,7 @@ const routes = [
   'projects/crowd-analytics',
   'projects/poultry-health-ai',
   'projects/on-device-ai',
+  'projects/parkfnb',
   'projects/facial-attendance',
   'projects/lora-traffic-mesh',
   'experience',

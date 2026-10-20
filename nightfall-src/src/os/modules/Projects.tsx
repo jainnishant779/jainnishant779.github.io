@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { projects } from '../../content/projects';
 import { ProjectDossier } from './ProjectDossier';
 
@@ -8,12 +8,20 @@ interface ProjectsProps {
   onClearSelection?: () => void;
 }
 
+const CATEGORIES = ['All', 'AI/ML', 'Computer Vision', 'Edge AI', 'IoT', 'Research'] as const;
+
 export const Projects: React.FC<ProjectsProps> = ({
   selectedSlug,
   onSelectProject,
   onClearSelection,
 }) => {
+  const [activeCategory, setActiveCategory] = useState<string>('All');
   const activeProject = projects.find((p) => p.slug === selectedSlug);
+
+  const filteredProjects = useMemo(() => {
+    if (activeCategory === 'All') return projects;
+    return projects.filter((p) => p.category === activeCategory);
+  }, [activeCategory]);
 
   if (activeProject) {
     return (
@@ -45,8 +53,44 @@ export const Projects: React.FC<ProjectsProps> = ({
         </div>
       </div>
 
+      {/* Category Filter Pills Matching Reference Panel 5 */}
+      <div
+        className="project-category-filters"
+        style={{
+          display: 'flex',
+          gap: '0.5rem',
+          flexWrap: 'wrap',
+          marginBottom: '1.5rem',
+        }}
+      >
+        {CATEGORIES.map((cat) => {
+          const isActive = activeCategory === cat;
+          return (
+            <button
+              key={cat}
+              type="button"
+              onClick={() => setActiveCategory(cat)}
+              style={{
+                padding: '0.4rem 0.95rem',
+                backgroundColor: isActive ? '#e8a23a' : 'rgba(14, 18, 24, 0.85)',
+                color: isActive ? '#070a0e' : '#9e9a8e',
+                border: `1px solid ${isActive ? '#e8a23a' : '#232a35'}`,
+                borderRadius: '4px',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              {cat}
+            </button>
+          );
+        })}
+      </div>
+
       <div className="projects-grid">
-        {projects.map((project) => (
+        {filteredProjects.map((project) => (
           <div
             key={project.slug}
             className="project-card"
@@ -90,6 +134,19 @@ export const Projects: React.FC<ProjectsProps> = ({
 
             <div className="project-card-body">
               <div className="project-card-title">{project.title}</div>
+              {project.subtitle && (
+                <div
+                  style={{
+                    fontSize: '0.75rem',
+                    color: 'var(--accent)',
+                    fontFamily: 'var(--font-mono)',
+                    marginBottom: '0.35rem',
+                    fontWeight: 600,
+                  }}
+                >
+                  {project.subtitle}
+                </div>
+              )}
               <p className="project-card-desc">{project.description[0]}</p>
 
               <div className="project-stack-tags">
@@ -100,9 +157,24 @@ export const Projects: React.FC<ProjectsProps> = ({
                 ))}
               </div>
 
-              {project.imageCaption && (
-                <div className="artwork-caption">{project.imageCaption}</div>
-              )}
+              <div
+                style={{
+                  marginTop: '0.85rem',
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: '0.74rem',
+                    color: 'var(--accent)',
+                    fontFamily: 'var(--font-mono)',
+                    fontWeight: 700,
+                  }}
+                >
+                  View Details →
+                </span>
+              </div>
             </div>
           </div>
         ))}

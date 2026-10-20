@@ -69,26 +69,48 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({
           gap: '0.75rem',
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <div
             style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '0.85rem',
-              fontWeight: 700,
-              color: '#e6e2d8',
-              letterSpacing: '0.05em',
-            }}
-          >
-            THE ENGINEER'S CAVE
-          </div>
-          <div
-            style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '0.7rem',
+              width: '28px',
+              height: '28px',
+              borderRadius: '3px',
+              border: '1.5px solid #e8a23a',
+              backgroundColor: 'rgba(232, 162, 58, 0.15)',
               color: '#e8a23a',
+              fontFamily: "'Space Grotesk', serif",
+              fontWeight: 800,
+              fontSize: '1.1rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 0 10px rgba(232, 162, 58, 0.35)',
+              flexShrink: 0,
             }}
           >
-            NISHANT JAIN // AI/ML · EDGE AI · COMPUTER VISION
+            N
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
+            <div
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: '0.85rem',
+                fontWeight: 700,
+                color: '#e6e2d8',
+                letterSpacing: '0.05em',
+              }}
+            >
+              THE ENGINEER'S CAVE
+            </div>
+            <div
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: '0.7rem',
+                color: '#e8a23a',
+              }}
+            >
+              NISHANT JAIN // AI/ML · EDGE AI · COMPUTER VISION
+            </div>
           </div>
         </div>
 

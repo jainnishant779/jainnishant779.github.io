@@ -4,8 +4,10 @@ export const projects: Project[] = [
   {
     slug: 'edgedesk',
     title: 'EdgeDesk: Secure Multi-Device Remote Access Platform',
-    badge: 'Patent application filed — not granted',
-    stack: ['Python', 'WebSocket', 'VNC', 'Jetson Nano', 'TLS/WSS'],
+    subtitle: 'Remote Access Platform',
+    category: 'Edge AI',
+    badge: 'Patent Application Filed — Not Granted',
+    stack: ['Python', 'WebSocket', 'VNC', 'Jetson Nano', 'Linux', 'TLS/WSS'],
     description: [
       'VPN-style secure remote desktop for encrypted screen access and file transfer across a fleet of Jetson Nano edge devices; patent application filed for the multi-device architecture.',
       'Custom WebSocket broker with encrypted file transfer and cross-device drag-and-drop, managing multiple devices from one dashboard with reboot-safe Linux services.',
@@ -16,17 +18,23 @@ export const projects: Project[] = [
   {
     slug: 'crowd-analytics',
     title: 'Real-Time Crowd Analytics & Stampede Detection',
-    badge: 'Top Finalist — MPSEDC Mahakumbh Hackathon 2025 (200+ teams)',
+    subtitle: 'Stampede Detection',
+    category: 'Computer Vision',
+    badge: 'Top Finalist — MPSEDC Mahakumbh 2025 (200+ teams)',
     stack: ['Python', 'YOLOv8', 'ByteTrack', 'OpenCV', 'Jetson Nano (CUDA)'],
     description: [
       'GPU-accelerated multi-object tracking pipeline achieving sub-50 ms inference latency for real-time person counting and density/velocity-based stampede alerts.',
     ],
+    image: '/nightfall/images/projects/crowd-analytics.jpg',
+    imageCaption: 'Illustrative artwork — not a product screenshot.',
   },
   {
     slug: 'poultry-health-ai',
-    title: 'AI-Powered Poultry Health Monitoring',
-    badge: 'Client project',
-    stack: ['Python', 'YOLO', 'OpenCV', 'Object Detection'],
+    title: 'AI-Powered Poultry Health Monitoring System',
+    subtitle: 'Flock Detection & Monitoring',
+    category: 'Computer Vision',
+    badge: 'Client Production Deployment',
+    stack: ['Python', 'YOLO', 'OpenCV', 'Edge AI', 'Agriculture'],
     description: [
       'Owned the ML lifecycle end-to-end — data collection, annotation, training, and deployment — for a real farm-operator client.',
     ],
@@ -36,18 +44,36 @@ export const projects: Project[] = [
   {
     slug: 'on-device-ai',
     title: 'On-Device AI Assistant (Offline Speech & Local LLM)',
-    badge: 'Personal R&D — in progress, not a released app',
+    subtitle: 'Offline STT + LLM',
+    category: 'Research',
+    badge: 'Personal R&D Prototype',
     stack: ['Android', 'Whisper', 'sherpa-onnx', 'llama.cpp', 'GGUF'],
     description: [
-      'Offline speech transcription and local language-model inference running fully on an Android device.',
+      'Offline speech transcription and local language-model inference running fully on an Android device without cloud dependencies.',
     ],
     image: '/nightfall/images/projects/on-device-ai.jpg',
     imageCaption: 'Illustrative artwork — not a product screenshot.',
   },
   {
+    slug: 'parkfnb',
+    title: 'ParkFNB: Intelligent Parking Management & Analytics',
+    subtitle: 'Intelligent Parking',
+    category: 'IoT',
+    badge: 'IoT & Computer Vision Prototype',
+    stack: ['Node.js', 'CCTV', 'Web App', 'Computer Vision', 'IoT'],
+    description: [
+      'Automated parking occupancy detection and vehicle entry/exit tracking using fixed CCTV RTSP camera feeds and lightweight inference.',
+      'Real-time occupancy status dashboard, slot reservation telemetry, and historical turnover analytics for commercial parking facilities.',
+    ],
+    image: '/nightfall/images/projects/parkfnb.jpg',
+    imageCaption: 'Illustrative artwork — not a product screenshot.',
+  },
+  {
     slug: 'facial-attendance',
     title: 'AI-Accelerated Facial Recognition Attendance System',
-    badge: 'Pilot deployment',
+    subtitle: 'Facial Recognition Platform',
+    category: 'AI/ML',
+    badge: 'AWS EC2 Pilot Deployment',
     stack: ['Python', 'Flask', 'dlib', 'MySQL', 'AWS EC2'],
     description: [
       'Full-stack attendance system deployed on AWS EC2, reducing manual attendance-taking time by ~90% for a 3-course pilot through automated facial recognition.',
@@ -58,6 +84,8 @@ export const projects: Project[] = [
   {
     slug: 'lora-traffic-mesh',
     title: 'Adaptive LoRa Traffic Intersection Mesh',
+    subtitle: 'Decentralized Traffic Mesh',
+    category: 'IoT',
     badge: 'Hardware Prototype — ESP32 & Sub-GHz LoRa',
     stack: ['ESP32', 'LoRaWAN', 'FreeRTOS', 'C++', 'UART / SPI', 'Ad-Hoc Gossip'],
     description: [

@@ -29,6 +29,8 @@ export interface Experience {
 export interface Project {
   slug: string;
   title: string;
+  subtitle?: string;
+  category?: 'AI/ML' | 'Computer Vision' | 'Edge AI' | 'IoT' | 'Research';
   badge: string;
   stack: string[];
   description: string[];

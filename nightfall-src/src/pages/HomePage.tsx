@@ -32,7 +32,15 @@ export const HomePage: React.FC = () => {
     } catch {
       setEngineSupported(false);
     }
-  }, []);
+
+    // Direct deep-link query parameter handling (?view=suit or ?view=os)
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('view') === 'suit') {
+      setMode('suit-inspect');
+    } else if (params.get('view') === 'os') {
+      setOsOpen(true);
+    }
+  }, [setMode, setOsOpen]);
 
   // Keyboard shortcut: Escape to close OS overlay or exit suit inspection
   useEffect(() => {

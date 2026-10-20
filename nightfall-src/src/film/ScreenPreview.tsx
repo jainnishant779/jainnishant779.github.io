@@ -1222,6 +1222,26 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
                       </div>
                     )}
 
+                    {activeProject.slug === 'parkfnb' && (
+                      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.85rem', fontSize: '0.72rem' }}>
+                        <div style={{ border: '1px solid #00e5ff', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(0, 229, 255, 0.10)', color: '#00e5ff' }}>
+                          [1] CCTV RTSP CAMERA VIDEO INGESTION
+                        </div>
+                        <div style={{ textAlign: 'center', color: '#e8a23a', fontSize: '0.68rem' }}>
+                          ↓↓ Slot Occupancy & Vehicle Tracking ↓↓
+                        </div>
+                        <div style={{ border: '1px solid #e8a23a', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(232, 162, 58, 0.10)', color: '#e8a23a' }}>
+                          [2] NODE.JS REAL-TIME TELEMETRY BACKEND
+                        </div>
+                        <div style={{ textAlign: 'center', color: '#7fb38a', fontSize: '0.68rem' }}>
+                          ↓↓ Live WebSocket State Sync ↓↓
+                        </div>
+                        <div style={{ border: '1px solid #7fb38a', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(127, 179, 138, 0.10)', color: '#7fb38a' }}>
+                          [3] SMART PARKING MANAGEMENT & WEB APP
+                        </div>
+                      </div>
+                    )}
+
                     {activeProject.slug === 'lora-traffic-mesh' && (
                       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.85rem', fontSize: '0.72rem' }}>
                         <div style={{ border: '1px solid #e8a23a', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(232, 162, 58, 0.10)', color: '#e8a23a' }}>

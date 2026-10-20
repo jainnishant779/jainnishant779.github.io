@@ -4,6 +4,7 @@ import { prefersReducedMotion } from '../lib/reducedMotion';
 import { sound } from '../lib/sound';
 import { projects } from '../content/projects';
 import { getCVUrl } from '../lib/assets';
+import { useStore } from '../state/store';
 import type { OSModuleId } from '../os/OSShell';
 
 interface ScreenDef {
@@ -117,6 +118,25 @@ const SCREENS: ScreenDef[] = [
     srcW: 360,
     srcH: 150,
     keyNum: '5',
+  },
+  {
+    id: 'lora-traffic-mesh',
+    slug: 'lora-traffic-mesh',
+    module: 'projects',
+    title: 'Adaptive LoRa Traffic Intersection Mesh',
+    shortTitle: 'LORA TRAFFIC MESH',
+    badge: 'HARDWARE PROTOTYPE',
+    metrics: 'SUB-GHZ MESH · ESP32 + FREERTOS',
+    tech: ['ESP32', 'LoRaWAN', 'FreeRTOS', 'C++'],
+    rawQuad: [
+      [1310, 830],
+      [1480, 830],
+      [1480, 898],
+      [1310, 898],
+    ],
+    srcW: 360,
+    srcH: 150,
+    keyNum: '6',
   },
 ];
 
@@ -271,7 +291,7 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
       } else if (e.key === 'Enter' && !selectedProjectSlug) {
         e.preventDefault();
         handleLaunchFullOS('identity');
-      } else if (['1', '2', '3', '4', '5'].includes(e.key)) {
+      } else if (['1', '2', '3', '4', '5', '6'].includes(e.key)) {
         const targetScreen = SCREENS.find((s) => s.keyNum === e.key);
         if (targetScreen) {
           e.preventDefault();
@@ -683,6 +703,52 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
                     <div style={{ fontSize: '0.55rem', color: '#00e5ff', lineHeight: 1.4 }}>
                       <div>WHISPER SPEECH</div>
                       <div style={{ color: '#7fb38a' }}>LLAMA.CPP 4-BIT GGUF</div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 6. LORA TRAFFIC MESH: Sub-GHz Radio Gossip & Signal Fail-Safe */}
+                {scr.id === 'lora-traffic-mesh' && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                    <div
+                      style={{
+                        flex: 1,
+                        height: '60px',
+                        border: '1px solid rgba(0, 229, 255, 0.4)',
+                        backgroundColor: 'rgba(0, 20, 28, 0.7)',
+                        borderRadius: '2px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-around',
+                        padding: '4px 8px',
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.52rem' }}>
+                        <span style={{ color: '#00e5ff' }}>NODE_A ⇄ NODE_B</span>
+                        <span style={{ color: '#7fb38a' }}>RSSI: -68 dBm</span>
+                      </div>
+                      {/* Packet Activity Pulse Bar */}
+                      <div style={{ display: 'flex', gap: '2px', height: '14px', alignItems: 'center' }}>
+                        {[1, 2, 3, 4, 5, 6, 7, 8].map((seg) => (
+                          <div
+                            key={seg}
+                            style={{
+                              flex: 1,
+                              height: '100%',
+                              backgroundColor: ((tickerTick + seg) % 4 === 0) ? '#e8a23a' : '#00e5ff',
+                              opacity: 0.8,
+                              borderRadius: '1px',
+                            }}
+                          />
+                        ))}
+                      </div>
+                      <div style={{ fontSize: '0.5rem', color: '#9e9a8e' }}>
+                        SLOTTED ALOHA · FAIL-SAFE: ARMED
+                      </div>
+                    </div>
+                    <div style={{ fontSize: '0.55rem', color: '#00e5ff', lineHeight: 1.4 }}>
+                      <div>ESP32 GOSSIP</div>
+                      <div style={{ color: '#e8a23a' }}>868 MHz MESH</div>
                     </div>
                   </div>
                 )}
@@ -1155,6 +1221,26 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
                         </div>
                       </div>
                     )}
+
+                    {activeProject.slug === 'lora-traffic-mesh' && (
+                      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.85rem', fontSize: '0.72rem' }}>
+                        <div style={{ border: '1px solid #e8a23a', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(232, 162, 58, 0.10)', color: '#e8a23a' }}>
+                          [1] INTERSECTION NODE A (ESP32 AUTONOMOUS CONTROLLER)
+                        </div>
+                        <div style={{ textAlign: 'center', color: '#00e5ff', fontSize: '0.68rem' }}>
+                          ↓↓ Ad-Hoc Gossip Mesh (868/915 MHz Sub-GHz LoRa) ↓↓
+                        </div>
+                        <div style={{ border: '1px solid #00e5ff', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(0, 229, 255, 0.10)', color: '#00e5ff' }}>
+                          [2] INTERSECTION NODE B (FREERTOS DYNAMIC SCHEDULER)
+                        </div>
+                        <div style={{ textAlign: 'center', color: '#7fb38a', fontSize: '0.68rem' }}>
+                          ↓↓ Slotted ALOHA Backoff + Fail-Safe Fallback ↓↓
+                        </div>
+                        <div style={{ border: '1px solid #7fb38a', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(127, 179, 138, 0.10)', color: '#7fb38a' }}>
+                          [3] SOLID-STATE SIGNAL RELAYS (NO INTERNET REQUIRED)
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div style={{ fontSize: '0.64rem', color: '#9e9a8e', borderTop: '1px solid rgba(0, 229, 255, 0.25)', paddingTop: '0.45rem', display: 'flex', justifyContent: 'space-between' }}>
@@ -1312,6 +1398,29 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
                 [{s.keyNum}] {s.shortTitle}
               </button>
             ))}
+
+            <button
+              type="button"
+              onClick={() => {
+                sound.playAccessBeep();
+                useStore.getState().setMode('suit-inspect');
+              }}
+              style={{
+                padding: '0.3rem 0.75rem',
+                backgroundColor: 'rgba(127, 179, 138, 0.15)',
+                border: '1px solid #7fb38a',
+                color: '#7fb38a',
+                fontSize: '0.68rem',
+                fontWeight: 700,
+                borderRadius: '2px',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                transition: 'all 0.15s ease',
+              }}
+              title="Inspect 3D Warden Exoskeleton Suit Chamber"
+            >
+              🛡️ SUIT VAULT [3D]
+            </button>
           </div>
 
           {selectedProjectSlug && (

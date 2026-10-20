@@ -7,6 +7,7 @@ const routes = [
   { path: 'projects', heading: '02 // PROJECT ARCHIVES' },
   { path: 'projects/edgedesk', heading: 'EdgeDesk: Secure Multi-Device Remote Access Platform' },
   { path: 'projects/crowd-analytics', heading: 'Real-Time Crowd Analytics & Stampede Detection' },
+  { path: 'projects/lora-traffic-mesh', heading: 'Adaptive LoRa Traffic Intersection Mesh' },
   { path: 'experience', heading: '03 // EXPERIENCE LOG' },
   { path: 'skills', heading: '04 // TECHNICAL CAPABILITIES' },
   { path: 'achievements', heading: '05 // HONORS & CREDENTIALS' },

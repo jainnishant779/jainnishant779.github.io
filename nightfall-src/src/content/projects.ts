@@ -55,4 +55,14 @@ export const projects: Project[] = [
     image: '/nightfall/images/projects/facial-attendance.jpg',
     imageCaption: 'Illustrative artwork — not a product screenshot.',
   },
+  {
+    slug: 'lora-traffic-mesh',
+    title: 'Adaptive LoRa Traffic Intersection Mesh',
+    badge: 'Hardware Prototype — ESP32 & Sub-GHz LoRa',
+    stack: ['ESP32', 'LoRaWAN', 'FreeRTOS', 'C++', 'UART / SPI', 'Ad-Hoc Gossip'],
+    description: [
+      'Decentralized multi-node traffic intersection mesh dynamically coordinating signal green times via sub-GHz LoRa gossip protocol without internet connectivity.',
+      'Formulated an ad-hoc peer-to-peer coordination protocol where each intersection controller broadcasts queue density with randomized slotted ALOHA channel backoff and autonomous fail-safe fallback to fixed timing.',
+    ],
+  },
 ];

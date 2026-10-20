@@ -135,6 +135,28 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({
             QUICK PORTFOLIO [OS] →
           </button>
 
+          <button
+            onClick={() => {
+              if (audioEnabled) sound.playAccessBeep();
+              useStore.getState().setMode('suit-inspect');
+            }}
+            className="suit-vault-hud-btn"
+            title="Inspect 3D Warden Exoskeleton Suit Chamber"
+            style={{
+              background: 'rgba(127, 179, 138, 0.15)',
+              border: '1px solid #7fb38a',
+              color: '#7fb38a',
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: '0.78rem',
+              padding: '0.4rem 0.85rem',
+              borderRadius: '3px',
+              cursor: 'pointer',
+              fontWeight: 600,
+            }}
+          >
+            🛡️ SUIT VAULT [3D]
+          </button>
+
           <a
             href={cvUrl}
             target="_blank"

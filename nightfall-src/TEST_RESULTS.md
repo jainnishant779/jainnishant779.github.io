@@ -850,4 +850,88 @@ Running 28 tests using 1 worker
 ```
 **Result:** 28 passed, 0 failed. Total test duration dropped from 9.0m down to 56.3s!
 
+---
+
+## Phase 10 / Final Master Build & Armored Suit Chamber Verification: 2026-10-20
+
+### 1. TypeScript Strict Typecheck (`npm run typecheck`)
+
+```text
+> nightfall@1.0.0 typecheck
+> tsc --noEmit
+```
+**Result:** Clean exit code 0. Zero errors across all 6 projects, 3D suit inspection view, interactive system topologies, and perspective screen overlays.
+
+---
+
+### 2. Production Build & Static Route Generation (`npm run build`)
+
+```text
+> nightfall@1.0.0 prebuild
+> node scripts/scan-assets.mjs
+
+[scan-assets] Found 0 assets
+
+> nightfall@1.0.0 build
+> vite build && node scripts/make-route-pages.mjs
+
+vite v5.4.10 building for production...
+transforming...
+✓ 674 modules transformed.
+rendering chunks...
+computing gzip size...
+../nightfall/index.html                     3.05 kB │ gzip:   1.22 kB
+../nightfall/assets/index-CuE98Ibb.css     16.32 kB │ gzip:   3.64 kB
+../nightfall/assets/HomePage-DJkQk69C.js   63.25 kB │ gzip:  14.97 kB
+../nightfall/assets/index-CH2OpKb6.js      70.41 kB │ gzip:  22.17 kB
+../nightfall/assets/three-DIodSfvu.js     978.60 kB │ gzip: 270.95 kB
+✓ built in 53.29s
+[make-route-pages] Created 14 route pages + 404.html
+```
+**Result:** Clean exit code 0. All 14 static route pages + `404.html` generated in `../nightfall/`. 3D engine is strictly code-split into `three-DIodSfvu.js` and never loaded on conventional OS/plain routes.
+
+---
+
+### 3. Full Playwright E2E Suite Verification (`npm run test`)
+
+```text
+Running 31 tests using 1 worker
+
+  ok 1 [chromium] › audio-accessibility.spec.ts:4:3 › Phase 8 — Polish, Audio Synthesizer, & Accessibility › audio toggle defaults to muted, activates ambience on user interaction, and toggles state correctly (7.1s)
+  ok 2 [chromium] › audio-accessibility.spec.ts:34:3 › Phase 8 — Polish, Audio Synthesizer, & Accessibility › permanent HUD corner links are accessible on desktop (9.3s)
+  ok 3 [chromium] › audio-accessibility.spec.ts:63:3 › Phase 8 — Polish, Audio Synthesizer, & Accessibility › prefers-reduced-motion media query disables smooth transitions and accelerates facility entry (1.9s)
+  ok 4 [chromium] › audio-accessibility.spec.ts:86:3 › Phase 8 — Polish, Audio Synthesizer, & Accessibility › HTML meta tags, OG tags, and noscript fallback are present and valid (1.2s)
+  ok 5 [chromium] › cv.spec.ts:4:3 › CV Download and Open Verification › CV link is present with target=_blank and triggers download event (2.7s)
+  ok 6 [chromium] › cv.spec.ts:24:3 › CV Download and Open Verification › Direct PDF file request returns 200 and valid file buffer (145ms)
+  ok 7 [chromium] › experience.spec.ts:6:3 › 3D Experience & Guided Camera Scroll Journey › Scroll drives camera, gate opens, captures screenshots, and opens workstation OS (9.5s)
+  ok 8 [chromium] › fallback.spec.ts:4:3 › WebGL Unsupported Fallback › Displays fallback UI and direct links when WebGL2 is disabled (2.0s)
+  ok 9 [chromium] › film.spec.ts:4:3 › Photorealistic Scroll Film Engine & Perspective Quad › Manifest loads with valid structure and initial frames return 200 OK (84ms)
+  ok 10 [chromium] › film.spec.ts:28:3 › Photorealistic Scroll Film Engine & Perspective Quad › Canvas mounts, scrolls smoothly, and renders non-blank frames on scroll (2.1s)
+  ok 11 [chromium] › film.spec.ts:63:3 › Photorealistic Scroll Film Engine & Perspective Quad › Scrolling to terminal displays matrix3d ScreenPreview with interactive profile (3.4s)
+  ok 12 [chromium] › gate.spec.ts:6:3 › Phase 3 — Gate Cinematic & Controls › Access facility button, audio toggle, skip intro, and forward/backward gate scrubbing (8.0s)
+  ok 13 [chromium] › mobile.spec.ts:6:3 › Mobile Viewport (375px) Testing › No horizontal scroll at 375px width on OS view (2.0s)
+  ok 14 [chromium] › mobile.spec.ts:21:3 › Mobile Viewport (375px) Testing › Mobile navigation rail renders as bottom tab bar (1.6s)
+  ok 15 [chromium] › mobile.spec.ts:35:3 › Mobile Viewport (375px) Testing › No horizontal scroll at 375px width on Home Page (1.4s)
+  ok 16 [chromium] › routes.spec.ts:20:5 › Phase 1 Routes & Deep Links › route "/" loads and displays "THE ENGINEER'S CAVE" (2.5s)
+  ok 17 [chromium] › routes.spec.ts:20:5 › Phase 1 Routes & Deep Links › route "/os" loads and displays "NJ-OS // COMMAND CENTER" (1.3s)
+  ok 18 [chromium] › routes.spec.ts:20:5 › Phase 1 Routes & Deep Links › route "/about" loads and displays "01 // IDENTITY DOSSIER" (1.9s)
+  ok 19 [chromium] › routes.spec.ts:20:5 › Phase 1 Routes & Deep Links › route "/projects" loads and displays "02 // PROJECT ARCHIVES" (1.2s)
+  ok 20 [chromium] › routes.spec.ts:20:5 › Phase 1 Routes & Deep Links › route "/projects/edgedesk" loads and displays "EdgeDesk: Secure Multi-Device Remote Access Platform" (1.3s)
+  ok 21 [chromium] › routes.spec.ts:20:5 › Phase 1 Routes & Deep Links › route "/projects/crowd-analytics" loads and displays "Real-Time Crowd Analytics & Stampede Detection" (1.2s)
+  ok 22 [chromium] › routes.spec.ts:20:5 › Phase 1 Routes & Deep Links › route "/projects/lora-traffic-mesh" loads and displays "Adaptive LoRa Traffic Intersection Mesh" (3.3s)
+  ok 23 [chromium] › routes.spec.ts:20:5 › Phase 1 Routes & Deep Links › route "/experience" loads and displays "03 // EXPERIENCE LOG" (1.1s)
+  ok 24 [chromium] › routes.spec.ts:20:5 › Phase 1 Routes & Deep Links › route "/skills" loads and displays "04 // TECHNICAL CAPABILITIES" (1.1s)
+  ok 25 [chromium] › routes.spec.ts:20:5 › Phase 1 Routes & Deep Links › route "/achievements" loads and displays "05 // HONORS & CREDENTIALS" (951ms)
+  ok 26 [chromium] › routes.spec.ts:20:5 › Phase 1 Routes & Deep Links › route "/contact" loads and displays "07 // TRANSMISSION PROTOCOL" (1.1s)
+  ok 27 [chromium] › routes.spec.ts:20:5 › Phase 1 Routes & Deep Links › route "/cv" loads and displays "06 // CURRICULUM VITAE" (1.2s)
+  ok 28 [chromium] › routes.spec.ts:34:3 › Phase 1 Routes & Deep Links › Phase 9 Link check: all external links in the OS are strictly Section 6 verified URLs (1.0s)
+  ok 29 [chromium] › workstation.spec.ts:6:3 › Workstation Primary Terminal & Perspective Quad Screen › Workstation renders live terminal screen, clicking button launches OS with zoom, and Escape returns (5.9s)
+  ok 30 [chromium] › workstation.spec.ts:74:3 › Workstation Primary Terminal & Perspective Quad Screen › Clicking a tactical monitor opens the Project Intel Dossier directly on the center screen in-place without page jump (7.6s)
+  ok 31 [chromium] › workstation.spec.ts:120:3 › Workstation Primary Terminal & Perspective Quad Screen › Clicking the 3D Suit Vault button transitions to 3D Armored Suit chamber with Warden MK-IV specifications (15.3s)
+
+  31 passed (2.3m)
+```
+**Result:** 31 passed, 0 failed. All verification criteria met.
+
+
 

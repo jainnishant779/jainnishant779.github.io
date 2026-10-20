@@ -4,6 +4,7 @@ import { useStore } from '../state/store';
 import { FilmPlayer } from '../film/FilmPlayer';
 import { HudOverlay } from '../ui/HudOverlay';
 import { OSShell, type OSModuleId } from '../os/OSShell';
+import { SuitInspectView } from '../world/SuitInspectView';
 import { prefersReducedMotion } from '../lib/reducedMotion';
 import { sound } from '../lib/sound';
 import { getCVUrl } from '../lib/assets';
@@ -15,6 +16,8 @@ export const HomePage: React.FC = () => {
   const [osSlug, setOsSlug] = useState<string | undefined>(undefined);
   const osOpen = useStore((state) => state.osOpen);
   const setOsOpen = useStore((state) => state.setOsOpen);
+  const mode = useStore((state) => state.mode);
+  const setMode = useStore((state) => state.setMode);
   const audioEnabled = useStore((state) => state.audioEnabled);
   const cvUrl = getCVUrl();
 
@@ -31,13 +34,15 @@ export const HomePage: React.FC = () => {
     }
   }, []);
 
-  // Keyboard shortcut: Escape to close OS overlay
+  // Keyboard shortcut: Escape to close OS overlay or exit suit inspection
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         const state = useStore.getState();
         if (state.osOpen) {
           setOsOpen(false);
+        } else if (state.mode === 'suit-inspect') {
+          state.setMode('guided');
         }
       }
     };
@@ -221,6 +226,14 @@ export const HomePage: React.FC = () => {
             zIndex: 100,
             pointerEvents: 'none',
           }}
+        />
+      )}
+
+      {/* 3D Warden Exoskeleton Suit Vault Inspection Mode */}
+      {mode === 'suit-inspect' && (
+        <SuitInspectView
+          onReturnToWorkstation={() => setMode('guided')}
+          onOpenOS={handleOpenOS}
         />
       )}
 

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { EdgeDeskDiagram } from '../diagrams/EdgeDeskDiagram';
 import { CrowdDiagram } from '../diagrams/CrowdDiagram';
+import { LoRaDiagram } from '../diagrams/LoRaDiagram';
 
 export const Architecture: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'edgedesk' | 'crowd'>('edgedesk');
+  const [activeTab, setActiveTab] = useState<'edgedesk' | 'crowd' | 'lora'>('edgedesk');
 
   return (
     <div className="architecture-module-container">
@@ -17,13 +18,19 @@ export const Architecture: React.FC = () => {
             className={`os-btn ${activeTab === 'edgedesk' ? 'os-btn-primary' : 'os-btn-subtle'}`}
             onClick={() => setActiveTab('edgedesk')}
           >
-            EDGEDESK TOPOLOGY
+            EDGEDESK
           </button>
           <button
             className={`os-btn ${activeTab === 'crowd' ? 'os-btn-primary' : 'os-btn-subtle'}`}
             onClick={() => setActiveTab('crowd')}
           >
-            CROWD ANALYTICS PIPELINE
+            CROWD PIPELINE
+          </button>
+          <button
+            className={`os-btn ${activeTab === 'lora' ? 'os-btn-primary' : 'os-btn-subtle'}`}
+            onClick={() => setActiveTab('lora')}
+          >
+            LORA MESH
           </button>
         </div>
       </div>
@@ -34,7 +41,13 @@ export const Architecture: React.FC = () => {
         </p>
       </div>
 
-      {activeTab === 'edgedesk' ? <EdgeDeskDiagram /> : <CrowdDiagram />}
+      {activeTab === 'edgedesk' ? (
+        <EdgeDeskDiagram />
+      ) : activeTab === 'crowd' ? (
+        <CrowdDiagram />
+      ) : (
+        <LoRaDiagram />
+      )}
     </div>
   );
 };

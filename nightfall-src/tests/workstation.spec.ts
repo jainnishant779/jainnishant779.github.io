@@ -116,5 +116,40 @@ test.describe('Workstation Primary Terminal & Perspective Quad Screen', () => {
     await page.waitForTimeout(400);
     await expect(dossierHeader).not.toBeVisible({ timeout: 5000 });
   });
+
+  test('Clicking the 3D Suit Vault button transitions to 3D Armored Suit chamber with Warden MK-IV specifications', async ({
+    page,
+  }) => {
+    test.setTimeout(180000);
+    const shotsDir = path.join(process.cwd(), 'tests', '__shots__');
+    await page.goto('');
+    await page.waitForSelector('.scroll-track', { state: 'attached', timeout: 45000 });
+
+    // Click the top HUD Suit Vault button
+    const suitVaultBtn = page.locator('.suit-vault-hud-btn');
+    await expect(suitVaultBtn).toBeVisible({ timeout: 10000 });
+    await suitVaultBtn.click();
+    await page.waitForTimeout(800);
+
+    // Verify 3D Suit Viewport and HUD card are rendered
+    const suitViewport = page.locator('.suit-inspect-viewport');
+    await expect(suitViewport).toBeVisible({ timeout: 8000 });
+    await expect(suitViewport).toContainText('WARDEN EXOSKELETON MK-IV');
+    await expect(suitViewport).toContainText('NVIDIA Jetson Core (CUDA)');
+
+    // Capture screenshot of the 3D suit vault
+    const shotSuit = path.join(shotsDir, 'warden_suit_vault_3d.png');
+    await page.screenshot({ path: shotSuit });
+    expect(fs.existsSync(shotSuit)).toBeTruthy();
+
+    // Click Return button to exit vault
+    const returnBtn = page.locator('button:has-text("RETURN TO WORKSTATION")');
+    await expect(returnBtn).toBeVisible();
+    await returnBtn.click();
+    await page.waitForTimeout(400);
+
+    // Verify suit viewport is closed
+    await expect(suitViewport).not.toBeVisible({ timeout: 5000 });
+  });
 });
 

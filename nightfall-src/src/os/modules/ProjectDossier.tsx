@@ -2,6 +2,7 @@ import React from 'react';
 import { Project } from '../../content/types';
 import { EdgeDeskDiagram } from '../diagrams/EdgeDeskDiagram';
 import { CrowdDiagram } from '../diagrams/CrowdDiagram';
+import { LoRaDiagram } from '../diagrams/LoRaDiagram';
 
 interface ProjectDossierProps {
   project: Project;
@@ -124,6 +125,16 @@ export const ProjectDossier: React.FC<ProjectDossierProps> = ({ project, onBack 
             GPU-accelerated end-to-end edge pipeline from raw camera stream to real-time density and velocity anomaly detection. Select any node to inspect subsystem mechanics.
           </p>
           <CrowdDiagram />
+        </div>
+      )}
+
+      {project.slug === 'lora-traffic-mesh' && (
+        <div className="dossier-section">
+          <h3>Decentralized Mesh & Fail-Safe Architecture</h3>
+          <p className="dossier-text" style={{ marginBottom: '1rem' }}>
+            Ad-hoc gossip protocol across sub-GHz ESP32 hardware nodes coordinating traffic signals without internet backhaul.
+          </p>
+          <LoRaDiagram />
         </div>
       )}
     </div>

@@ -983,43 +983,57 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
           className="film-screen-hud"
           style={{
             position: 'absolute',
-            bottom: '0.35rem',
+            bottom: 'clamp(2.1rem, 3.8vh, 2.8rem)',
             left: '50%',
             transform: 'translateX(-50%)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '0.25rem',
+            gap: '0.2rem',
             background: 'rgba(7, 11, 18, 0.96)',
-            border: '1px solid rgba(0, 229, 255, 0.35)',
-            padding: '0.25rem 0.8rem',
+            border: '1px solid rgba(0, 229, 255, 0.4)',
+            padding: '0.22rem 0.65rem',
             borderRadius: '4px',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.85)',
+            boxShadow: '0 4px 24px rgba(0, 0, 0, 0.9), 0 0 12px rgba(0, 229, 255, 0.15)',
             zIndex: 40,
             pointerEvents: 'auto',
+            maxWidth: '96vw',
           }}
         >
-          <div style={{ fontSize: '0.62rem', color: '#00e5ff', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+          <div style={{ fontSize: '0.60rem', color: '#00e5ff', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
             <span style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: '#00e5ff', boxShadow: '0 0 6px #00e5ff' }} />
             TRIPLE-DISPLAY COMPUTER ACTIVE // MOUSE INPUT ENGAGED // CAVERN COMMUNICATING
           </div>
 
-          <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <div
+            style={{
+              display: 'flex',
+              gap: '0.3rem',
+              flexWrap: 'nowrap',
+              justifyContent: 'center',
+              alignItems: 'center',
+              maxWidth: '100%',
+              overflowX: 'auto',
+              scrollbarWidth: 'none',
+              padding: '0.05rem',
+            }}
+          >
             {SCREENS.map((s) => (
               <button
                 key={s.id}
                 type="button"
                 onClick={() => handleSelectScreenInPlace(s)}
                 style={{
-                  padding: '0.25rem 0.55rem',
+                  padding: '0.2rem 0.45rem',
                   backgroundColor: selectedProjectSlug === s.slug ? 'rgba(0, 229, 255, 0.3)' : 'rgba(0, 229, 255, 0.08)',
                   border: selectedProjectSlug === s.slug ? '1px solid #00e5ff' : '1px solid rgba(0, 229, 255, 0.25)',
                   color: selectedProjectSlug === s.slug ? '#00e5ff' : '#cbd5e1',
-                  fontSize: '0.64rem',
+                  fontSize: '0.60rem',
                   fontWeight: 700,
                   borderRadius: '2px',
                   cursor: 'pointer',
                   fontFamily: 'inherit',
+                  whiteSpace: 'nowrap',
                   transition: 'all 0.15s ease',
                 }}
               >
@@ -1034,15 +1048,16 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
                 useStore.getState().setMode('suit-inspect');
               }}
               style={{
-                padding: '0.25rem 0.65rem',
+                padding: '0.2rem 0.55rem',
                 backgroundColor: 'rgba(127, 179, 138, 0.15)',
                 border: '1px solid #7fb38a',
                 color: '#7fb38a',
-                fontSize: '0.64rem',
+                fontSize: '0.60rem',
                 fontWeight: 700,
                 borderRadius: '2px',
                 cursor: 'pointer',
                 fontFamily: 'inherit',
+                whiteSpace: 'nowrap',
               }}
               title="Inspect 3D Warden Exoskeleton Suit Chamber"
             >
@@ -1054,15 +1069,16 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
                 type="button"
                 onClick={() => setSelectedProjectSlug(null)}
                 style={{
-                  padding: '0.25rem 0.65rem',
+                  padding: '0.2rem 0.55rem',
                   backgroundColor: 'rgba(232, 162, 58, 0.18)',
                   border: '1px solid #e8a23a',
                   color: '#e8a23a',
-                  fontSize: '0.64rem',
+                  fontSize: '0.60rem',
                   fontWeight: 700,
                   borderRadius: '2px',
                   cursor: 'pointer',
                   fontFamily: 'inherit',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 CLOSE [ESC]

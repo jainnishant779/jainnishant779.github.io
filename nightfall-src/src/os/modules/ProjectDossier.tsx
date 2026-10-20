@@ -3,6 +3,9 @@ import { Project } from '../../content/types';
 import { EdgeDeskDiagram } from '../diagrams/EdgeDeskDiagram';
 import { CrowdDiagram } from '../diagrams/CrowdDiagram';
 import { LoRaDiagram } from '../diagrams/LoRaDiagram';
+import { PoultryHealthDiagram } from '../diagrams/PoultryHealthDiagram';
+import { FacialAttendanceDiagram } from '../diagrams/FacialAttendanceDiagram';
+import { OnDeviceAiDiagram } from '../diagrams/OnDeviceAiDiagram';
 import { sound } from '../../lib/sound';
 
 interface ProjectDossierProps {
@@ -219,9 +222,12 @@ export const ProjectDossier: React.FC<ProjectDossierProps> = ({ project, onBack 
           {project.slug === 'edgedesk' && <EdgeDeskDiagram />}
           {project.slug === 'crowd-analytics' && <CrowdDiagram />}
           {project.slug === 'lora-traffic-mesh' && <LoRaDiagram />}
-          {project.slug !== 'edgedesk' && project.slug !== 'crowd-analytics' && project.slug !== 'lora-traffic-mesh' && (
+          {project.slug === 'poultry-health-ai' && <PoultryHealthDiagram />}
+          {project.slug === 'facial-attendance' && <FacialAttendanceDiagram />}
+          {project.slug === 'on-device-ai' && <OnDeviceAiDiagram />}
+          {project.slug === 'parkfnb' && (
             <div style={{ padding: '2rem', textAlign: 'center', fontFamily: 'var(--font-mono)', color: '#00e5ff', background: '#090d14', border: '1px solid #1e293b', borderRadius: '4px' }}>
-              [ PIPELINE TOPOLOGY: DATA INGESTION → MODEL INFERENCE → TELEMETRY / ACTION ENGINE ]
+              [ PIPELINE TOPOLOGY: CCTV RTSP FEED → OPENCV PREPROCESSING → PARKING OCCUPANCY MATRIX → REST API ]
             </div>
           )}
         </div>

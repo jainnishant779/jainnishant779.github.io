@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { EdgeDeskDiagram } from '../diagrams/EdgeDeskDiagram';
 import { CrowdDiagram } from '../diagrams/CrowdDiagram';
 import { LoRaDiagram } from '../diagrams/LoRaDiagram';
+import { PoultryHealthDiagram } from '../diagrams/PoultryHealthDiagram';
+import { FacialAttendanceDiagram } from '../diagrams/FacialAttendanceDiagram';
+import { OnDeviceAiDiagram } from '../diagrams/OnDeviceAiDiagram';
 import { sound } from '../../lib/sound';
 
 export const Architecture: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'edgedesk' | 'crowd' | 'poultry' | 'ondevice' | 'lora'>('edgedesk');
+  const [activeTab, setActiveTab] = useState<'edgedesk' | 'crowd' | 'poultry' | 'facial' | 'ondevice' | 'lora'>('edgedesk');
 
   return (
     <div className="architecture-module-container" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', paddingBottom: '2rem' }}>
@@ -37,6 +40,7 @@ export const Architecture: React.FC = () => {
           { id: 'edgedesk', label: 'EdgeDesk' },
           { id: 'crowd', label: 'Crowd Analytics' },
           { id: 'poultry', label: 'Poultry AI' },
+          { id: 'facial', label: 'Facial Attendance' },
           { id: 'ondevice', label: 'On-Device AI' },
           { id: 'lora', label: 'LoRa Mesh' },
         ].map((tab) => {
@@ -76,26 +80,9 @@ export const Architecture: React.FC = () => {
         {activeTab === 'edgedesk' && <EdgeDeskDiagram />}
         {activeTab === 'crowd' && <CrowdDiagram />}
         {activeTab === 'lora' && <LoRaDiagram />}
-        {activeTab === 'poultry' && (
-          <div style={{ padding: '2.5rem 1.5rem', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>
-            <div style={{ fontSize: '1rem', color: '#e8a23a', fontWeight: 700, marginBottom: '0.5rem' }}>
-              POULTRY HEALTH AI PIPELINE
-            </div>
-            <div style={{ fontSize: '0.8rem', color: '#94a3b8', maxWidth: '600px', margin: '0 auto', lineHeight: 1.6 }}>
-              [ Farm Shed RTSP Stream ] → [ Frame Pre-processing & Top-Down Homography ] → [ YOLOv8 Object Detection ] → [ Spatial Grid Clustering ] → [ Operator Daily Telemetry Reports ]
-            </div>
-          </div>
-        )}
-        {activeTab === 'ondevice' && (
-          <div style={{ padding: '2.5rem 1.5rem', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>
-            <div style={{ fontSize: '1rem', color: '#00e5ff', fontWeight: 700, marginBottom: '0.5rem' }}>
-              ON-DEVICE OFFLINE AI PIPELINE
-            </div>
-            <div style={{ fontSize: '0.8rem', color: '#94a3b8', maxWidth: '600px', margin: '0 auto', lineHeight: 1.6 }}>
-              [ Microphone PCM Stream ] → [ sherpa-onnx Whisper ASR ] → [ Token String ] → [ llama.cpp 4-Bit GGUF Engine ] → [ On-Device Output (Zero Cloud) ]
-            </div>
-          </div>
-        )}
+        {activeTab === 'poultry' && <PoultryHealthDiagram />}
+        {activeTab === 'facial' && <FacialAttendanceDiagram />}
+        {activeTab === 'ondevice' && <OnDeviceAiDiagram />}
       </div>
 
       {/* Bottom Service Layer Bar Matching Reference Image 1 Panel 7 */}

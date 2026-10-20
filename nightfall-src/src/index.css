@@ -147,3 +147,19 @@ img {
   background: var(--accent);
   color: var(--bg-deep);
 }
+
+/* CRT Phosphor Scanline Texture for Diegetic Cavern Monitors */
+.diegetic-screen-scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%,
+    rgba(0, 0, 0, 0.18) 50%
+  );
+  background-size: 100% 3px;
+  opacity: 0.45;
+  z-index: 50;
+  mix-blend-mode: overlay;
+}
+

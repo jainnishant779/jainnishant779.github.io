@@ -11,6 +11,9 @@ import { useStore } from '../state/store';
 import { EdgeDeskDiagram } from '../os/diagrams/EdgeDeskDiagram';
 import { CrowdDiagram } from '../os/diagrams/CrowdDiagram';
 import { LoRaDiagram } from '../os/diagrams/LoRaDiagram';
+import { PoultryHealthDiagram } from '../os/diagrams/PoultryHealthDiagram';
+import { FacialAttendanceDiagram } from '../os/diagrams/FacialAttendanceDiagram';
+import { OnDeviceAiDiagram } from '../os/diagrams/OnDeviceAiDiagram';
 import type { OSModuleId } from '../os/OSShell';
 
 interface ScreenDef {
@@ -334,6 +337,9 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
             pointerEvents: 'auto',
           }}
         >
+          {/* CRT Diegetic Phosphor Scanline Overlay */}
+          <div className="diegetic-screen-scanlines" aria-hidden="true" />
+
           {/* Top Title & Sub-tabs */}
           <div
             style={{
@@ -477,6 +483,9 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
             pointerEvents: 'auto',
           }}
         >
+          {/* CRT Diegetic Phosphor Scanline Overlay */}
+          <div className="diegetic-screen-scanlines" aria-hidden="true" />
+
           {/* Top Bar with Monogram & Master Nav */}
           <div
             style={{
@@ -619,7 +628,10 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
                   {activeProject.slug === 'edgedesk' && <EdgeDeskDiagram />}
                   {activeProject.slug === 'crowd-analytics' && <CrowdDiagram />}
                   {activeProject.slug === 'lora-traffic-mesh' && <LoRaDiagram />}
-                  {activeProject.slug !== 'edgedesk' && activeProject.slug !== 'crowd-analytics' && activeProject.slug !== 'lora-traffic-mesh' && (
+                  {activeProject.slug === 'poultry-health-ai' && <PoultryHealthDiagram />}
+                  {activeProject.slug === 'facial-attendance' && <FacialAttendanceDiagram />}
+                  {activeProject.slug === 'on-device-ai' && <OnDeviceAiDiagram />}
+                  {activeProject.slug === 'parkfnb' && (
                     <div style={{ fontSize: '0.76rem', color: '#cbd5e1', lineHeight: 1.5 }}>
                       {activeProject.description.map((d, i) => (
                         <p key={i} style={{ marginBottom: '0.4rem' }}>▸ {d}</p>
@@ -831,6 +843,9 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
             pointerEvents: 'auto',
           }}
         >
+          {/* CRT Diegetic Phosphor Scanline Overlay */}
+          <div className="diegetic-screen-scanlines" aria-hidden="true" />
+
           {/* Top Title & Sub-tabs */}
           <div
             style={{

@@ -12,11 +12,11 @@ interface HudOverlayProps {
 }
 
 function getFilmHint(progress: number): string {
-  if (progress < 0.15) return 'VAULT BLAST GATE // SEALED — SCROLL TO OPEN';
-  if (progress < 0.35) return 'TRANSIT CORRIDOR // HYDRAULIC LOCKS DISENGAGED';
-  if (progress < 0.65) return 'SUBTERRANEAN CAVERN // CATWALK PASSAGE & WATERFALL';
-  if (progress < 0.88) return 'APPROACHING COMMAND WORKSTATION PLATFORM';
-  return 'WORKSTATION PRIMARY TERMINAL // STANDBY READY';
+  if (progress < 0.15) return 'CAVERN ENTRANCE // OPEN & READY — SCROLL TO ENTER';
+  if (progress < 0.40) return 'TRANSIT CORRIDOR // ADVANCING DOWN CATWALK';
+  if (progress < 0.75) return 'SUBTERRANEAN CAVERN // CATWALK PASSAGE & WATERFALL';
+  if (progress < 0.90) return 'APPROACHING COMMAND WORKSTATION PLATFORM';
+  return 'TRIPLE-MONITOR WORKSTATION // COMPUTER READY';
 }
 
 export const HudOverlay: React.FC<HudOverlayProps> = ({

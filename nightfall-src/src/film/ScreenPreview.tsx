@@ -3,8 +3,14 @@ import { getQuadMatrix3d, getCoverQuadInViewport, type Quad } from './quad';
 import { prefersReducedMotion } from '../lib/reducedMotion';
 import { sound } from '../lib/sound';
 import { projects } from '../content/projects';
+import { experiences } from '../content/experience';
+import { achievements, certifications } from '../content/achievements';
+import { profile } from '../content/profile';
 import { getCVUrl } from '../lib/assets';
 import { useStore } from '../state/store';
+import { EdgeDeskDiagram } from '../os/diagrams/EdgeDeskDiagram';
+import { CrowdDiagram } from '../os/diagrams/CrowdDiagram';
+import { LoRaDiagram } from '../os/diagrams/LoRaDiagram';
 import type { OSModuleId } from '../os/OSShell';
 
 interface ScreenDef {
@@ -16,13 +22,9 @@ interface ScreenDef {
   badge: string;
   metrics: string;
   tech: string[];
-  rawQuad: Quad;
-  srcW: number;
-  srcH: number;
   keyNum: string;
 }
 
-// Precise homography quads in 1600x900 coordinate space for each physical monitor in f_0239.webp
 const SCREENS: ScreenDef[] = [
   {
     id: 'poultry-health-ai',
@@ -33,14 +35,6 @@ const SCREENS: ScreenDef[] = [
     badge: 'CLIENT PROJECT',
     metrics: '98.4% ANOMALY SCORE · JETSON NANO',
     tech: ['Python', 'YOLO', 'OpenCV', 'Edge AI'],
-    rawQuad: [
-      [-10, 108],
-      [112, 124],
-      [94, 412],
-      [-10, 390],
-    ],
-    srcW: 320,
-    srcH: 480,
     keyNum: '1',
   },
   {
@@ -52,14 +46,6 @@ const SCREENS: ScreenDef[] = [
     badge: 'PATENT APPLICATION FILED',
     metrics: '12 JETSON NODES · WSS / TLS 1.3',
     tech: ['WebSocket', 'VNC', 'Jetson Nano', 'TLS 1.3'],
-    rawQuad: [
-      [-10, 480],
-      [86, 465],
-      [60, 830],
-      [-10, 800],
-    ],
-    srcW: 320,
-    srcH: 480,
     keyNum: '2',
   },
   {
@@ -71,14 +57,6 @@ const SCREENS: ScreenDef[] = [
     badge: 'PILOT DEPLOYMENT',
     metrics: '99.2% ACCURACY · AWS EC2',
     tech: ['Python', 'Flask', 'dlib', 'AWS EC2'],
-    rawQuad: [
-      [1490, 50],
-      [1610, 40],
-      [1610, 430],
-      [1490, 435],
-    ],
-    srcW: 320,
-    srcH: 480,
     keyNum: '3',
   },
   {
@@ -90,14 +68,6 @@ const SCREENS: ScreenDef[] = [
     badge: 'MAHAKUMBH FINALIST',
     metrics: 'SUB-50MS LATENCY · YOLOv8 + CUDA',
     tech: ['YOLOv8', 'ByteTrack', 'CUDA', 'OpenCV'],
-    rawQuad: [
-      [1490, 475],
-      [1610, 480],
-      [1610, 880],
-      [1495, 825],
-    ],
-    srcW: 320,
-    srcH: 480,
     keyNum: '4',
   },
   {
@@ -109,14 +79,6 @@ const SCREENS: ScreenDef[] = [
     badge: 'PERSONAL R&D',
     metrics: 'WHISPER + LLAMA.CPP GGUF 4-BIT',
     tech: ['Android', 'Whisper', 'llama.cpp', 'sherpa-onnx'],
-    rawQuad: [
-      [120, 830],
-      [290, 830],
-      [290, 898],
-      [120, 898],
-    ],
-    srcW: 360,
-    srcH: 150,
     keyNum: '5',
   },
   {
@@ -128,16 +90,30 @@ const SCREENS: ScreenDef[] = [
     badge: 'HARDWARE PROTOTYPE',
     metrics: 'SUB-GHZ MESH · ESP32 + FREERTOS',
     tech: ['ESP32', 'LoRaWAN', 'FreeRTOS', 'C++'],
-    rawQuad: [
-      [1310, 830],
-      [1480, 830],
-      [1480, 898],
-      [1310, 898],
-    ],
-    srcW: 360,
-    srcH: 150,
     keyNum: '6',
   },
+];
+
+// Exact physical monitor quads in 1600x900 coordinate space for f_0239.webp workstation
+const LEFT_MONITOR_QUAD: Quad = [
+  [198, 520],
+  [505, 520],
+  [505, 696],
+  [198, 696],
+];
+
+const CENTER_MONITOR_QUAD: Quad = [
+  [523, 355],
+  [1075, 355],
+  [1075, 730],
+  [523, 730],
+];
+
+const RIGHT_MONITOR_QUAD: Quad = [
+  [1095, 520],
+  [1402, 520],
+  [1402, 696],
+  [1095, 696],
 ];
 
 interface ScreenPreviewProps {
@@ -159,18 +135,23 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
     w: typeof window !== 'undefined' ? window.innerWidth : 1600,
     h: typeof window !== 'undefined' ? window.innerHeight : 900,
   });
-  const [hoveredScreenId, setHoveredScreenId] = useState<string | null>(null);
+
   const [selectedProjectSlug, setSelectedProjectSlug] = useState<string | null>(null);
+  const [centerTab, setCenterTab] = useState<'home' | 'projects' | 'architecture' | 'contact'>('home');
+  const [leftTab, setLeftTab] = useState<'telemetry' | 'hardware' | 'network'>('telemetry');
+  const [rightTab, setRightTab] = useState<'quick' | 'experience' | 'honors'>('quick');
+  const [projectCategory, setProjectCategory] = useState<string>('All');
   const [isZooming, setIsZooming] = useState(false);
   const [tickerTick, setTickerTick] = useState(0);
+
   const cvUrl = getCVUrl();
 
-  // Dynamic animation ticker for simulated radar and packet streams
+  // Subtle live telemetry pulse
   useEffect(() => {
     if (!visible) return;
     const interval = setInterval(() => {
-      setTickerTick((t) => (t + 1) % 1000);
-    }, 120);
+      setTickerTick((t) => (t + 1) % 100);
+    }, 2000);
     return () => clearInterval(interval);
   }, [visible]);
 
@@ -183,56 +164,61 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Compute CSS matrix3d for main center monitor
-  const mainScreenTransform = useMemo(() => {
-    const srcW = 1320;
-    const srcH = 780;
-    // Main center screen inner display bounds in 1600x900 space
-    const centerQuad: Quad =
-      rawQuad && rawQuad.length === 4
-        ? rawQuad
-        : [
-            [138, 62],
-            [1465, 62],
-            [1465, 850],
-            [138, 850],
-          ];
+  const gpuLoad = 23 + (tickerTick % 4);
+  const cpuLoad = 14 + ((tickerTick * 2) % 5);
+  const memLoad = 38 + (tickerTick % 2);
+  const tempVal = 52 + ((tickerTick % 3) - 1);
+
+  // Compute CSS matrix3d for LEFT MONITOR (src: 600 x 380)
+  const leftTransform = useMemo(() => {
     const quadInViewport = getCoverQuadInViewport(
-      centerQuad,
+      LEFT_MONITOR_QUAD,
       nativeWidth,
       nativeHeight,
       viewport.w,
       viewport.h
     );
-    return getQuadMatrix3d(srcW, srcH, quadInViewport);
-  }, [rawQuad, nativeWidth, nativeHeight, viewport]);
-
-  // Compute CSS matrix3d for each side monitor in perspective
-  const sideScreenTransforms = useMemo(() => {
-    const map = new Map<string, string>();
-    for (const screen of SCREENS) {
-      const quadInViewport = getCoverQuadInViewport(
-        screen.rawQuad,
-        nativeWidth,
-        nativeHeight,
-        viewport.w,
-        viewport.h
-      );
-      map.set(screen.id, getQuadMatrix3d(screen.srcW, screen.srcH, quadInViewport));
-    }
-    return map;
+    return getQuadMatrix3d(600, 380, quadInViewport);
   }, [nativeWidth, nativeHeight, viewport]);
 
-  // Active project data
+  // Compute CSS matrix3d for CENTER MONITOR (src: 900 x 600)
+  const centerTransform = useMemo(() => {
+    const quadToUse: Quad =
+      rawQuad && rawQuad.length === 4 && rawQuad[0][0] > 0
+        ? rawQuad
+        : CENTER_MONITOR_QUAD;
+    const quadInViewport = getCoverQuadInViewport(
+      quadToUse,
+      nativeWidth,
+      nativeHeight,
+      viewport.w,
+      viewport.h
+    );
+    return getQuadMatrix3d(900, 600, quadInViewport);
+  }, [rawQuad, nativeWidth, nativeHeight, viewport]);
+
+  // Compute CSS matrix3d for RIGHT MONITOR (src: 600 x 380)
+  const rightTransform = useMemo(() => {
+    const quadInViewport = getCoverQuadInViewport(
+      RIGHT_MONITOR_QUAD,
+      nativeWidth,
+      nativeHeight,
+      viewport.w,
+      viewport.h
+    );
+    return getQuadMatrix3d(600, 380, quadInViewport);
+  }, [nativeWidth, nativeHeight, viewport]);
+
+  // Active project data for in-place dossier
   const activeProject = useMemo(() => {
     if (!selectedProjectSlug) return null;
     return projects.find((p) => p.slug === selectedProjectSlug) || null;
   }, [selectedProjectSlug]);
 
-  const activeScreenDef = useMemo(() => {
-    if (!selectedProjectSlug) return null;
-    return SCREENS.find((s) => s.slug === selectedProjectSlug) || null;
-  }, [selectedProjectSlug]);
+  const filteredProjects = useMemo(() => {
+    if (projectCategory === 'All') return projects;
+    return projects.filter((p) => p.category === projectCategory);
+  }, [projectCategory]);
 
   // Cycle to next / prev project
   const handleCycleProject = useCallback((direction: number) => {
@@ -246,13 +232,13 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
     });
   }, []);
 
-  // Select project in-place on workstation screen
+  // Select project in-place on center screen
   const handleSelectScreenInPlace = useCallback((screen: ScreenDef) => {
     sound.playAccessBeep();
     setSelectedProjectSlug((prev) => (prev === screen.slug ? null : screen.slug));
   }, []);
 
-  // Open standalone OS overlay
+  // Open standalone OS overlay with zoom
   const handleLaunchFullOS = useCallback(
     (module?: OSModuleId, slug?: string) => {
       if (isZooming) return;
@@ -268,12 +254,12 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
       setTimeout(() => {
         onOpenOS(module, slug);
         setIsZooming(false);
-      }, 750);
+      }, 700);
     },
     [isZooming, onOpenOS]
   );
 
-  // Keyboard navigation & number shortcuts (1-5, Arrows, Esc, Enter)
+  // Keyboard navigation & shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!visible) return;
@@ -307,7 +293,10 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
 
   return (
     <>
-      {/* Perspective Container for all physical monitors */}
+      {/* =========================================================================
+       * TRIPLE-MONITOR INTERACTIVE WORKSTATION CONTAINER
+       * Operable directly with mouse across all 3 monitors in the subterranean cave
+       * ========================================================================= */}
       <div
         className="film-screen-quad-container"
         style={{
@@ -316,1098 +305,717 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
           pointerEvents: visible && !isZooming ? 'auto' : 'none',
           zIndex: 35,
           opacity: visible ? 1 : 0,
-          transition: 'opacity 0.5s ease-out, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-          transform: selectedProjectSlug ? 'scale(1.03) translateY(-0.5%)' : 'scale(1)',
+          transition: 'opacity 0.4s ease-out',
           userSelect: 'none',
           fontFamily: "'JetBrains Mono', monospace",
         }}
       >
-        {/* =========================================================
-            1. SIDE MONITORS: LIVE PHOTOREALISTIC DIEGETIC FEEDS
-            ========================================================= */}
-        {SCREENS.map((scr) => {
-          const transform = sideScreenTransforms.get(scr.id);
-          if (!transform) return null;
-          const isSelected = selectedProjectSlug === scr.slug;
-          const isHovered = hoveredScreenId === scr.id;
-
-          return (
-            <div
-              key={scr.id}
-              onClick={() => handleSelectScreenInPlace(scr)}
-              onMouseEnter={() => {
-                setHoveredScreenId(scr.id);
-                sound.playAccessBeep();
-              }}
-              onMouseLeave={() => setHoveredScreenId(null)}
-              role="button"
-              tabIndex={0}
-              aria-label={`Inspect ${scr.title}`}
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: scr.srcW,
-                height: scr.srcH,
-                transformOrigin: '0 0',
-                transform,
-                cursor: 'pointer',
-                backgroundColor: isSelected
-                  ? 'rgba(4, 22, 34, 0.90)'
-                  : isHovered
-                  ? 'rgba(4, 18, 28, 0.82)'
-                  : 'rgba(3, 12, 18, 0.65)',
-                border: isSelected
-                  ? '2px solid #00e5ff'
-                  : isHovered
-                  ? '1.5px solid #00e5ff'
-                  : '1px solid rgba(0, 229, 255, 0.35)',
-                boxShadow: isSelected
-                  ? '0 0 35px rgba(0, 229, 255, 0.85), inset 0 0 30px rgba(0, 229, 255, 0.4)'
-                  : isHovered
-                  ? '0 0 25px rgba(0, 229, 255, 0.55), inset 0 0 20px rgba(0, 229, 255, 0.25)'
-                  : '0 0 15px rgba(0, 229, 255, 0.2), inset 0 0 25px rgba(0, 0, 0, 0.85)',
-                borderRadius: '4px',
-                padding: '0.65rem 0.85rem',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                boxSizing: 'border-box',
-                backdropFilter: 'blur(2px)',
-                transition: 'border 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease',
-                overflow: 'hidden',
-              }}
-            >
-              {/* CRT Phosphor Scanline Texture */}
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  pointerEvents: 'none',
-                  background:
-                    'repeating-linear-gradient(0deg, rgba(0, 229, 255, 0.05) 0px, rgba(0, 229, 255, 0.05) 2px, transparent 2px, transparent 4px)',
-                  zIndex: 4,
-                }}
-              />
-
-              {/* Monitor Glass Specular Glare Reflection */}
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  pointerEvents: 'none',
-                  background:
-                    'linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 40%, transparent 60%)',
-                  zIndex: 5,
-                }}
-              />
-
-              {/* Tactical Corner Brackets */}
-              <div style={{ position: 'absolute', top: 4, left: 4, fontSize: '0.65rem', color: '#00e5ff', zIndex: 6, lineHeight: 1 }}>┌</div>
-              <div style={{ position: 'absolute', top: 4, right: 4, fontSize: '0.65rem', color: '#00e5ff', zIndex: 6, lineHeight: 1 }}>┐</div>
-              <div style={{ position: 'absolute', bottom: 4, left: 4, fontSize: '0.65rem', color: '#00e5ff', zIndex: 6, lineHeight: 1 }}>└</div>
-              <div style={{ position: 'absolute', bottom: 4, right: 4, fontSize: '0.65rem', color: '#00e5ff', zIndex: 6, lineHeight: 1 }}>┘</div>
-
-              {/* Monitor Header */}
-              <div style={{ zIndex: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <span
-                    style={{
-                      width: '7px',
-                      height: '7px',
-                      borderRadius: '50%',
-                      backgroundColor: isSelected ? '#00e5ff' : '#7fb38a',
-                      boxShadow: isSelected ? '0 0 8px #00e5ff' : '0 0 6px #7fb38a',
-                      animation: 'pulseDot 1.5s infinite',
-                    }}
-                  />
-                  <span style={{ fontSize: '0.68rem', color: '#00e5ff', fontWeight: 700, letterSpacing: '0.04em' }}>
-                    [{scr.keyNum}] {scr.shortTitle}
-                  </span>
-                </div>
-                <span
-                  style={{
-                    fontSize: '0.58rem',
-                    color: isSelected ? '#07080a' : '#e8a23a',
-                    backgroundColor: isSelected ? '#e8a23a' : 'rgba(232, 162, 58, 0.18)',
-                    padding: '0.1rem 0.35rem',
-                    borderRadius: '2px',
-                    fontWeight: 700,
-                  }}
-                >
-                  {scr.badge}
-                </span>
-              </div>
-
-              {/* Monitor Visual Content: High-Fidelity Tactical Telemetry Feeds */}
-              <div style={{ zIndex: 6, flex: 1, margin: '0.45rem 0', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                {/* 1. POULTRY HEALTH AI: Camera Stream with YOLO Bounding Boxes */}
-                {scr.id === 'poultry-health-ai' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                    <div
-                      style={{
-                        height: '110px',
-                        border: '1px solid rgba(0, 229, 255, 0.4)',
-                        backgroundColor: 'rgba(0, 20, 28, 0.7)',
-                        position: 'relative',
-                        borderRadius: '2px',
-                        overflow: 'hidden',
-                      }}
-                    >
-                      <div
-                        style={{
-                          position: 'absolute',
-                          top: 4,
-                          left: 6,
-                          fontSize: '0.55rem',
-                          color: '#7fb38a',
-                          fontWeight: 700,
-                        }}
-                      >
-                        ● CAM_04 [FARM LIVE] · 30 FPS
-                      </div>
-                      {/* YOLO Bounding Box 1 */}
-                      <div
-                        style={{
-                          position: 'absolute',
-                          top: 24,
-                          left: 18,
-                          width: '110px',
-                          height: '55px',
-                          border: '1.5px solid #7fb38a',
-                          backgroundColor: 'rgba(127, 179, 138, 0.12)',
-                          boxShadow: '0 0 10px rgba(127, 179, 138, 0.4)',
-                          borderRadius: '2px',
-                        }}
-                      >
-                        <span
-                          style={{
-                            position: 'absolute',
-                            top: -14,
-                            left: 0,
-                            backgroundColor: '#7fb38a',
-                            color: '#07080a',
-                            fontSize: '0.50rem',
-                            fontWeight: 700,
-                            padding: '0 3px',
-                          }}
-                        >
-                          BIRD_01 // 98.4%
-                        </span>
-                      </div>
-                      {/* YOLO Bounding Box 2 */}
-                      <div
-                        style={{
-                          position: 'absolute',
-                          bottom: 8,
-                          right: 18,
-                          width: '100px',
-                          height: '50px',
-                          border: '1.5px solid #00e5ff',
-                          backgroundColor: 'rgba(0, 229, 255, 0.10)',
-                          boxShadow: '0 0 10px rgba(0, 229, 255, 0.35)',
-                          borderRadius: '2px',
-                        }}
-                      >
-                        <span
-                          style={{
-                            position: 'absolute',
-                            top: -14,
-                            left: 0,
-                            backgroundColor: '#00e5ff',
-                            color: '#07080a',
-                            fontSize: '0.50rem',
-                            fontWeight: 700,
-                            padding: '0 3px',
-                          }}
-                        >
-                          BIRD_02 // 99.1%
-                        </span>
-                      </div>
-                    </div>
-                    {/* Thermal Gradient Bar */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.55rem', color: '#9e9a8e' }}>
-                      <span>THERMAL:</span>
-                      <div
-                        style={{
-                          flex: 1,
-                          height: '6px',
-                          borderRadius: '2px',
-                          background: 'linear-gradient(90deg, #00e5ff 0%, #7fb38a 40%, #e8a23a 80%, #ff4d4d 100%)',
-                        }}
-                      />
-                      <span style={{ color: '#7fb38a', fontWeight: 700 }}>NORMAL</span>
-                    </div>
-                  </div>
-                )}
-
-                {/* 2. EDGEDESK: Secure Mesh Topology & Encrypted Packet Stream */}
-                {scr.id === 'edgedesk' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                    <div
-                      style={{
-                        height: '110px',
-                        border: '1px solid rgba(0, 229, 255, 0.4)',
-                        backgroundColor: 'rgba(0, 20, 28, 0.7)',
-                        padding: '0.5rem',
-                        borderRadius: '2px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                      }}
-                    >
-                      <svg width="100%" height="55" viewBox="0 0 240 55">
-                        {/* Central Broker Node */}
-                        <circle cx="120" cy="12" r="8" fill="#e8a23a" />
-                        <text x="120" y="15" fill="#07080a" fontSize="7" fontWeight="bold" textAnchor="middle">HUB</text>
-                        {/* Connecting Links */}
-                        <line x1="120" y1="20" x2="40" y2="42" stroke="#00e5ff" strokeWidth="1.5" strokeDasharray="3,3" />
-                        <line x1="120" y1="20" x2="120" y2="42" stroke="#00e5ff" strokeWidth="1.5" />
-                        <line x1="120" y1="20" x2="200" y2="42" stroke="#00e5ff" strokeWidth="1.5" strokeDasharray="3,3" />
-                        {/* Jetson Edge Nodes */}
-                        <circle cx="40" cy="44" r="7" fill="#00e5ff" />
-                        <text x="40" y="47" fill="#07080a" fontSize="6" fontWeight="bold" textAnchor="middle">J_01</text>
-                        <circle cx="120" cy="44" r="7" fill="#7fb38a" />
-                        <text x="120" y="47" fill="#07080a" fontSize="6" fontWeight="bold" textAnchor="middle">J_02</text>
-                        <circle cx="200" cy="44" r="7" fill="#00e5ff" />
-                        <text x="200" y="47" fill="#07080a" fontSize="6" fontWeight="bold" textAnchor="middle">J_03</text>
-                      </svg>
-                      <div style={{ fontSize: '0.56rem', color: '#9e9a8e', lineHeight: 1.3 }}>
-                        <div>WSS://JETSON.FLEET.MESH [ACTIVE]</div>
-                        <div style={{ color: '#00e5ff' }}>12 JETSON NODES ONLINE · TLS 1.3</div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* 3. FACIAL RECOGNITION: 3D Biometric Face Mesh Wireframe */}
-                {scr.id === 'facial-attendance' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                    <div
-                      style={{
-                        height: '110px',
-                        border: '1px solid rgba(0, 229, 255, 0.4)',
-                        backgroundColor: 'rgba(0, 20, 28, 0.7)',
-                        position: 'relative',
-                        borderRadius: '2px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        overflow: 'hidden',
-                      }}
-                    >
-                      <svg width="120" height="90" viewBox="0 0 120 90">
-                        {/* 3D Cyan Face Mesh Contours */}
-                        <ellipse cx="60" cy="45" rx="34" ry="40" fill="none" stroke="#00e5ff" strokeWidth="1.2" opacity="0.8" />
-                        <path d="M 38 34 Q 60 42 82 34" fill="none" stroke="#00e5ff" strokeWidth="1" />
-                        <path d="M 42 58 Q 60 66 78 58" fill="none" stroke="#00e5ff" strokeWidth="1" />
-                        <line x1="60" y1="20" x2="60" y2="70" stroke="#00e5ff" strokeWidth="0.8" opacity="0.6" />
-                        {/* Biometric Landmark Nodes */}
-                        <circle cx="48" cy="38" r="3" fill="#7fb38a" />
-                        <circle cx="72" cy="38" r="3" fill="#7fb38a" />
-                        <circle cx="60" cy="50" r="2.5" fill="#e8a23a" />
-                        <circle cx="60" cy="62" r="3" fill="#00e5ff" />
-                      </svg>
-                      {/* Sweeping Cyan Scanning Laser */}
-                      <div
-                        style={{
-                          position: 'absolute',
-                          left: 0,
-                          right: 0,
-                          height: '2px',
-                          backgroundColor: '#00e5ff',
-                          boxShadow: '0 0 10px #00e5ff',
-                          animation: 'faceLaserScan 2s ease-in-out infinite alternate',
-                        }}
-                      />
-                    </div>
-                    <div style={{ fontSize: '0.56rem', color: '#7fb38a', fontWeight: 700, textAlign: 'center' }}>
-                      BIOMETRIC MATCH: 99.2% · AWS EC2 SYNC
-                    </div>
-                  </div>
-                )}
-
-                {/* 4. CROWD ANALYTICS: Heatmap & Sub-50ms Inference Graph */}
-                {scr.id === 'crowd-analytics' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                    <div
-                      style={{
-                        height: '110px',
-                        border: '1px solid rgba(0, 229, 255, 0.4)',
-                        backgroundColor: 'rgba(0, 20, 28, 0.7)',
-                        padding: '0.45rem',
-                        borderRadius: '2px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.54rem' }}>
-                        <span style={{ color: '#e8a23a' }}>DENSITY: NORMAL</span>
-                        <span style={{ color: '#7fb38a' }}>LATENCY: 42.6 MS</span>
-                      </div>
-                      {/* Live Inference Latency Bar Chart */}
-                      <div style={{ display: 'flex', alignItems: 'flex-end', height: '42px', gap: '3px', padding: '0 4px' }}>
-                        {[28, 45, 38, 62, 40, 52, 35, 48, 42, 58, 38, 44].map((h, i) => (
-                          <div
-                            key={i}
-                            style={{
-                              flex: 1,
-                              height: `${(h + ((tickerTick + i * 5) % 15)) * 0.55}%`,
-                              backgroundColor: i === 9 ? '#e8a23a' : '#00e5ff',
-                              borderRadius: '1px',
-                              opacity: 0.85,
-                            }}
-                          />
-                        ))}
-                      </div>
-                      <div style={{ fontSize: '0.54rem', color: '#9e9a8e' }}>
-                        YOLOv8 + BYTETRACK (CUDA) · STAMPEDE RISK: 0
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* 5. ON-DEVICE AI ASSISTANT: Audio Oscilloscope & Local LLM Telemetry */}
-                {scr.id === 'on-device-ai' && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                    <div
-                      style={{
-                        flex: 1,
-                        height: '60px',
-                        border: '1px solid rgba(0, 229, 255, 0.4)',
-                        backgroundColor: 'rgba(0, 20, 28, 0.7)',
-                        borderRadius: '2px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: '0 6px',
-                      }}
-                    >
-                      {/* Audio Waveform */}
-                      <div style={{ display: 'flex', alignItems: 'center', height: '32px', gap: '3px', width: '100%' }}>
-                        {[12, 28, 42, 65, 85, 55, 30, 48, 70, 92, 60, 35, 50, 75, 40, 20].map((h, idx) => (
-                          <div
-                            key={idx}
-                            style={{
-                              flex: 1,
-                              height: `${Math.max(15, (h + (tickerTick * 7 + idx * 11) % 40) * 0.75)}%`,
-                              backgroundColor: '#7fb38a',
-                              borderRadius: '1px',
-                              boxShadow: '0 0 4px rgba(127, 179, 138, 0.6)',
-                            }}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    <div style={{ fontSize: '0.55rem', color: '#00e5ff', lineHeight: 1.4 }}>
-                      <div>WHISPER SPEECH</div>
-                      <div style={{ color: '#7fb38a' }}>LLAMA.CPP 4-BIT GGUF</div>
-                    </div>
-                  </div>
-                )}
-
-                {/* 6. LORA TRAFFIC MESH: Sub-GHz Radio Gossip & Signal Fail-Safe */}
-                {scr.id === 'lora-traffic-mesh' && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                    <div
-                      style={{
-                        flex: 1,
-                        height: '60px',
-                        border: '1px solid rgba(0, 229, 255, 0.4)',
-                        backgroundColor: 'rgba(0, 20, 28, 0.7)',
-                        borderRadius: '2px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-around',
-                        padding: '4px 8px',
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.52rem' }}>
-                        <span style={{ color: '#00e5ff' }}>NODE_A ⇄ NODE_B</span>
-                        <span style={{ color: '#7fb38a' }}>RSSI: -68 dBm</span>
-                      </div>
-                      {/* Packet Activity Pulse Bar */}
-                      <div style={{ display: 'flex', gap: '2px', height: '14px', alignItems: 'center' }}>
-                        {[1, 2, 3, 4, 5, 6, 7, 8].map((seg) => (
-                          <div
-                            key={seg}
-                            style={{
-                              flex: 1,
-                              height: '100%',
-                              backgroundColor: ((tickerTick + seg) % 4 === 0) ? '#e8a23a' : '#00e5ff',
-                              opacity: 0.8,
-                              borderRadius: '1px',
-                            }}
-                          />
-                        ))}
-                      </div>
-                      <div style={{ fontSize: '0.5rem', color: '#9e9a8e' }}>
-                        SLOTTED ALOHA · FAIL-SAFE: ARMED
-                      </div>
-                    </div>
-                    <div style={{ fontSize: '0.55rem', color: '#00e5ff', lineHeight: 1.4 }}>
-                      <div>ESP32 GOSSIP</div>
-                      <div style={{ color: '#e8a23a' }}>868 MHz MESH</div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Monitor Footer / Click CTA */}
-              <div
-                style={{
-                  zIndex: 6,
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  borderTop: '1px solid rgba(0, 229, 255, 0.25)',
-                  paddingTop: '0.35rem',
-                  fontSize: '0.58rem',
-                  color: isSelected ? '#00e5ff' : '#9e9a8e',
-                }}
-              >
-                <span>{scr.metrics}</span>
-                <span style={{ fontWeight: 700, color: isSelected ? '#00e5ff' : '#e8a23a' }}>
-                  {isSelected ? '● ACTIVE ON MAIN' : 'CLICK TO LOAD ↵'}
-                </span>
-              </div>
-            </div>
-          );
-        })}
-
-        {/* =========================================================
-            2. CENTRAL MAIN MONITOR: SEAMLESS DIEGETIC MASTER DOSSIER
-            ========================================================= */}
+        {/* =======================================================================
+         * 1. LEFT MONITOR (TELEMETRY & HARDWARE LAB)
+         * ======================================================================= */}
         <div
+          className="workstation-left-screen"
           style={{
             position: 'absolute',
             top: 0,
             left: 0,
-            width: 1320,
-            height: 780,
+            width: 600,
+            height: 380,
             transformOrigin: '0 0',
-            transform: mainScreenTransform,
-            pointerEvents: 'auto',
-            backgroundColor: selectedProjectSlug
-              ? 'rgba(6, 12, 18, 0.94)'
-              : 'transparent', // Transparent in default state to reveal the video's path-traced world map
-            border: selectedProjectSlug ? '2px solid #00e5ff' : 'none',
-            boxShadow: selectedProjectSlug
-              ? '0 0 60px rgba(0, 229, 255, 0.6), inset 0 0 60px rgba(0, 0, 0, 0.95)'
-              : 'none',
+            transform: leftTransform,
+            backgroundColor: 'rgba(5, 10, 16, 0.94)',
+            border: '1.5px solid rgba(0, 229, 255, 0.4)',
+            boxShadow: '0 0 25px rgba(0, 229, 255, 0.25), inset 0 0 35px rgba(0, 0, 0, 0.8)',
             borderRadius: '4px',
-            padding: selectedProjectSlug ? '2.2rem 2.8rem' : '0',
+            overflow: 'hidden',
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'space-between',
-            boxSizing: 'border-box',
-            backdropFilter: selectedProjectSlug ? 'blur(10px)' : 'none',
-            transition: 'all 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
-            overflow: 'hidden',
+            color: '#e2e8f0',
+            pointerEvents: 'auto',
           }}
         >
-          {/* Scanlines overlay on active project */}
-          {selectedProjectSlug && (
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                pointerEvents: 'none',
-                background:
-                  'repeating-linear-gradient(0deg, rgba(0,0,0,0.2) 0px, rgba(0,0,0,0.2) 2px, transparent 2px, transparent 4px)',
-                zIndex: 1,
-              }}
-            />
-          )}
-
-          {/* Hidden anchor text to satisfy Playwright test assertions */}
-          <div style={{ position: 'absolute', width: 1, height: 1, opacity: 0, overflow: 'hidden' }}>
-            <span>NISHANT JAIN</span>
-            <span>NJ-OS</span>
+          {/* Top Title & Sub-tabs */}
+          <div
+            style={{
+              padding: '0.45rem 0.75rem',
+              background: 'rgba(9, 14, 22, 0.98)',
+              borderBottom: '1px solid rgba(0, 229, 255, 0.25)',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <div style={{ fontSize: '0.68rem', color: '#00e5ff', fontWeight: 700, letterSpacing: '0.04em' }}>
+              ● MON-01 // TELEMETRY & HARDWARE
+            </div>
+            <div style={{ display: 'flex', gap: '0.3rem' }}>
+              {(['telemetry', 'hardware', 'network'] as const).map((tab) => (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => {
+                    sound.playUiClick();
+                    setLeftTab(tab);
+                  }}
+                  style={{
+                    fontSize: '0.62rem',
+                    padding: '0.15rem 0.45rem',
+                    borderRadius: '2px',
+                    border: `1px solid ${leftTab === tab ? '#00e5ff' : '#1e293b'}`,
+                    backgroundColor: leftTab === tab ? 'rgba(0, 229, 255, 0.2)' : 'transparent',
+                    color: leftTab === tab ? '#00e5ff' : '#64748b',
+                    cursor: 'pointer',
+                    fontWeight: 700,
+                  }}
+                >
+                  {tab.toUpperCase()}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* VIEW A: MASTER PROFILE DEFAULT (Diegetic hotspots over the video's native buttons) */}
-          {!activeProject ? (
-            <div
-              style={{
-                zIndex: 2,
-                width: '100%',
-                height: '100%',
-                position: 'relative',
-              }}
-            >
-              {/* Diegetic Hotspot Button: Directly covers "Enter the..." button on video */}
-              <button
-                type="button"
-                onClick={() => handleLaunchFullOS('identity')}
-                className="workstation-access-btn"
-                style={{
-                  position: 'absolute',
-                  left: '265px',
-                  bottom: '82px',
-                  width: '220px',
-                  height: '62px',
-                  backgroundColor: 'rgba(232, 162, 58, 0.25)',
-                  border: '2px solid #e8a23a',
-                  borderRadius: '31px',
-                  color: '#e6e2d8',
-                  fontWeight: 700,
-                  fontSize: '0.80rem',
-                  cursor: 'pointer',
-                  boxShadow: '0 0 25px rgba(232, 162, 58, 0.55), inset 0 0 15px rgba(232, 162, 58, 0.3)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.35rem',
-                  fontFamily: 'inherit',
-                  transition: 'all 0.2s ease',
-                  backdropFilter: 'blur(2px)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(232, 162, 58, 0.50)';
-                  e.currentTarget.style.boxShadow = '0 0 35px rgba(232, 162, 58, 0.85)';
-                  sound.playAccessBeep();
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(232, 162, 58, 0.25)';
-                  e.currentTarget.style.boxShadow = '0 0 25px rgba(232, 162, 58, 0.55)';
-                }}
-              >
-                <span>ACCESS COMPUTER WORKSTATION [NJ-OS]</span>
-                <span className="terminal-cursor">_</span>
-              </button>
-
-              {/* Diegetic Hotspot Button: Directly covers "Watch My Intro" button on video */}
-              <button
-                type="button"
-                onClick={() => setSelectedProjectSlug('crowd-analytics')}
-                style={{
-                  position: 'absolute',
-                  left: '525px',
-                  bottom: '82px',
-                  width: '240px',
-                  height: '62px',
-                  backgroundColor: 'rgba(0, 229, 255, 0.22)',
-                  border: '2px solid #00e5ff',
-                  borderRadius: '31px',
-                  color: '#00e5ff',
-                  fontWeight: 700,
-                  fontSize: '0.82rem',
-                  cursor: 'pointer',
-                  boxShadow: '0 0 25px rgba(0, 229, 255, 0.50), inset 0 0 15px rgba(0, 229, 255, 0.25)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontFamily: 'inherit',
-                  transition: 'all 0.2s ease',
-                  backdropFilter: 'blur(2px)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(0, 229, 255, 0.45)';
-                  e.currentTarget.style.boxShadow = '0 0 35px rgba(0, 229, 255, 0.85)';
-                  sound.playAccessBeep();
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(0, 229, 255, 0.22)';
-                  e.currentTarget.style.boxShadow = '0 0 25px rgba(0, 229, 255, 0.50)';
-                }}
-              >
-                [ BROWSE ALL PROJECTS ↵ ]
-              </button>
-
-              {/* Top Right CV Button */}
-              <a
-                href={cvUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  position: 'absolute',
-                  top: '25px',
-                  right: '30px',
-                  fontSize: '0.80rem',
-                  color: '#e8a23a',
-                  border: '1px solid rgba(232, 162, 58, 0.5)',
-                  backgroundColor: 'rgba(7, 10, 14, 0.75)',
-                  padding: '0.45rem 1rem',
-                  borderRadius: '3px',
-                  textDecoration: 'none',
-                  fontWeight: 700,
-                  boxShadow: '0 0 15px rgba(232, 162, 58, 0.3)',
-                  backdropFilter: 'blur(4px)',
-                }}
-              >
-                DOWNLOAD CV (PDF) ↗
-              </a>
-            </div>
-          ) : (
-            /* VIEW B: IN-PLACE TACTICAL PROJECT DOSSIER */
-            <div
-              style={{
-                zIndex: 2,
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                animation: 'mainIntelFadeIn 0.3s ease-out',
-              }}
-            >
-              <style>{`
-                @keyframes mainIntelFadeIn {
-                  from { opacity: 0; transform: scale(0.985); }
-                  to { opacity: 1; transform: scale(1); }
-                }
-                @keyframes pulseDot {
-                  0%, 100% { opacity: 1; }
-                  50% { opacity: 0.4; }
-                }
-                @keyframes faceLaserScan {
-                  0% { top: 10px; }
-                  100% { top: 95px; }
-                }
-              `}</style>
-
-              {/* Dossier Header */}
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  borderBottom: '1px solid rgba(0, 229, 255, 0.4)',
-                  paddingBottom: '0.85rem',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-                  <span
-                    style={{
-                      width: '10px',
-                      height: '10px',
-                      borderRadius: '50%',
-                      backgroundColor: '#00e5ff',
-                      boxShadow: '0 0 12px #00e5ff',
-                    }}
-                  />
-                  <span style={{ fontSize: '0.96rem', color: '#00e5ff', fontWeight: 700, letterSpacing: '0.05em' }}>
-                    // COMMAND WORKSTATION INTEL DOSSIER [ {activeProject.slug.toUpperCase()} ]
-                  </span>
-                  <span
-                    style={{
-                      fontSize: '0.74rem',
-                      color: '#e8a23a',
-                      backgroundColor: 'rgba(232, 162, 58, 0.18)',
-                      border: '1px solid rgba(232, 162, 58, 0.4)',
-                      padding: '0.15rem 0.55rem',
-                      borderRadius: '2px',
-                      fontWeight: 700,
-                    }}
-                  >
-                    {activeScreenDef?.badge}
-                  </span>
+          {/* Left Screen Body */}
+          <div style={{ flex: 1, padding: '0.65rem 0.85rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+            {leftTab === 'telemetry' && (
+              <>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.4rem', textAlign: 'center' }}>
+                  <div style={{ background: 'rgba(11, 16, 24, 0.8)', border: '1px solid #1e293b', borderRadius: '3px', padding: '0.35rem' }}>
+                    <div style={{ fontSize: '1rem', color: '#00e5ff', fontWeight: 700 }}>{gpuLoad}%</div>
+                    <div style={{ fontSize: '0.58rem', color: '#64748b' }}>GPU CUDA</div>
+                  </div>
+                  <div style={{ background: 'rgba(11, 16, 24, 0.8)', border: '1px solid #1e293b', borderRadius: '3px', padding: '0.35rem' }}>
+                    <div style={{ fontSize: '1rem', color: '#00e5ff', fontWeight: 700 }}>{cpuLoad}%</div>
+                    <div style={{ fontSize: '0.58rem', color: '#64748b' }}>CPU ARM</div>
+                  </div>
+                  <div style={{ background: 'rgba(11, 16, 24, 0.8)', border: '1px solid #1e293b', borderRadius: '3px', padding: '0.35rem' }}>
+                    <div style={{ fontSize: '1rem', color: '#e8a23a', fontWeight: 700 }}>{memLoad}%</div>
+                    <div style={{ fontSize: '0.58rem', color: '#64748b' }}>RAM 8GB</div>
+                  </div>
+                  <div style={{ background: 'rgba(11, 16, 24, 0.8)', border: '1px solid #1e293b', borderRadius: '3px', padding: '0.35rem' }}>
+                    <div style={{ fontSize: '1rem', color: '#34d399', fontWeight: 700 }}>{tempVal}°C</div>
+                    <div style={{ fontSize: '0.58rem', color: '#64748b' }}>THERMAL</div>
+                  </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setSelectedProjectSlug(null)}
-                  style={{
-                    padding: '0.4rem 1rem',
-                    backgroundColor: 'rgba(232, 162, 58, 0.18)',
-                    border: '1px solid #e8a23a',
-                    color: '#e8a23a',
-                    fontSize: '0.78rem',
-                    fontWeight: 700,
-                    borderRadius: '2px',
-                    cursor: 'pointer',
-                    fontFamily: 'inherit',
-                  }}
-                >
-                  RETURN TO MASTER VIEW ✕
-                </button>
-              </div>
-
-              {/* Dossier Body: 2-Column Tactical Intel Layout */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '2rem', margin: '1rem 0', flex: 1, alignItems: 'center' }}>
-                {/* Left Column: Project Overview & Verified Facts */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
-                  <div>
-                    <h2
-                      style={{
-                        fontSize: '2.1rem',
-                        fontWeight: 700,
-                        color: '#e6e2d8',
-                        fontFamily: "'Space Grotesk', sans-serif",
-                        lineHeight: 1.15,
-                        margin: 0,
-                      }}
-                    >
-                      {activeProject.title}
-                    </h2>
-                    <div style={{ fontSize: '0.88rem', color: '#e8a23a', marginTop: '0.35rem', fontWeight: 600 }}>
-                      {activeProject.badge}
+                <div style={{ borderTop: '1px solid rgba(0, 229, 255, 0.15)', paddingTop: '0.45rem' }}>
+                  <div style={{ fontSize: '0.62rem', color: '#64748b', marginBottom: '0.3rem' }}>ACTIVE INFERENCE PIPELINES:</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', fontSize: '0.68rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', color: '#cbd5e1' }}>
+                      <span>▸ EdgeDesk Fleet Daemon</span>
+                      <span style={{ color: '#00e5ff' }}>TLS 1.3 / OK</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', color: '#cbd5e1' }}>
+                      <span>▸ Crowd YOLOv8 Tracking</span>
+                      <span style={{ color: '#34d399' }}>41.8 ms / CUDA</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', color: '#cbd5e1' }}>
+                      <span>▸ Poultry Anomaly Detection</span>
+                      <span style={{ color: '#e8a23a' }}>30 FPS RTSP</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', color: '#cbd5e1' }}>
+                      <span>▸ On-Device Whisper & LLM</span>
+                      <span style={{ color: '#00e5ff' }}>GGUF 4-Bit</span>
                     </div>
                   </div>
-
-                  {/* Tech Stack Pills */}
-                  <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap' }}>
-                    {activeProject.stack.map((tech) => (
-                      <span
-                        key={tech}
-                        style={{
-                          fontSize: '0.76rem',
-                          backgroundColor: 'rgba(0, 229, 255, 0.12)',
-                          border: '1px solid rgba(0, 229, 255, 0.4)',
-                          color: '#00e5ff',
-                          padding: '0.2rem 0.65rem',
-                          borderRadius: '2px',
-                          fontWeight: 600,
-                        }}
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Verified CV Description Bullets */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
-                    {activeProject.description.map((desc, idx) => (
-                      <p
-                        key={idx}
-                        style={{
-                          fontSize: '0.92rem',
-                          color: '#c2beb4',
-                          lineHeight: 1.55,
-                          margin: 0,
-                        }}
-                      >
-                        {desc}
-                      </p>
-                    ))}
-                  </div>
-
-                  {/* Verified Engineering Highlight Note */}
-                  <div
-                    style={{
-                      borderLeft: '3px solid #7fb38a',
-                      backgroundColor: 'rgba(127, 179, 138, 0.08)',
-                      padding: '0.5rem 0.85rem',
-                      fontSize: '0.78rem',
-                      color: '#7fb38a',
-                    }}
-                  >
-                    DEPLOYMENT TELEMETRY: {activeScreenDef?.metrics}
-                  </div>
                 </div>
 
-                {/* Right Column: Holographic Tactical Architecture & Live Schematic */}
-                <div
-                  style={{
-                    backgroundColor: 'rgba(4, 18, 28, 0.75)',
-                    border: '1px solid rgba(0, 229, 255, 0.4)',
-                    boxShadow: 'inset 0 0 25px rgba(0, 229, 255, 0.15)',
-                    borderRadius: '4px',
-                    padding: '1.25rem',
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    boxSizing: 'border-box',
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(0, 229, 255, 0.25)', paddingBottom: '0.5rem' }}>
-                    <span style={{ fontSize: '0.72rem', color: '#00e5ff', fontWeight: 700 }}>
-                      // SYSTEM ARCHITECTURE TOPOLOGY
-                    </span>
-                    <span style={{ fontSize: '0.64rem', color: '#7fb38a' }}>ONLINE</span>
-                  </div>
+                <div style={{ borderTop: '1px solid rgba(0, 229, 255, 0.15)', paddingTop: '0.45rem', display: 'flex', justifyContent: 'space-between', fontSize: '0.62rem' }}>
+                  <span style={{ color: '#64748b' }}>STATION: INDORE, MP, INDIA</span>
+                  <span style={{ color: '#34d399' }}>● SYSTEM ONLINE</span>
+                </div>
+              </>
+            )}
 
-                  {/* Interactive Diagram depending on active project */}
-                  <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0.75rem 0' }}>
-                    {activeProject.slug === 'edgedesk' && (
-                      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.85rem', fontSize: '0.72rem' }}>
-                        <div style={{ border: '1px solid #e8a23a', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(232, 162, 58, 0.10)', color: '#e8a23a' }}>
-                          [1] WEB CLIENT / OPERATOR DASHBOARD
-                        </div>
-                        <div style={{ textAlign: 'center', color: '#00e5ff', fontSize: '0.68rem' }}>
-                          ↓↓ WebSocket (TLS 1.3 / WSS Encrypted) ↓↓
-                        </div>
-                        <div style={{ border: '1px solid #00e5ff', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(0, 229, 255, 0.10)', color: '#00e5ff' }}>
-                          [2] EDGEDESK CENTRAL BROKER (REBOOT-SAFE LINUX)
-                        </div>
-                        <div style={{ textAlign: 'center', color: '#7fb38a', fontSize: '0.68rem' }}>
-                          ↓↓ Encrypted VNC Stream / File Transfer ↓↓
-                        </div>
-                        <div style={{ border: '1px solid #7fb38a', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(127, 179, 138, 0.10)', color: '#7fb38a' }}>
-                          [3] NVIDIA JETSON NANO FLEET NODES (12 ONLINE)
-                        </div>
-                      </div>
-                    )}
-
-                    {activeProject.slug === 'crowd-analytics' && (
-                      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.85rem', fontSize: '0.72rem' }}>
-                        <div style={{ border: '1px solid #00e5ff', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(0, 229, 255, 0.10)', color: '#00e5ff' }}>
-                          [1] RTSP CCTV CAMERA STREAM INGESTION
-                        </div>
-                        <div style={{ textAlign: 'center', color: '#e8a23a', fontSize: '0.68rem' }}>
-                          ↓↓ GPU TensorRT / CUDA Acceleration ↓↓
-                        </div>
-                        <div style={{ border: '1px solid #e8a23a', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(232, 162, 58, 0.10)', color: '#e8a23a' }}>
-                          [2] YOLOv8 DETECTION + BYTETRACK MULTI-TRACKING
-                        </div>
-                        <div style={{ textAlign: 'center', color: '#7fb38a', fontSize: '0.68rem' }}>
-                          ↓↓ Sub-50ms Latency Pipeline ↓↓
-                        </div>
-                        <div style={{ border: '1px solid #7fb38a', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(127, 179, 138, 0.10)', color: '#7fb38a' }}>
-                          [3] REAL-TIME STAMPEDE DENSITY & VELOCITY ALERTS
-                        </div>
-                      </div>
-                    )}
-
-                    {activeProject.slug === 'poultry-health-ai' && (
-                      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.85rem', fontSize: '0.72rem' }}>
-                        <div style={{ border: '1px solid #7fb38a', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(127, 179, 138, 0.10)', color: '#7fb38a' }}>
-                          [1] FARM CAMERA MULTI-ANGLE DATA PIPELINE
-                        </div>
-                        <div style={{ textAlign: 'center', color: '#00e5ff', fontSize: '0.68rem' }}>
-                          ↓↓ YOLO Object Detection & Anomaly Model ↓↓
-                        </div>
-                        <div style={{ border: '1px solid #00e5ff', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(0, 229, 255, 0.10)', color: '#00e5ff' }}>
-                          [2] COMPUTER VISION HEALTH INFERENCE (98.4%)
-                        </div>
-                        <div style={{ textAlign: 'center', color: '#e8a23a', fontSize: '0.68rem' }}>
-                          ↓↓ Production Deployment ↓↓
-                        </div>
-                        <div style={{ border: '1px solid #e8a23a', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(232, 162, 58, 0.10)', color: '#e8a23a' }}>
-                          [3] REAL FARM OPERATOR TELEMETRY DASHBOARD
-                        </div>
-                      </div>
-                    )}
-
-                    {activeProject.slug === 'facial-attendance' && (
-                      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.85rem', fontSize: '0.72rem' }}>
-                        <div style={{ border: '1px solid #00e5ff', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(0, 229, 255, 0.10)', color: '#00e5ff' }}>
-                          [1] AUTOMATED FACIAL RECOGNITION (DLIB)
-                        </div>
-                        <div style={{ textAlign: 'center', color: '#7fb38a', fontSize: '0.68rem' }}>
-                          ↓↓ RESTful Flask Pipeline ↓↓
-                        </div>
-                        <div style={{ border: '1px solid #7fb38a', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(127, 179, 138, 0.10)', color: '#7fb38a' }}>
-                          [2] AWS EC2 CLOUD BACKEND & MYSQL
-                        </div>
-                        <div style={{ textAlign: 'center', color: '#e8a23a', fontSize: '0.68rem' }}>
-                          ↓↓ 90% Time Saved Pilot ↓↓
-                        </div>
-                        <div style={{ border: '1px solid #e8a23a', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(232, 162, 58, 0.10)', color: '#e8a23a' }}>
-                          [3] 3-COURSE AUTOMATED ATTENDANCE RECORD
-                        </div>
-                      </div>
-                    )}
-
-                    {activeProject.slug === 'on-device-ai' && (
-                      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.85rem', fontSize: '0.72rem' }}>
-                        <div style={{ border: '1px solid #7fb38a', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(127, 179, 138, 0.10)', color: '#7fb38a' }}>
-                          [1] MICROPHONE OFFLINE AUDIO STREAM
-                        </div>
-                        <div style={{ textAlign: 'center', color: '#00e5ff', fontSize: '0.68rem' }}>
-                          ↓↓ Whisper ONNX STT Engine (sherpa-onnx) ↓↓
-                        </div>
-                        <div style={{ border: '1px solid #00e5ff', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(0, 229, 255, 0.10)', color: '#00e5ff' }}>
-                          [2] LOCAL LLAMA.CPP INFERENCE (GGUF 4-BIT)
-                        </div>
-                        <div style={{ textAlign: 'center', color: '#e8a23a', fontSize: '0.68rem' }}>
-                          ↓↓ 100% On-Device / Zero Cloud ↓↓
-                        </div>
-                        <div style={{ border: '1px solid #e8a23a', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(232, 162, 58, 0.10)', color: '#e8a23a' }}>
-                          [3] PRIVACY-PRESERVING ANDROID ASSISTANT
-                        </div>
-                      </div>
-                    )}
-
-                    {activeProject.slug === 'parkfnb' && (
-                      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.85rem', fontSize: '0.72rem' }}>
-                        <div style={{ border: '1px solid #00e5ff', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(0, 229, 255, 0.10)', color: '#00e5ff' }}>
-                          [1] CCTV RTSP CAMERA VIDEO INGESTION
-                        </div>
-                        <div style={{ textAlign: 'center', color: '#e8a23a', fontSize: '0.68rem' }}>
-                          ↓↓ Slot Occupancy & Vehicle Tracking ↓↓
-                        </div>
-                        <div style={{ border: '1px solid #e8a23a', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(232, 162, 58, 0.10)', color: '#e8a23a' }}>
-                          [2] NODE.JS REAL-TIME TELEMETRY BACKEND
-                        </div>
-                        <div style={{ textAlign: 'center', color: '#7fb38a', fontSize: '0.68rem' }}>
-                          ↓↓ Live WebSocket State Sync ↓↓
-                        </div>
-                        <div style={{ border: '1px solid #7fb38a', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(127, 179, 138, 0.10)', color: '#7fb38a' }}>
-                          [3] SMART PARKING MANAGEMENT & WEB APP
-                        </div>
-                      </div>
-                    )}
-
-                    {activeProject.slug === 'lora-traffic-mesh' && (
-                      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.85rem', fontSize: '0.72rem' }}>
-                        <div style={{ border: '1px solid #e8a23a', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(232, 162, 58, 0.10)', color: '#e8a23a' }}>
-                          [1] INTERSECTION NODE A (ESP32 AUTONOMOUS CONTROLLER)
-                        </div>
-                        <div style={{ textAlign: 'center', color: '#00e5ff', fontSize: '0.68rem' }}>
-                          ↓↓ Ad-Hoc Gossip Mesh (868/915 MHz Sub-GHz LoRa) ↓↓
-                        </div>
-                        <div style={{ border: '1px solid #00e5ff', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(0, 229, 255, 0.10)', color: '#00e5ff' }}>
-                          [2] INTERSECTION NODE B (FREERTOS DYNAMIC SCHEDULER)
-                        </div>
-                        <div style={{ textAlign: 'center', color: '#7fb38a', fontSize: '0.68rem' }}>
-                          ↓↓ Slotted ALOHA Backoff + Fail-Safe Fallback ↓↓
-                        </div>
-                        <div style={{ border: '1px solid #7fb38a', padding: '0.5rem', borderRadius: '3px', backgroundColor: 'rgba(127, 179, 138, 0.10)', color: '#7fb38a' }}>
-                          [3] SOLID-STATE SIGNAL RELAYS (NO INTERNET REQUIRED)
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  <div style={{ fontSize: '0.64rem', color: '#9e9a8e', borderTop: '1px solid rgba(0, 229, 255, 0.25)', paddingTop: '0.45rem', display: 'flex', justifyContent: 'space-between' }}>
-                    <span>STATUS: OPERATIONAL</span>
-                    <span style={{ color: '#00e5ff' }}>VERIFIED CV SPEC</span>
-                  </div>
+            {leftTab === 'hardware' && (
+              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                <div style={{ width: '130px', height: '100px', borderRadius: '3px', overflow: 'hidden', border: '1px solid #334155', flexShrink: 0 }}>
+                  <img src="/nightfall/images/projects/jetson_hardware.jpg" alt="Jetson" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+                <div style={{ flex: 1, fontSize: '0.68rem', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                  <div style={{ color: '#e8a23a', fontWeight: 700 }}>NVIDIA JETSON COMPUTE</div>
+                  <div style={{ color: '#94a3b8' }}>• 6-Core ARM Cortex-A78AE</div>
+                  <div style={{ color: '#94a3b8' }}>• 1024-Core NVIDIA Ampere GPU</div>
+                  <div style={{ color: '#94a3b8' }}>• Ubuntu Linux (L4T) Runtime</div>
+                  <div style={{ color: '#34d399' }}>• Watchdog Systemd Daemons</div>
                 </div>
               </div>
+            )}
 
-              {/* Dossier Footer Controls */}
+            {leftTab === 'network' && (
+              <div style={{ padding: '0.5rem', fontSize: '0.68rem', textAlign: 'center', color: '#94a3b8' }}>
+                <div style={{ color: '#00e5ff', fontWeight: 700, marginBottom: '0.4rem' }}>ENCRYPTED EDGE TOPOLOGY</div>
+                <div style={{ background: '#070a0e', border: '1px solid #1e293b', padding: '0.5rem', borderRadius: '3px' }}>
+                  [ Client Web Browser ] ↔ [ TLS 1.3 WebSocket Broker ] ↔ [ Fleet NVIDIA Jetson Nano Nodes ]
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* =======================================================================
+         * 2. CENTER MONITOR (MASTER NJ-OS COMMAND CENTER)
+         * Matches Image 3 & Image 1: Main screen operable by mouse!
+         * ======================================================================= */}
+        <div
+          className="workstation-center-screen"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: 900,
+            height: 600,
+            transformOrigin: '0 0',
+            transform: centerTransform,
+            backgroundColor: 'rgba(5, 9, 14, 0.96)',
+            border: '2px solid rgba(232, 162, 58, 0.55)',
+            boxShadow: '0 0 35px rgba(232, 162, 58, 0.35), inset 0 0 45px rgba(0, 0, 0, 0.85)',
+            borderRadius: '5px',
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            color: '#e2e8f0',
+            pointerEvents: 'auto',
+          }}
+        >
+          {/* Top Bar with Monogram & Master Nav */}
+          <div
+            style={{
+              padding: '0.55rem 1rem',
+              background: 'rgba(10, 15, 22, 0.98)',
+              borderBottom: '1px solid rgba(232, 162, 58, 0.35)',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
               <div
                 style={{
+                  width: '24px',
+                  height: '24px',
+                  borderRadius: '3px',
+                  border: '1.5px solid #e8a23a',
+                  color: '#e8a23a',
                   display: 'flex',
-                  justifyContent: 'space-between',
                   alignItems: 'center',
-                  borderTop: '1px solid rgba(0, 229, 255, 0.4)',
-                  paddingTop: '0.85rem',
+                  justifyContent: 'center',
+                  fontWeight: 800,
+                  fontSize: '0.85rem',
                 }}
               >
-                <div style={{ display: 'flex', gap: '0.75rem' }}>
-                  <button
-                    type="button"
-                    onClick={() => handleCycleProject(-1)}
-                    style={{
-                      padding: '0.5rem 1.1rem',
-                      backgroundColor: 'rgba(0, 229, 255, 0.15)',
-                      border: '1px solid rgba(0, 229, 255, 0.45)',
-                      color: '#00e5ff',
-                      fontSize: '0.80rem',
-                      fontWeight: 700,
-                      borderRadius: '2px',
-                      cursor: 'pointer',
-                      fontFamily: 'inherit',
-                    }}
-                  >
-                    ← PREV PROJECT
-                  </button>
+                N
+              </div>
+              <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#f8fafc' }}>
+                NJ-OS // COMMAND CENTER
+              </span>
+            </div>
 
-                  <button
-                    type="button"
-                    onClick={() => handleCycleProject(1)}
-                    style={{
-                      padding: '0.5rem 1.1rem',
-                      backgroundColor: 'rgba(0, 229, 255, 0.15)',
-                      border: '1px solid rgba(0, 229, 255, 0.45)',
-                      color: '#00e5ff',
-                      fontSize: '0.80rem',
-                      fontWeight: 700,
-                      borderRadius: '2px',
-                      cursor: 'pointer',
-                      fontFamily: 'inherit',
-                    }}
-                  >
-                    NEXT PROJECT →
-                  </button>
+            {/* In-Screen Navigation Tabs */}
+            <div style={{ display: 'flex', gap: '0.4rem' }}>
+              {(['home', 'projects', 'architecture', 'contact'] as const).map((tab) => (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => {
+                    sound.playUiClick();
+                    setSelectedProjectSlug(null);
+                    setCenterTab(tab);
+                  }}
+                  style={{
+                    fontSize: '0.68rem',
+                    padding: '0.25rem 0.65rem',
+                    borderRadius: '3px',
+                    border: `1px solid ${centerTab === tab && !selectedProjectSlug ? '#e8a23a' : '#1e293b'}`,
+                    backgroundColor: centerTab === tab && !selectedProjectSlug ? '#e8a23a' : 'rgba(15, 23, 42, 0.7)',
+                    color: centerTab === tab && !selectedProjectSlug ? '#070a0e' : '#cbd5e1',
+                    cursor: 'pointer',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  {tab === 'home' ? 'ABOUT' : tab}
+                </button>
+              ))}
+
+              <button
+                type="button"
+                className="workstation-access-btn"
+                onClick={() => handleLaunchFullOS('home')}
+                style={{
+                  fontSize: '0.68rem',
+                  padding: '0.25rem 0.65rem',
+                  borderRadius: '3px',
+                  border: '1px solid #00e5ff',
+                  backgroundColor: 'rgba(0, 229, 255, 0.15)',
+                  color: '#00e5ff',
+                  cursor: 'pointer',
+                  fontWeight: 700,
+                }}
+                title="Expand full screen terminal"
+              >
+                ACCESS COMPUTER WORKSTATION
+              </button>
+            </div>
+          </div>
+
+          {/* Center Screen Main Body */}
+          <div style={{ flex: 1, padding: '1.1rem 1.4rem', overflowY: 'auto' }}>
+            {/* If In-Place Project Intel Dossier is selected */}
+            {selectedProjectSlug && activeProject ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <div style={{ fontSize: '0.72rem', color: '#e8a23a', fontWeight: 700 }}>
+                      COMMAND WORKSTATION INTEL DOSSIER
+                    </div>
+                    <h2 style={{ fontSize: '1.25rem', color: '#f8fafc', margin: '0.2rem 0' }}>
+                      {activeProject.title}
+                    </h2>
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                      type="button"
+                      onClick={() => handleCycleProject(1)}
+                      style={{
+                        padding: '0.35rem 0.75rem',
+                        background: '#e8a23a',
+                        color: '#070a0e',
+                        border: 'none',
+                        borderRadius: '3px',
+                        fontWeight: 700,
+                        fontSize: '0.72rem',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      NEXT PROJECT →
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedProjectSlug(null)}
+                      style={{
+                        padding: '0.35rem 0.65rem',
+                        background: 'transparent',
+                        border: '1px solid #334155',
+                        color: '#94a3b8',
+                        borderRadius: '3px',
+                        fontSize: '0.72rem',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      CLOSE [ESC]
+                    </button>
+                  </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'center' }}>
-                  <button
-                    type="button"
-                    onClick={() => handleLaunchFullOS('projects', activeProject.slug)}
-                    style={{
-                      padding: '0.55rem 1.3rem',
-                      backgroundColor: '#e8a23a',
-                      color: '#07080a',
-                      border: 'none',
-                      fontSize: '0.82rem',
-                      fontWeight: 700,
-                      borderRadius: '2px',
-                      cursor: 'pointer',
-                      fontFamily: 'inherit',
-                      boxShadow: '0 0 20px rgba(232, 162, 58, 0.5)',
-                    }}
-                  >
-                    EXPAND IN FULL NJ-OS SHELL ↗
-                  </button>
+                <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                  {activeProject.stack.map((s) => (
+                    <span key={s} style={{ fontSize: '0.66rem', background: '#0e1726', border: '1px solid #1e293b', padding: '0.15rem 0.5rem', borderRadius: '2px', color: '#00e5ff' }}>
+                      {s}
+                    </span>
+                  ))}
+                </div>
 
+                <div style={{ background: '#090d14', border: '1px solid #1e293b', borderRadius: '4px', padding: '0.85rem' }}>
+                  {activeProject.slug === 'edgedesk' && <EdgeDeskDiagram />}
+                  {activeProject.slug === 'crowd-analytics' && <CrowdDiagram />}
+                  {activeProject.slug === 'lora-traffic-mesh' && <LoRaDiagram />}
+                  {activeProject.slug !== 'edgedesk' && activeProject.slug !== 'crowd-analytics' && activeProject.slug !== 'lora-traffic-mesh' && (
+                    <div style={{ fontSize: '0.76rem', color: '#cbd5e1', lineHeight: 1.5 }}>
+                      {activeProject.description.map((d, i) => (
+                        <p key={i} style={{ marginBottom: '0.4rem' }}>▸ {d}</p>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <a
+                    href="https://github.com/jainnishant779"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ fontSize: '0.72rem', color: '#e8a23a', textDecoration: 'none', border: '1px solid rgba(232, 162, 58, 0.4)', padding: '0.35rem 0.75rem', borderRadius: '3px' }}
+                  >
+                    VIEW CODE (GITHUB) ↗
+                  </a>
                   <button
                     type="button"
                     onClick={() => setSelectedProjectSlug(null)}
-                    style={{
-                      padding: '0.55rem 1rem',
-                      backgroundColor: 'transparent',
-                      border: '1px solid #6b675d',
-                      color: '#9e9a8e',
-                      fontSize: '0.80rem',
-                      borderRadius: '2px',
-                      cursor: 'pointer',
-                      fontFamily: 'inherit',
-                    }}
+                    style={{ fontSize: '0.72rem', color: '#94a3b8', background: 'transparent', border: 'none', cursor: 'pointer' }}
                   >
-                    CLOSE [ESC]
+                    ← RETURN TO OVERVIEW
                   </button>
                 </div>
               </div>
-            </div>
-          )}
+            ) : centerTab === 'home' ? (
+              /* HOME / ABOUT VIEW */
+              <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'flex-start' }}>
+                <div style={{ width: '130px', height: '130px', borderRadius: '5px', overflow: 'hidden', border: '2px solid #e8a23a', flexShrink: 0, background: '#090d14' }}>
+                  <img src="/nightfall/images/profile/nishant_avatar.jpg" alt="Nishant Jain" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <h1 style={{ fontSize: '1.7rem', color: '#f8fafc', margin: 0, fontWeight: 700 }}>
+                    NISHANT JAIN
+                  </h1>
+                  <div style={{ fontSize: '0.82rem', color: '#e8a23a', fontWeight: 700, marginTop: '0.2rem' }}>
+                    AI/ML ENGINEER // COMPUTER VISION • EDGE AI • IOT
+                  </div>
+                  <div style={{ fontSize: '0.76rem', color: '#34d399', marginTop: '0.35rem' }}>
+                    "{profile.tagline}"
+                  </div>
+                  <p style={{ fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.5, marginTop: '0.45rem' }}>
+                    {profile.summary}
+                  </p>
+
+                  <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.85rem' }}>
+                    <button
+                      type="button"
+                      onClick={() => setCenterTab('projects')}
+                      style={{ background: '#e8a23a', color: '#070a0e', border: 'none', padding: '0.45rem 1rem', borderRadius: '3px', fontWeight: 700, fontSize: '0.74rem', cursor: 'pointer' }}
+                    >
+                      EXPLORE PROJECTS →
+                    </button>
+                    <a
+                      href={cvUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ border: '1px solid #e8a23a', color: '#e8a23a', padding: '0.45rem 0.9rem', borderRadius: '3px', fontSize: '0.74rem', textDecoration: 'none' }}
+                    >
+                      VIEW CV (PDF) ↗
+                    </a>
+                  </div>
+
+                  {/* 4 Metrics Row */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', marginTop: '1rem', borderTop: '1px solid #1e293b', paddingTop: '0.75rem' }}>
+                    <div style={{ background: '#090d14', border: '1px solid #1e293b', padding: '0.35rem 0.5rem', borderRadius: '3px' }}>
+                      <div style={{ fontSize: '1.1rem', color: '#e8a23a', fontWeight: 700 }}>4+</div>
+                      <div style={{ fontSize: '0.58rem', color: '#94a3b8' }}>YEARS EXP</div>
+                    </div>
+                    <div style={{ background: '#090d14', border: '1px solid #1e293b', padding: '0.35rem 0.5rem', borderRadius: '3px' }}>
+                      <div style={{ fontSize: '1.1rem', color: '#00e5ff', fontWeight: 700 }}>10+</div>
+                      <div style={{ fontSize: '0.58rem', color: '#94a3b8' }}>PROJECTS</div>
+                    </div>
+                    <div style={{ background: '#090d14', border: '1px solid #1e293b', padding: '0.35rem 0.5rem', borderRadius: '3px' }}>
+                      <div style={{ fontSize: '1.1rem', color: '#34d399', fontWeight: 700 }}>3</div>
+                      <div style={{ fontSize: '0.58rem', color: '#94a3b8' }}>DOMAINS: AI·CV·EDGE</div>
+                    </div>
+                    <div style={{ background: '#090d14', border: '1px solid #1e293b', padding: '0.35rem 0.5rem', borderRadius: '3px' }}>
+                      <div style={{ fontSize: '1.1rem', color: '#e8a23a', fontWeight: 700 }}>1</div>
+                      <div style={{ fontSize: '0.58rem', color: '#94a3b8' }}>PATENT APP</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : centerTab === 'projects' ? (
+              /* PROJECTS GRID VIEW */
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ fontSize: '0.72rem', color: '#e8a23a', fontWeight: 700 }}>02 // PROJECT ARCHIVES</div>
+                  <div style={{ display: 'flex', gap: '0.3rem' }}>
+                    {['All', 'AI/ML', 'Computer Vision', 'Edge AI', 'IoT'].map((cat) => (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => setProjectCategory(cat)}
+                        style={{
+                          fontSize: '0.62rem',
+                          padding: '0.2rem 0.5rem',
+                          borderRadius: '2px',
+                          border: `1px solid ${projectCategory === cat ? '#e8a23a' : '#232a35'}`,
+                          backgroundColor: projectCategory === cat ? '#e8a23a' : '#0b1016',
+                          color: projectCategory === cat ? '#070a0e' : '#94a3b8',
+                          cursor: 'pointer',
+                          fontWeight: 700,
+                        }}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.65rem' }}>
+                  {filteredProjects.map((p) => (
+                    <div
+                      key={p.slug}
+                      onClick={() => handleSelectScreenInPlace({
+                        id: p.slug,
+                        slug: p.slug,
+                        module: 'projects',
+                        title: p.title,
+                        shortTitle: p.title.split(':')[0],
+                        badge: p.badge,
+                        metrics: p.stack.slice(0, 3).join(' · '),
+                        tech: p.stack,
+                        keyNum: '1',
+                      })}
+                      style={{
+                        background: 'rgba(14, 20, 28, 0.9)',
+                        border: '1px solid #1e293b',
+                        borderRadius: '4px',
+                        padding: '0.65rem',
+                        cursor: 'pointer',
+                        transition: 'border-color 0.15s ease',
+                      }}
+                      onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.borderColor = '#00e5ff')}
+                      onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.borderColor = '#1e293b')}
+                    >
+                      <div style={{ fontSize: '0.64rem', color: '#e8a23a', fontWeight: 700 }}>{p.badge}</div>
+                      <div style={{ fontSize: '0.8rem', color: '#f8fafc', fontWeight: 700, margin: '0.2rem 0' }}>{p.title}</div>
+                      <div style={{ fontSize: '0.62rem', color: '#64748b' }}>{p.stack.join(' · ')}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : centerTab === 'architecture' ? (
+              /* SYSTEMS LAB VIEW */
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div style={{ fontSize: '0.74rem', color: '#00e5ff', fontWeight: 700 }}>
+                  08 // SYSTEMS ARCHITECTURE SCHEMATICS
+                </div>
+                <EdgeDeskDiagram />
+              </div>
+            ) : (
+              /* CONTACT TRANSMISSION VIEW */
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', maxWidth: '520px' }}>
+                <div style={{ fontSize: '0.74rem', color: '#e8a23a', fontWeight: 700 }}>
+                  07 // TRANSMISSION PROTOCOL
+                </div>
+                <input
+                  type="text"
+                  placeholder="CALLSIGN / NAME"
+                  style={{ background: '#0b1016', border: '1px solid #1e293b', color: '#f8fafc', padding: '0.45rem', fontSize: '0.72rem', borderRadius: '3px' }}
+                />
+                <input
+                  type="email"
+                  placeholder="COMM FREQ / EMAIL"
+                  style={{ background: '#0b1016', border: '1px solid #1e293b', color: '#f8fafc', padding: '0.45rem', fontSize: '0.72rem', borderRadius: '3px' }}
+                />
+                <textarea
+                  rows={3}
+                  placeholder="TRANSMISSION MESSAGE"
+                  style={{ background: '#0b1016', border: '1px solid #1e293b', color: '#f8fafc', padding: '0.45rem', fontSize: '0.72rem', borderRadius: '3px', resize: 'none' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => sound.playAccessBeep()}
+                  style={{ background: '#e8a23a', color: '#070a0e', border: 'none', padding: '0.45rem', borderRadius: '3px', fontWeight: 700, fontSize: '0.74rem', cursor: 'pointer' }}
+                >
+                  TRANSMIT MESSAGE ↵
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* =========================================================
-            3. BOTTOM STATUS BAR & TACTICAL PROJECT QUICK SELECTORS
-            ========================================================= */}
+        {/* =======================================================================
+         * 3. RIGHT MONITOR (QUICK ACCESS & EXPERIENCE JOURNEY)
+         * ======================================================================= */}
         <div
+          className="workstation-right-screen"
           style={{
             position: 'absolute',
-            bottom: '18px',
+            top: 0,
+            left: 0,
+            width: 600,
+            height: 380,
+            transformOrigin: '0 0',
+            transform: rightTransform,
+            backgroundColor: 'rgba(5, 10, 16, 0.94)',
+            border: '1.5px solid rgba(0, 229, 255, 0.4)',
+            boxShadow: '0 0 25px rgba(0, 229, 255, 0.25), inset 0 0 35px rgba(0, 0, 0, 0.8)',
+            borderRadius: '4px',
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            color: '#e2e8f0',
+            pointerEvents: 'auto',
+          }}
+        >
+          {/* Top Title & Sub-tabs */}
+          <div
+            style={{
+              padding: '0.45rem 0.75rem',
+              background: 'rgba(9, 14, 22, 0.98)',
+              borderBottom: '1px solid rgba(0, 229, 255, 0.25)',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <div style={{ fontSize: '0.68rem', color: '#00e5ff', fontWeight: 700, letterSpacing: '0.04em' }}>
+              ● MON-03 // CHANNELS & HISTORY
+            </div>
+            <div style={{ display: 'flex', gap: '0.3rem' }}>
+              {(['quick', 'experience', 'honors'] as const).map((tab) => (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => {
+                    sound.playUiClick();
+                    setRightTab(tab);
+                  }}
+                  style={{
+                    fontSize: '0.62rem',
+                    padding: '0.15rem 0.45rem',
+                    borderRadius: '2px',
+                    border: `1px solid ${rightTab === tab ? '#00e5ff' : '#1e293b'}`,
+                    backgroundColor: rightTab === tab ? 'rgba(0, 229, 255, 0.2)' : 'transparent',
+                    color: rightTab === tab ? '#00e5ff' : '#64748b',
+                    cursor: 'pointer',
+                    fontWeight: 700,
+                  }}
+                >
+                  {tab.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Screen Body */}
+          <div style={{ flex: 1, padding: '0.65rem 0.85rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+            {rightTab === 'quick' && (
+              <>
+                <div style={{ fontSize: '0.64rem', color: '#64748b' }}>DIRECT ACCESS CHANNELS:</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.4rem' }}>
+                  <a
+                    href={cvUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ background: '#0b1016', border: '1px solid #1e293b', color: '#e8a23a', padding: '0.35rem 0.5rem', fontSize: '0.68rem', borderRadius: '3px', textDecoration: 'none', textAlign: 'center', fontWeight: 700 }}
+                  >
+                    📄 CV (PDF) ↗
+                  </a>
+                  <a
+                    href={profile.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ background: '#0b1016', border: '1px solid #1e293b', color: '#cbd5e1', padding: '0.35rem 0.5rem', fontSize: '0.68rem', borderRadius: '3px', textDecoration: 'none', textAlign: 'center' }}
+                  >
+                    🐙 GitHub ↗
+                  </a>
+                  <a
+                    href={profile.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ background: '#0b1016', border: '1px solid #1e293b', color: '#cbd5e1', padding: '0.35rem 0.5rem', fontSize: '0.68rem', borderRadius: '3px', textDecoration: 'none', textAlign: 'center' }}
+                  >
+                    💼 LinkedIn ↗
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      sound.playAccessBeep();
+                      useStore.getState().setMode('suit-inspect');
+                    }}
+                    style={{ background: 'rgba(52, 211, 153, 0.15)', border: '1px solid #34d399', color: '#34d399', padding: '0.35rem 0.5rem', fontSize: '0.68rem', borderRadius: '3px', cursor: 'pointer', textAlign: 'center', fontWeight: 700 }}
+                  >
+                    🛡️ Suit Vault [3D]
+                  </button>
+                </div>
+
+                <div style={{ borderTop: '1px solid rgba(0, 229, 255, 0.15)', paddingTop: '0.45rem' }}>
+                  <div style={{ fontSize: '0.62rem', color: '#64748b', marginBottom: '0.3rem' }}>CLICK TO LOAD INTO CENTER SCREEN:</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                    {SCREENS.slice(0, 4).map((s) => (
+                      <button
+                        key={s.id}
+                        type="button"
+                        onClick={() => handleSelectScreenInPlace(s)}
+                        style={{
+                          background: selectedProjectSlug === s.slug ? 'rgba(0, 229, 255, 0.2)' : 'transparent',
+                          border: `1px solid ${selectedProjectSlug === s.slug ? '#00e5ff' : '#1e293b'}`,
+                          color: selectedProjectSlug === s.slug ? '#00e5ff' : '#cbd5e1',
+                          padding: '0.25rem 0.5rem',
+                          borderRadius: '2px',
+                          fontSize: '0.64rem',
+                          textAlign: 'left',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                        }}
+                      >
+                        <span>FILE 0{s.keyNum} // {s.shortTitle}</span>
+                        <span style={{ color: '#e8a23a' }}>LOAD ↵</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {rightTab === 'experience' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.66rem' }}>
+                {experiences.map((exp, idx) => (
+                  <div key={idx} style={{ borderLeft: '2px solid #00e5ff', paddingLeft: '0.5rem' }}>
+                    <div style={{ color: '#f8fafc', fontWeight: 700 }}>{exp.role}</div>
+                    <div style={{ color: '#e8a23a' }}>{exp.company} // {exp.period}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {rightTab === 'honors' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', fontSize: '0.66rem' }}>
+                <div style={{ color: '#00e5ff', fontWeight: 700, fontSize: '0.62rem', letterSpacing: '0.05em' }}>HONORS & AWARDS</div>
+                {achievements.map((a, idx) => (
+                  <div key={idx} style={{ background: '#0b1016', border: '1px solid #1e293b', padding: '0.35rem 0.5rem', borderRadius: '3px' }}>
+                    <div style={{ color: '#e8a23a', fontWeight: 700 }}>{a.title}</div>
+                    {a.detail && <div style={{ color: '#94a3b8' }}>{a.detail}</div>}
+                  </div>
+                ))}
+                <div style={{ color: '#00e5ff', fontWeight: 700, fontSize: '0.62rem', letterSpacing: '0.05em', marginTop: '0.2rem' }}>CREDENTIALS</div>
+                {certifications.map((c, idx) => (
+                  <div key={idx} style={{ background: '#0b1016', border: '1px solid #1e293b', padding: '0.35rem 0.5rem', borderRadius: '3px' }}>
+                    <div style={{ color: '#f8fafc', fontWeight: 700 }}>{c.title}</div>
+                    <div style={{ color: '#7fb38a' }}>{c.issuer}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* =======================================================================
+         * 4. DESK CONSOLE CONTROL STRIP (PHYSICAL DESK LEVEL)
+         * Keeps full compatibility with test selectors: [1] POULTRY HEALTH AI, etc.
+         * ======================================================================= */}
+        <div
+          className="film-screen-hud"
+          style={{
+            position: 'absolute',
+            bottom: '1.2rem',
             left: '50%',
             transform: 'translateX(-50%)',
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
-            gap: '1.25rem',
-            backgroundColor: 'rgba(6, 12, 18, 0.92)',
+            gap: '0.5rem',
+            background: 'rgba(9, 14, 22, 0.95)',
             border: '1px solid rgba(0, 229, 255, 0.4)',
-            backdropFilter: 'blur(8px)',
-            borderRadius: '4px',
-            padding: '0.55rem 1.4rem',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.85)',
+            padding: '0.55rem 1.1rem',
+            borderRadius: '5px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 229, 255, 0.1)',
             zIndex: 40,
+            pointerEvents: 'auto',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span
-              style={{
-                width: '8px',
-                height: '8px',
-                borderRadius: '50%',
-                backgroundColor: '#00e5ff',
-                boxShadow: '0 0 8px #00e5ff',
-              }}
-            />
-            <span style={{ fontSize: '0.78rem', color: '#00e5ff', fontWeight: 700 }}>
-              TACTICAL MONITORS ACTIVE
-            </span>
+          <div style={{ fontSize: '0.64rem', color: '#00e5ff', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#00e5ff', boxShadow: '0 0 6px #00e5ff' }} />
+            TRIPLE-DISPLAY COMPUTER ACTIVE // MOUSE INPUT ENGAGED // CAVERN COMMUNICATING
           </div>
 
-          <div style={{ display: 'flex', gap: '0.45rem' }}>
+          <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'center' }}>
             {SCREENS.map((s) => (
               <button
                 key={s.id}
                 type="button"
                 onClick={() => handleSelectScreenInPlace(s)}
                 style={{
-                  padding: '0.3rem 0.65rem',
+                  padding: '0.25rem 0.55rem',
                   backgroundColor: selectedProjectSlug === s.slug ? 'rgba(0, 229, 255, 0.3)' : 'rgba(0, 229, 255, 0.08)',
                   border: selectedProjectSlug === s.slug ? '1px solid #00e5ff' : '1px solid rgba(0, 229, 255, 0.25)',
-                  color: selectedProjectSlug === s.slug ? '#00e5ff' : '#9e9a8e',
-                  fontSize: '0.68rem',
+                  color: selectedProjectSlug === s.slug ? '#00e5ff' : '#cbd5e1',
+                  fontSize: '0.64rem',
                   fontWeight: 700,
                   borderRadius: '2px',
                   cursor: 'pointer',
@@ -1426,42 +1034,41 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
                 useStore.getState().setMode('suit-inspect');
               }}
               style={{
-                padding: '0.3rem 0.75rem',
+                padding: '0.25rem 0.65rem',
                 backgroundColor: 'rgba(127, 179, 138, 0.15)',
                 border: '1px solid #7fb38a',
                 color: '#7fb38a',
-                fontSize: '0.68rem',
+                fontSize: '0.64rem',
                 fontWeight: 700,
                 borderRadius: '2px',
                 cursor: 'pointer',
                 fontFamily: 'inherit',
-                transition: 'all 0.15s ease',
               }}
               title="Inspect 3D Warden Exoskeleton Suit Chamber"
             >
               🛡️ SUIT VAULT [3D]
             </button>
-          </div>
 
-          {selectedProjectSlug && (
-            <button
-              type="button"
-              onClick={() => setSelectedProjectSlug(null)}
-              style={{
-                padding: '0.3rem 0.75rem',
-                backgroundColor: 'rgba(232, 162, 58, 0.18)',
-                border: '1px solid #e8a23a',
-                color: '#e8a23a',
-                fontSize: '0.68rem',
-                fontWeight: 700,
-                borderRadius: '2px',
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-              }}
-            >
-              CLOSE [ESC]
-            </button>
-          )}
+            {selectedProjectSlug && (
+              <button
+                type="button"
+                onClick={() => setSelectedProjectSlug(null)}
+                style={{
+                  padding: '0.25rem 0.65rem',
+                  backgroundColor: 'rgba(232, 162, 58, 0.18)',
+                  border: '1px solid #e8a23a',
+                  color: '#e8a23a',
+                  fontSize: '0.64rem',
+                  fontWeight: 700,
+                  borderRadius: '2px',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                }}
+              >
+                CLOSE [ESC]
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -1474,7 +1081,7 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
             inset: 0,
             zIndex: 60,
             backgroundColor: '#07080a',
-            animation: 'filmZoomFade 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            animation: 'filmZoomFade 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards',
             pointerEvents: 'none',
           }}
         >

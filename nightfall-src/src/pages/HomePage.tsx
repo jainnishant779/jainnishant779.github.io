@@ -34,12 +34,17 @@ export const HomePage: React.FC = () => {
       setEngineSupported(false);
     }
 
-    // Direct deep-link query parameter handling (?view=suit or ?view=os)
+    // Scroll restoration & direct deep-link query parameter handling (?view=suit or ?view=os)
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
     const params = new URLSearchParams(window.location.search);
     if (params.get('view') === 'suit') {
       setMode('suit-inspect');
     } else if (params.get('view') === 'os') {
       setOsOpen(true);
+    } else {
+      window.scrollTo(0, 0);
     }
   }, [setMode, setOsOpen]);
 
@@ -112,10 +117,12 @@ export const HomePage: React.FC = () => {
     setOsOpen(true);
   }, [setOsOpen]);
 
-  // Access facility handler: scrolls into the cavern
+  // Access facility handler: unlatches the massive blast door and scrolls to threshold (0.20)
   const handleAccessFacility = useCallback(() => {
     sound.initContext();
     sound.playAccessBeep();
+    setTimeout(() => sound.playMechanicalClunk(), 120);
+    setTimeout(() => sound.playPneumaticHiss(), 380);
     useStore.getState().setAudioEnabled(true);
 
     const doc = document.documentElement;
@@ -125,7 +132,7 @@ export const HomePage: React.FC = () => {
       setFadeScreen(true);
       setTimeout(() => {
         window.scrollTo({
-          top: scrollHeight * 0.35,
+          top: scrollHeight * 0.20,
           behavior: 'auto',
         });
         setTimeout(() => {
@@ -135,10 +142,10 @@ export const HomePage: React.FC = () => {
     } else {
       const lenis = (window as any).__lenis;
       if (lenis) {
-        lenis.scrollTo(scrollHeight * 0.35, { duration: 1.6 });
+        lenis.scrollTo(scrollHeight * 0.20, { duration: 2.2 });
       } else {
         window.scrollTo({
-          top: scrollHeight * 0.35,
+          top: scrollHeight * 0.20,
           behavior: 'smooth',
         });
       }

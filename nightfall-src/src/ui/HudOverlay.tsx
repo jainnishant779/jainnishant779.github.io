@@ -12,11 +12,12 @@ interface HudOverlayProps {
 }
 
 function getFilmHint(progress: number): string {
-  if (progress < 0.15) return 'CAVERN ENTRANCE // OPEN & READY — SCROLL TO ENTER';
-  if (progress < 0.40) return 'TRANSIT CORRIDOR // ADVANCING DOWN CATWALK';
-  if (progress < 0.75) return 'SUBTERRANEAN CAVERN // CATWALK PASSAGE & WATERFALL';
+  if (progress < 0.05) return 'FACILITY VAULT ENTRANCE // SECURITY BLAST DOOR LOCKED';
+  if (progress < 0.20) return 'HYDRAULIC GATES UNLATCHING // BREACHING INTERIOR CAVERN';
+  if (progress < 0.50) return 'TRANSIT CORRIDOR // ADVANCING DOWN CATWALK';
+  if (progress < 0.78) return 'SUBTERRANEAN CAVERN // CATWALK PASSAGE & WATERFALL';
   if (progress < 0.90) return 'APPROACHING COMMAND WORKSTATION PLATFORM';
-  return 'TRIPLE-MONITOR WORKSTATION // COMPUTER READY';
+  return 'TRIPLE-MONITOR WORKSTATION // BATCOMPUTER ONLINE [E]';
 }
 
 export const HudOverlay: React.FC<HudOverlayProps> = ({
@@ -29,7 +30,7 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({
   const setAudioEnabled = useStore((state) => state.setAudioEnabled);
   const cvUrl = getCVUrl();
 
-  const showAccessButton = progress < 0.1;
+  const showAccessButton = progress < 0.06;
   const activeHint = getFilmHint(progress);
 
   const handleToggleAudio = () => {
@@ -225,26 +226,61 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({
         }}
       >
         {showAccessButton && (
-          <button
-            onClick={onAccessFacility}
-            className="access-facility-btn"
+          <div
             style={{
-              background: 'rgba(7, 8, 10, 0.92)',
-              border: '2px solid #e8a23a',
-              color: '#e8a23a',
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '0.92rem',
-              fontWeight: 700,
-              letterSpacing: '0.08em',
-              padding: '0.85rem 2.2rem',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              boxShadow: '0 0 25px rgba(232, 162, 58, 0.35)',
-              transition: 'all 0.2s ease',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '0.65rem',
             }}
           >
-            ACCESS THE FACILITY ▾
-          </button>
+            <div
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: '0.72rem',
+                color: '#e8a23a',
+                letterSpacing: '0.12em',
+                background: 'rgba(7, 8, 10, 0.88)',
+                padding: '0.25rem 0.75rem',
+                borderRadius: '3px',
+                border: '1px solid rgba(232, 162, 58, 0.45)',
+                boxShadow: '0 0 15px rgba(232, 162, 58, 0.25)',
+              }}
+            >
+              // SUBTERRANEAN HEADQUARTERS BLAST DOOR
+            </div>
+            <button
+              onClick={onAccessFacility}
+              className="access-facility-btn"
+              style={{
+                background: 'rgba(7, 8, 10, 0.94)',
+                border: '2px solid #e8a23a',
+                color: '#e8a23a',
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: '0.94rem',
+                fontWeight: 700,
+                letterSpacing: '0.08em',
+                padding: '0.85rem 2.4rem',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                boxShadow: '0 0 30px rgba(232, 162, 58, 0.45)',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              ACCESS THE FACILITY ▾
+            </button>
+            <div
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: '0.68rem',
+                color: '#9e9a8e',
+                letterSpacing: '0.06em',
+                textShadow: '0 1px 3px rgba(0,0,0,0.8)',
+              }}
+            >
+              CLICK TO UNLOCK OR SCROLL DOWN
+            </div>
+          </div>
         )}
       </div>
 

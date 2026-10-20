@@ -94,26 +94,26 @@ const SCREENS: ScreenDef[] = [
   },
 ];
 
-// Exact physical monitor quads in 1600x900 coordinate space for f_0239.webp workstation
+// Exact physical monitor quads in 1600x900 coordinate space for f_0239.webp workstation (bezel-to-bezel 100% coverage)
 const LEFT_MONITOR_QUAD: Quad = [
-  [198, 520],
-  [505, 520],
-  [505, 696],
-  [198, 696],
+  [74, 465],
+  [484, 465],
+  [484, 730],
+  [74, 730],
 ];
 
 const CENTER_MONITOR_QUAD: Quad = [
-  [523, 355],
-  [1075, 355],
-  [1075, 730],
-  [523, 730],
+  [492, 312],
+  [1108, 312],
+  [1108, 746],
+  [492, 746],
 ];
 
 const RIGHT_MONITOR_QUAD: Quad = [
-  [1095, 520],
-  [1402, 520],
-  [1402, 696],
-  [1095, 696],
+  [1116, 465],
+  [1526, 465],
+  [1526, 730],
+  [1116, 730],
 ];
 
 interface ScreenPreviewProps {
@@ -178,10 +178,10 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
       viewport.w,
       viewport.h
     );
-    return getQuadMatrix3d(600, 380, quadInViewport);
+    return getQuadMatrix3d(600, 388, quadInViewport);
   }, [nativeWidth, nativeHeight, viewport]);
 
-  // Compute CSS matrix3d for CENTER MONITOR (src: 900 x 600)
+  // Compute CSS matrix3d for CENTER MONITOR (src: 880 x 620)
   const centerTransform = useMemo(() => {
     const quadToUse: Quad =
       rawQuad && rawQuad.length === 4 && rawQuad[0][0] > 0
@@ -194,10 +194,10 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
       viewport.w,
       viewport.h
     );
-    return getQuadMatrix3d(900, 600, quadInViewport);
+    return getQuadMatrix3d(880, 620, quadInViewport);
   }, [rawQuad, nativeWidth, nativeHeight, viewport]);
 
-  // Compute CSS matrix3d for RIGHT MONITOR (src: 600 x 380)
+  // Compute CSS matrix3d for RIGHT MONITOR (src: 600 x 388)
   const rightTransform = useMemo(() => {
     const quadInViewport = getCoverQuadInViewport(
       RIGHT_MONITOR_QUAD,
@@ -206,7 +206,7 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
       viewport.w,
       viewport.h
     );
-    return getQuadMatrix3d(600, 380, quadInViewport);
+    return getQuadMatrix3d(600, 388, quadInViewport);
   }, [nativeWidth, nativeHeight, viewport]);
 
   // Active project data for in-place dossier
@@ -320,12 +320,12 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
             top: 0,
             left: 0,
             width: 600,
-            height: 380,
+            height: 388,
             transformOrigin: '0 0',
             transform: leftTransform,
-            backgroundColor: 'rgba(5, 10, 16, 0.94)',
-            border: '1.5px solid rgba(0, 229, 255, 0.4)',
-            boxShadow: '0 0 25px rgba(0, 229, 255, 0.25), inset 0 0 35px rgba(0, 0, 0, 0.8)',
+            backgroundColor: '#070b12',
+            border: '1.5px solid rgba(0, 229, 255, 0.45)',
+            boxShadow: '0 0 25px rgba(0, 229, 255, 0.25), inset 0 0 35px rgba(0, 0, 0, 0.9)',
             borderRadius: '4px',
             overflow: 'hidden',
             display: 'flex',
@@ -462,13 +462,13 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
             position: 'absolute',
             top: 0,
             left: 0,
-            width: 900,
-            height: 600,
+            width: 880,
+            height: 620,
             transformOrigin: '0 0',
             transform: centerTransform,
-            backgroundColor: 'rgba(5, 9, 14, 0.96)',
+            backgroundColor: '#070b12',
             border: '2px solid rgba(232, 162, 58, 0.55)',
-            boxShadow: '0 0 35px rgba(232, 162, 58, 0.35), inset 0 0 45px rgba(0, 0, 0, 0.85)',
+            boxShadow: '0 0 35px rgba(232, 162, 58, 0.35), inset 0 0 45px rgba(0, 0, 0, 0.9)',
             borderRadius: '5px',
             overflow: 'hidden',
             display: 'flex',
@@ -817,12 +817,12 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
             top: 0,
             left: 0,
             width: 600,
-            height: 380,
+            height: 388,
             transformOrigin: '0 0',
             transform: rightTransform,
-            backgroundColor: 'rgba(5, 10, 16, 0.94)',
-            border: '1.5px solid rgba(0, 229, 255, 0.4)',
-            boxShadow: '0 0 25px rgba(0, 229, 255, 0.25), inset 0 0 35px rgba(0, 0, 0, 0.8)',
+            backgroundColor: '#070b12',
+            border: '1.5px solid rgba(0, 229, 255, 0.45)',
+            boxShadow: '0 0 25px rgba(0, 229, 255, 0.25), inset 0 0 35px rgba(0, 0, 0, 0.9)',
             borderRadius: '4px',
             overflow: 'hidden',
             display: 'flex',
@@ -983,24 +983,24 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
           className="film-screen-hud"
           style={{
             position: 'absolute',
-            bottom: '1.2rem',
+            bottom: '0.35rem',
             left: '50%',
             transform: 'translateX(-50%)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '0.5rem',
-            background: 'rgba(9, 14, 22, 0.95)',
-            border: '1px solid rgba(0, 229, 255, 0.4)',
-            padding: '0.55rem 1.1rem',
-            borderRadius: '5px',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 229, 255, 0.1)',
+            gap: '0.25rem',
+            background: 'rgba(7, 11, 18, 0.96)',
+            border: '1px solid rgba(0, 229, 255, 0.35)',
+            padding: '0.25rem 0.8rem',
+            borderRadius: '4px',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.85)',
             zIndex: 40,
             pointerEvents: 'auto',
           }}
         >
-          <div style={{ fontSize: '0.64rem', color: '#00e5ff', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#00e5ff', boxShadow: '0 0 6px #00e5ff' }} />
+          <div style={{ fontSize: '0.62rem', color: '#00e5ff', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+            <span style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: '#00e5ff', boxShadow: '0 0 6px #00e5ff' }} />
             TRIPLE-DISPLAY COMPUTER ACTIVE // MOUSE INPUT ENGAGED // CAVERN COMMUNICATING
           </div>
 

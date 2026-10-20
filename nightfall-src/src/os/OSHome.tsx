@@ -210,21 +210,18 @@ export const OSHome: React.FC<OSHomeProps> = ({ onSelectModule }) => {
                   VIEW CV (PDF) ↗
                 </a>
 
-                <button
-                  type="button"
+                <a
+                  href="/nightfall/"
                   className="os-btn os-btn-subtle"
-                  onClick={() => {
-                    sound.playUiClick();
-                    onSelectModule('identity');
-                  }}
                   style={{
                     borderColor: '#232a35',
-                    color: '#94a3b8',
+                    color: '#00e5ff',
                     padding: '0.55rem 1.1rem',
+                    textDecoration: 'none',
                   }}
                 >
-                  DOSSIER SPECS
-                </button>
+                  WATCH INTRO ▶
+                </a>
               </div>
             </div>
           </div>

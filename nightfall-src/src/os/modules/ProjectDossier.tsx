@@ -62,7 +62,7 @@ export const ProjectDossier: React.FC<ProjectDossierProps> = ({ project, onBack 
             )}
           </div>
         </div>
-        <div className="os-module-actions">
+        <div className="os-module-actions" style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
           <a
             href="https://github.com/jainnishant779"
             target="_blank"
@@ -70,8 +70,23 @@ export const ProjectDossier: React.FC<ProjectDossierProps> = ({ project, onBack 
             className="os-btn os-btn-primary"
             style={{ textDecoration: 'none', backgroundColor: '#e8a23a', color: '#070a0e', fontWeight: 700 }}
           >
-            VIEW CODE (GITHUB) ↗
+            VIEW CODE ↗
           </a>
+          {project.slug === 'edgedesk' && (
+            <span
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.74rem',
+                border: '1px solid rgba(0, 229, 255, 0.4)',
+                backgroundColor: 'rgba(0, 229, 255, 0.08)',
+                color: '#00e5ff',
+                padding: '0.4rem 0.75rem',
+                borderRadius: '3px',
+              }}
+            >
+              Patent Application (Filed)
+            </span>
+          )}
         </div>
       </div>
 

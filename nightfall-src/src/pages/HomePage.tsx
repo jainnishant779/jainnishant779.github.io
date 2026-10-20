@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import Lenis from 'lenis';
 import { useStore } from '../state/store';
 import { FilmPlayer } from '../film/FilmPlayer';
 import { HudOverlay } from '../ui/HudOverlay';
@@ -41,6 +42,37 @@ export const HomePage: React.FC = () => {
       setOsOpen(true);
     }
   }, [setMode, setOsOpen]);
+
+  // Lenis Smooth Scroll Engine (matching roccia.in luxury momentum physics)
+  useEffect(() => {
+    if (prefersReducedMotion()) return;
+
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.5,
+      infinite: false,
+    });
+
+    (window as any).__lenis = lenis;
+
+    let rafId: number;
+    function raf(time: number) {
+      lenis.raf(time);
+      rafId = requestAnimationFrame(raf);
+    }
+    rafId = requestAnimationFrame(raf);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      lenis.destroy();
+      delete (window as any).__lenis;
+    };
+  }, []);
 
   // Keyboard shortcut: Escape to close OS overlay or exit suit inspection
   useEffect(() => {
@@ -101,10 +133,15 @@ export const HomePage: React.FC = () => {
         }, 150);
       }, 150);
     } else {
-      window.scrollTo({
-        top: scrollHeight * 0.35,
-        behavior: 'smooth',
-      });
+      const lenis = (window as any).__lenis;
+      if (lenis) {
+        lenis.scrollTo(scrollHeight * 0.35, { duration: 1.6 });
+      } else {
+        window.scrollTo({
+          top: scrollHeight * 0.35,
+          behavior: 'smooth',
+        });
+      }
     }
   }, []);
 
@@ -118,10 +155,15 @@ export const HomePage: React.FC = () => {
         behavior: 'auto',
       });
     } else {
-      window.scrollTo({
-        top: scrollHeight * 0.96,
-        behavior: 'smooth',
-      });
+      const lenis = (window as any).__lenis;
+      if (lenis) {
+        lenis.scrollTo(scrollHeight * 0.96, { duration: 1.8 });
+      } else {
+        window.scrollTo({
+          top: scrollHeight * 0.96,
+          behavior: 'smooth',
+        });
+      }
     }
   }, []);
 

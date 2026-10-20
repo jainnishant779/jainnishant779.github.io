@@ -1,5 +1,5 @@
 {
-  "count": 239,
+  "count": 240,
   "fps": 12,
   "desktop": {
     "width": 1600,
@@ -15,22 +15,22 @@
     {
       "id": "gate",
       "start": 0,
-      "end": 47
+      "end": 48
     },
     {
       "id": "walk",
-      "start": 47,
-      "end": 143
+      "start": 48,
+      "end": 144
     },
     {
       "id": "approach",
-      "start": 143,
-      "end": 191
+      "start": 144,
+      "end": 192
     },
     {
       "id": "terminal",
-      "start": 191,
-      "end": 238
+      "start": 192,
+      "end": 239
     }
   ],
   "screenQuad": [

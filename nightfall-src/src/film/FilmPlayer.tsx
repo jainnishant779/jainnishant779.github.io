@@ -57,10 +57,10 @@ export const FilmPlayer: React.FC<FilmPlayerProps> = ({ onOpenOS }) => {
         currentProgressRef.current = targetP;
       } else {
         const diff = targetP - currentProgressRef.current;
-        if (Math.abs(diff) < 0.0005) {
+        if (Math.abs(diff) < 0.0002) {
           currentProgressRef.current = targetP;
         } else {
-          currentProgressRef.current = lerp(currentProgressRef.current, targetP, 0.15);
+          currentProgressRef.current = lerp(currentProgressRef.current, targetP, 0.2);
         }
       }
 
@@ -92,6 +92,8 @@ export const FilmPlayer: React.FC<FilmPlayerProps> = ({ onOpenOS }) => {
           const imgH = (frameImg as HTMLImageElement).naturalHeight || (frameImg as ImageBitmap).height;
 
           if (imgW && imgH) {
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
             const scale = Math.max(canvas.width / imgW, canvas.height / imgH);
             const drawW = imgW * scale;
             const drawH = imgH * scale;

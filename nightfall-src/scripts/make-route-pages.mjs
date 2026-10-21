@@ -19,6 +19,7 @@ const routes = [
   'projects/on-device-ai',
   'projects/facial-attendance',
   'kit',
+  'calibrate',
   'experience',
   'skills',
   'achievements',

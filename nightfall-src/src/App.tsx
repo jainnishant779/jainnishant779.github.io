@@ -13,6 +13,11 @@ const KitPage = React.lazy(() =>
   import('./pages/KitPage').then((m) => ({ default: m.KitPage }))
 );
 
+// Unlisted dev tool: click monitor corners on the final film frame -> public/film/screens.json
+const CalibratePage = React.lazy(() =>
+  import('./pages/CalibratePage').then((m) => ({ default: m.CalibratePage }))
+);
+
 export function App() {
   return (
     <Suspense
@@ -35,6 +40,7 @@ export function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/kit" element={<KitPage />} />
+        <Route path="/calibrate" element={<CalibratePage />} />
         <Route path="/os" element={<StandalonePage module="home" />} />
         <Route path="/about" element={<StandalonePage module="identity" />} />
         <Route path="/projects" element={<StandalonePage module="projects" />} />

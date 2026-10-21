@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit",
     "test": "playwright test",
     "film": "node scripts/build-film.mjs",
+    "perf": "node scripts/perf-scroll.mjs",
     "optimize": "node scripts/optimize-assets.mjs"
   },
   "dependencies": {

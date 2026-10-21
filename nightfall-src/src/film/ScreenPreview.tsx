@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { getQuadMatrix3d, getCoverQuadInViewport, type Quad } from './quad';
-import { prefersReducedMotion } from '../lib/reducedMotion';
+import type { ScreenQuads } from './useFrameLoader';
 import { sound } from '../lib/sound';
 import { projects } from '../content/projects';
 import { experiences } from '../content/experience';
@@ -76,14 +76,18 @@ const RIGHT_MONITOR_QUAD: Quad = [
 interface ScreenPreviewProps {
   visible: boolean;
   rawQuad: Quad;
+  /** Calibrated monitor quads for the final frame (public/film/screens.json). Falls back to the built-in defaults. */
+  screens?: ScreenQuads;
   nativeWidth: number;
   nativeHeight: number;
+  /** Opens the OS. The zoom-into-the-monitor transition is owned by FilmPlayer. */
   onOpenOS: (module?: OSModuleId, slug?: string) => void;
 }
 
-export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
+const ScreenPreviewInner: React.FC<ScreenPreviewProps> = ({
   visible,
   rawQuad,
+  screens,
   nativeWidth,
   nativeHeight,
   onOpenOS,
@@ -98,7 +102,6 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
   const [leftTab, setLeftTab] = useState<'focus' | 'stack' | 'network'>('focus');
   const [rightTab, setRightTab] = useState<'quick' | 'experience' | 'honors'>('quick');
   const [projectCategory, setProjectCategory] = useState<string>('All');
-  const [isZooming, setIsZooming] = useState(false);
 
   const cvUrl = getCVUrl();
   const companyCount = new Set(experiences.map((e) => e.company)).size;
@@ -115,21 +118,20 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
   // Compute CSS matrix3d for LEFT MONITOR (src: 600 x 380)
   const leftTransform = useMemo(() => {
     const quadInViewport = getCoverQuadInViewport(
-      LEFT_MONITOR_QUAD,
+      screens?.left ?? LEFT_MONITOR_QUAD,
       nativeWidth,
       nativeHeight,
       viewport.w,
       viewport.h
     );
     return getQuadMatrix3d(600, 388, quadInViewport);
-  }, [nativeWidth, nativeHeight, viewport]);
+  }, [screens, nativeWidth, nativeHeight, viewport]);
 
   // Compute CSS matrix3d for CENTER MONITOR (src: 880 x 620)
   const centerTransform = useMemo(() => {
     const quadToUse: Quad =
-      rawQuad && rawQuad.length === 4 && rawQuad[0][0] > 0
-        ? rawQuad
-        : CENTER_MONITOR_QUAD;
+      screens?.center ??
+      (rawQuad && rawQuad.length === 4 && rawQuad[0][0] > 0 ? rawQuad : CENTER_MONITOR_QUAD);
     const quadInViewport = getCoverQuadInViewport(
       quadToUse,
       nativeWidth,
@@ -138,19 +140,19 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
       viewport.h
     );
     return getQuadMatrix3d(880, 620, quadInViewport);
-  }, [rawQuad, nativeWidth, nativeHeight, viewport]);
+  }, [screens, rawQuad, nativeWidth, nativeHeight, viewport]);
 
   // Compute CSS matrix3d for RIGHT MONITOR (src: 600 x 388)
   const rightTransform = useMemo(() => {
     const quadInViewport = getCoverQuadInViewport(
-      RIGHT_MONITOR_QUAD,
+      screens?.right ?? RIGHT_MONITOR_QUAD,
       nativeWidth,
       nativeHeight,
       viewport.w,
       viewport.h
     );
     return getQuadMatrix3d(600, 388, quadInViewport);
-  }, [nativeWidth, nativeHeight, viewport]);
+  }, [screens, nativeWidth, nativeHeight, viewport]);
 
   // Active project data for in-place dossier
   const activeProject = useMemo(() => {
@@ -181,25 +183,14 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
     setSelectedProjectSlug((prev) => (prev === screen.slug ? null : screen.slug));
   }, []);
 
-  // Open standalone OS overlay with zoom
+  // Open the OS (FilmPlayer animates the camera zoom into the monitor, then mounts the overlay)
   const handleLaunchFullOS = useCallback(
     (module?: OSModuleId, slug?: string) => {
-      if (isZooming) return;
       sound.initContext();
       sound.playBootHum();
-
-      if (prefersReducedMotion()) {
-        onOpenOS(module, slug);
-        return;
-      }
-
-      setIsZooming(true);
-      setTimeout(() => {
-        onOpenOS(module, slug);
-        setIsZooming(false);
-      }, 700);
+      onOpenOS(module, slug);
     },
-    [isZooming, onOpenOS]
+    [onOpenOS]
   );
 
   // Keyboard navigation & shortcuts
@@ -232,8 +223,7 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [visible, selectedProjectSlug, handleCycleProject, handleLaunchFullOS, handleSelectScreenInPlace]);
 
-  if (!visible && !isZooming) return null;
-
+  // Always mounted (no mount hitch when the camera arrives); hidden with visibility so it costs no paint while scrolling.
   return (
     <>
       {/* =========================================================================
@@ -245,10 +235,11 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
         style={{
           position: 'fixed',
           inset: 0,
-          pointerEvents: visible && !isZooming ? 'auto' : 'none',
+          pointerEvents: visible ? 'auto' : 'none',
           zIndex: 35,
           opacity: visible ? 1 : 0,
-          transition: 'opacity 0.4s ease-out',
+          visibility: visible ? 'visible' : 'hidden',
+          transition: visible ? 'opacity 0.4s ease-out' : 'opacity 0.4s ease-out, visibility 0s linear 0.4s',
           userSelect: 'none',
           fontFamily: "'JetBrains Mono', monospace",
         }}
@@ -978,29 +969,9 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
           </div>
         </div>
       </div>
-
-      {/* Cinematic Zoom Transition Overlay */}
-      {isZooming && (
-        <div
-          className="film-zoom-transition"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 60,
-            backgroundColor: '#07080a',
-            animation: 'filmZoomFade 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-            pointerEvents: 'none',
-          }}
-        >
-          <style>{`
-            @keyframes filmZoomFade {
-              0% { opacity: 0; transform: scale(1); }
-              40% { opacity: 0.6; }
-              100% { opacity: 1; transform: scale(1.08); }
-            }
-          `}</style>
-        </div>
-      )}
     </>
   );
 };
+
+// Memoised: FilmPlayer re-renders rarely now, but the screens are heavy and their props are stable.
+export const ScreenPreview = React.memo(ScreenPreviewInner);

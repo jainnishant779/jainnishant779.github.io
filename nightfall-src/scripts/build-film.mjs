@@ -107,11 +107,71 @@ function extractClip(ffmpeg, entry, index, tempDir, delogo) {
     .map((f) => join(outDir, f));
 }
 
-/** Cross-dissolve: the b frame laid over the a frame with the given opacity (both normalised to 1600x900). */
-async function blendFrames(aPath, bPath, alpha, outPath) {
-  const a = await sharp(aPath).resize(OUT_W, OUT_H, { fit: 'cover' }).png().toBuffer();
-  const b = await sharp(bPath).resize(OUT_W, OUT_H, { fit: 'cover' }).ensureAlpha(alpha).png().toBuffer();
-  await sharp(a).composite([{ input: b }]).png().toFile(outPath);
+async function normalised(path) {
+  return sharp(path).resize(OUT_W, OUT_H, { fit: 'cover' }).png().toBuffer();
+}
+
+/** Zoom into (cx, cy) by z (centre-crop of an enlarged copy) and optionally blur. */
+async function zoomed(buf, z, cx, cy, blurSigma) {
+  let img = sharp(buf);
+  if (z > 1.001) {
+    const w = Math.round(OUT_W * z);
+    const h = Math.round(OUT_H * z);
+    const left = Math.min(w - OUT_W, Math.max(0, Math.round(w * cx - OUT_W / 2)));
+    const top = Math.min(h - OUT_H, Math.max(0, Math.round(h * cy - OUT_H / 2)));
+    img = sharp(await img.resize(w, h).png().toBuffer()).extract({ left, top, width: OUT_W, height: OUT_H });
+  }
+  if (blurSigma > 0.3) img = sharp(await img.png().toBuffer()).blur(blurSigma);
+  return img.png().toBuffer();
+}
+
+/** One transition frame at progress t (0..1): outgoing clip zooms in, incoming clip settles, blur peaks in the middle. */
+async function blendTransition(aPath, bPath, t, opts, outPath) {
+  const { push = 1, cx = 0.5, cy = 0.5, blur = 0 } = opts;
+  const mid = Math.sin(Math.PI * t);
+  const za = 1 + (push - 1) * t;
+  const zb = push - (push - 1) * t;
+  const [a, b] = await Promise.all([
+    normalised(aPath).then((buf) => zoomed(buf, za, cx, cy, blur * mid)),
+    normalised(bPath).then((buf) => zoomed(buf, zb, cx, cy, blur * mid)),
+  ]);
+  const alpha = t * t * (3 - 2 * t); // smoothstep: quick through the middle
+  const bOver = await sharp(b).ensureAlpha(alpha).png().toBuffer();
+  await sharp(a).composite([{ input: bOver }]).png().toFile(outPath);
+}
+
+/** Per-channel mean and standard deviation of a clip (6 sampled frames, downscaled). */
+async function clipStats(files) {
+  const picks = [0, 0.2, 0.4, 0.6, 0.8, 1].map((p) => files[Math.min(files.length - 1, Math.round(p * (files.length - 1)))]);
+  const sum = [0, 0, 0];
+  const sum2 = [0, 0, 0];
+  let n = 0;
+  for (const f of picks) {
+    const { data } = await sharp(f).resize(160).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+    for (let i = 0; i < data.length; i += 3) {
+      for (let c = 0; c < 3; c++) {
+        const v = data[i + c];
+        sum[c] += v;
+        sum2[c] += v * v;
+      }
+      n++;
+    }
+  }
+  const mean = sum.map((s) => s / n);
+  const std = sum2.map((s, c) => Math.sqrt(Math.max(1, s / n - mean[c] * mean[c])));
+  return { mean, std };
+}
+
+/** Linear per-channel map (out = a*in + b) that moves `src` statistics toward `ref` by `s` (0..1). */
+function gradeParams(src, ref, s) {
+  const a = [];
+  const b = [];
+  for (let c = 0; c < 3; c++) {
+    const gain = Math.min(1.35, Math.max(0.75, ref.std[c] / src.std[c]));
+    a.push(1 + s * (gain - 1));
+    b.push(s * (ref.mean[c] - gain * src.mean[c]));
+  }
+  return { a, b };
 }
 
 async function processFrames(sourceFiles, segments = null, holdEnd = 0) {
@@ -209,19 +269,46 @@ async function main() {
     if (existsSync(tempDir)) rmSync(tempDir, { recursive: true, force: true });
     mkdirSync(tempDir, { recursive: true });
 
-    let frames = [];
-    const segments = [];
-
+    // 1) extract every clip
+    const extracted = [];
     for (let c = 0; c < storyboard.clips.length; c++) {
       const entry = storyboard.clips[c];
       const clipFrames = extractClip(ffmpeg, entry, c, tempDir, delogo);
       if (clipFrames.length === 0) throw new Error(`No frames extracted from ${entry.file}`);
+      extracted.push(clipFrames);
+    }
+
+    // 2) colour-match the other clips to one reference clip, so the film reads as a single place instead of three
+    const gradeCfg = storyboard.grade;
+    if (gradeCfg?.reference) {
+      const refIdx = storyboard.clips.findIndex((c) => c.file === gradeCfg.reference);
+      if (refIdx < 0) throw new Error(`grade.reference ${gradeCfg.reference} is not in the storyboard`);
+      const ref = await clipStats(extracted[refIdx]);
+      const strength = gradeCfg.strength ?? 0.6;
+      for (let c = 0; c < extracted.length; c++) {
+        if (c === refIdx) continue;
+        const { a, b } = gradeParams(await clipStats(extracted[c]), ref, strength);
+        console.log(
+          `[build-film] grade ${storyboard.clips[c].file} -> ${gradeCfg.reference} (strength ${strength}): gain ${a.map((x) => x.toFixed(2)).join('/')}, offset ${b.map((x) => x.toFixed(0)).join('/')}`,
+        );
+        for (const f of extracted[c]) await writeFile(f, await sharp(f).linear(a, b).png().toBuffer());
+      }
+    }
+
+    // 3) join the clips
+    let frames = [];
+    const segments = [];
+    for (let c = 0; c < storyboard.clips.length; c++) {
+      const entry = storyboard.clips[c];
+      const clipFrames = extracted[c];
 
       let start = frames.length;
       if (c === 0) {
         frames = clipFrames;
       } else if (entry.fadeIn > 0) {
-        // Dissolve: the last n frames so far are blended with the first n frames of this clip.
+        // Transition: the last n frames so far are blended with the first n frames of this clip. With `push` the camera
+        // seems to move through the cut (outgoing frames zoom in, incoming frames settle from zoomed in) and `blur`
+        // softens the middle so the two scenes never show as a ghosted double exposure.
         const n = Math.max(1, Math.min(Math.round(entry.fadeIn * (entry.fps ?? FPS)), frames.length - 1, clipFrames.length - 1));
         const blendDir = join(tempDir, `blend_${c}`);
         mkdirSync(blendDir, { recursive: true });
@@ -229,12 +316,12 @@ async function main() {
         const blended = [];
         for (let k = 0; k < n; k++) {
           const out = join(blendDir, `b_${String(k).padStart(3, '0')}.png`);
-          await blendFrames(tail[k], clipFrames[k], (k + 1) / (n + 1), out);
+          await blendTransition(tail[k], clipFrames[k], (k + 1) / (n + 1), entry.transition ?? {}, out);
           blended.push(out);
         }
         start = frames.length - n;
         frames = frames.slice(0, -n).concat(blended, clipFrames.slice(n));
-        console.log(`[build-film] dissolve into ${entry.file} over ${n} frames`);
+        console.log(`[build-film] transition into ${entry.file} over ${n} frames${entry.transition ? ` (${JSON.stringify(entry.transition)})` : ''}`);
       } else {
         // Hard join: the previous clip's last frame is the next clip's first frame, so drop the duplicate.
         frames = frames.concat(clipFrames.slice(1));

@@ -1,0 +1,29 @@
+﻿{
+    "skill_name":  "nightfall-ui",
+    "evals":  [
+                  {
+                      "files":  [
+
+                                ],
+                      "prompt":  "OS ka Contact module (nightfall-src/src/os/modules/Contact.tsx) abhi purane inline-style look mein hai. Isko naye design system par laga do, smooth aur proper banao: kit components use karo. Contact details wahi rakhna (email, GitHub, LinkedIn, mailto form, copy email). Typecheck aur build chala ke real result batana.",
+                      "id":  0,
+                      "expected_output":  "Contact module rebuilt with kit components and token utilities, no raw hex or inline style objects, one primary CTA, real contact data from profile, functionality kept, typecheck and build pass."
+                  },
+                  {
+                      "files":  [
+
+                                ],
+                      "prompt":  "OS ke Home screen (nightfall-src/src/os/OSHome.tsx) par ek stats strip add kar do jo impressive lage: years of experience, projects delivered aur system uptime dikhaye. Kit components use karo aur chhota sa clean rakho. Typecheck aur build chala ke real result batana.",
+                      "id":  1,
+                      "expected_output":  "Strip added using only facts derivable from src/content (project count, companies, education period or start date); no invented years/uptime/percent figures; the user is told which requested stats were replaced and why; typecheck and build pass."
+                  },
+                  {
+                      "files":  [
+
+                                ],
+                      "prompt":  "Film ke upar jo HUD hai (nightfall-src/src/ui/HudOverlay.tsx), uska neeche ka hint + progress bar ek DynamicIsland mein badal do jo state ke saath morph kare (scroll hint, phir section naam + progress, phir \u0027Access system\u0027). Corner ke buttons/links waise hi rahein. Scroll smooth rehna chahiye. Typecheck aur build chala ke real result batana.",
+                      "id":  2,
+                      "expected_output":  "HudOverlay uses the kit DynamicIsland with a discrete stateKey (not the raw per-tick progress), keeps the selectors existing Playwright specs rely on, keeps corner links, adds no per-frame loops, typecheck and build pass."
+                  }
+              ]
+}

@@ -1,29 +1,29 @@
 # Component inventory — what to use where
 
-Paths are relative to `nightfall-src/src/`. Status: **planned** = not built yet; **ready** = exists.
+Paths are relative to `nightfall-src/src/`. Status: **planned** = not built yet; **ready** = exists. Live reference: the unlisted `/kit` page (`src/pages/KitPage.tsx`) renders every component below.
 When you build or install one, flip its status to ready in this table.
 
 | Need | Component | Source (free only) | Status |
 |---|---|---|---|
-| Glass panel / card shell | `components/kit/Panel.tsx` | own | planned |
-| Status pill | `components/kit/Badge.tsx` (tone: accent / ok / warn / muted) | own | planned |
-| Keyboard hint | `components/kit/Kbd.tsx` | own | planned |
-| Section title block | `components/kit/SectionHeader.tsx` (mono label + display title) | own | planned |
-| Heading reveal | `components/kit/TextReveal.tsx` (word-by-word blur-fade) | own | planned |
-| Primary / ghost CTA | `components/kit/MagneticButton.tsx` | own (Skiper-style) | planned |
-| Morphing status / toast pill | `components/kit/DynamicIsland.tsx` | own (Skiper-style) | planned |
-| Project art hover reveal | `components/kit/ImageReveal.tsx` | own (Skiper-style) | planned |
-| Desktop cursor | `components/kit/CursorRing.tsx` | own (Animmaster-style) | planned |
-| Experience timeline | `components/kit/TracingTimeline.tsx` (scroll-linked line) | own (Aceternity-style) | planned |
-| Scramble/decode label | `components/ui/hyper-text.tsx` | Magic UI | planned |
-| Rotating roles | `components/ui/word-rotate.tsx` | Magic UI | planned |
-| Section fade-in | `components/ui/blur-fade.tsx` | Magic UI | planned |
-| Spotlight project card | `components/ui/magic-card.tsx` | Magic UI | planned |
-| Single highlight border | `components/ui/border-beam.tsx` | Magic UI | planned |
-| Architecture flow lines | `components/ui/animated-beam.tsx` | Magic UI | planned |
-| Command palette (⌘K / Ctrl K) | `components/ui/command.tsx` + `dialog.tsx` | shadcn | planned |
-| Tabs | `components/ui/tabs.tsx` + Motion `layoutId` underline | shadcn | planned |
-| Tooltip | `components/ui/tooltip.tsx` | shadcn | planned |
+| Glass panel / card shell | `components/kit/Panel.tsx` | own | ready |
+| Status pill | `components/kit/Badge.tsx` (tone: accent / ok / warn / muted) | own | ready |
+| Keyboard hint | `components/kit/Kbd.tsx` | own | ready |
+| Section title block | `components/kit/SectionHeader.tsx` (mono label + display title) | own | ready |
+| Heading reveal | `components/kit/TextReveal.tsx` (word-by-word blur-fade) | own | ready |
+| Primary / ghost CTA | `components/kit/MagneticButton.tsx` | own (Skiper-style) | ready |
+| Morphing status / toast pill | `components/kit/DynamicIsland.tsx` | own (Skiper-style) | ready |
+| Project art hover reveal | `components/kit/ImageReveal.tsx` | own (Skiper-style) | ready |
+| Desktop cursor | `components/kit/CursorRing.tsx` | own (Animmaster-style) | ready |
+| Experience timeline | `components/kit/TracingTimeline.tsx` (scroll-linked line) | own (Aceternity-style) | ready |
+| Scramble/decode label | `components/ui/hyper-text.tsx` | Magic UI | ready |
+| Rotating roles | `components/ui/word-rotate.tsx` | Magic UI | ready |
+| Section fade-in | `components/ui/blur-fade.tsx` | Magic UI | ready |
+| Spotlight project card | `components/ui/magic-card.tsx` | Magic UI | ready |
+| Single highlight border | `components/ui/border-beam.tsx` | Magic UI | ready |
+| Architecture flow lines | `components/ui/animated-beam.tsx` | Magic UI | ready |
+| Command palette (⌘K / Ctrl K) | `components/ui/command.tsx` + `dialog.tsx` | shadcn | ready |
+| Tabs | `components/ui/tabs.tsx` + Motion `layoutId` underline | shadcn | ready |
+| Tooltip | `components/ui/tooltip.tsx` | shadcn | ready |
 
 ## Where each surface uses them
 
@@ -80,3 +80,14 @@ npx shadcn@latest add @skiper-ui/<id>
 
 Vendor components often import `framer-motion` or `motion/react`. We use `motion` (v12): change
 `from "framer-motion"` → `from "motion/react"`.
+
+## Vendor adaptation notes (what U3 changed — repeat these for any new vendor component)
+
+- `shadcn@latest add ... -y` writes `from "cn"` imports (wrong). Fix to `from "@/lib/utils"` in every new file in `src/components/ui/`.
+- It may also miss peer deps: install `class-variance-authority` (done) and `tw-animate-css` (imported in `src/styles/tailwind.css`).
+- Vendor `framer-motion` imports -> `motion/react`. Remove `next-themes` usage (the site is always dark: `<html class="dark">`, `@custom-variant dark` in `tailwind.css`).
+- shadcn semantic colours (`bg-background`, `text-muted-foreground`, `border-border`, `ring-ring` …) are mapped to Nightfall tokens in `src/styles/tokens.css`. shadcn's `accent` means "hover surface", ours means amber: after install, replace `bg-accent` -> `bg-accent-soft` and `text-accent-foreground` -> `text-text-1`.
+- Replace vendor default colours (purple/pink, `#ffaa40`, `gray`) with `var(--accent)`, `var(--screen)`, `var(--line-strong)`. In SVG use `style={{ stopColor }}` / `style={{ stroke }}` rather than attributes when passing `var()`.
+- Add `useReducedMotion()`: looping/decorative effects render nothing or a static state (BorderBeam, AnimatedBeam gradient, WordRotate, HyperText scramble); entrance effects become opacity-only (BlurFade).
+- Tailwind preflight is NOT enabled yet, so browser defaults leak through: add `list-none` to `ul/ol` you style, and set heading/paragraph spacing explicitly.
+- Free Magic UI URLs used: `https://magicui.design/r/<name>.json` for hyper-text, word-rotate, blur-fade, magic-card, border-beam, animated-beam.

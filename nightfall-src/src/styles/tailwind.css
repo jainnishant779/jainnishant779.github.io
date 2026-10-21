@@ -5,5 +5,9 @@
 
 @import 'tailwindcss/theme.css' layer(theme);
 @import './tokens.css';
+@import 'tw-animate-css';
+
+/* The site is always dark: vendor `dark:` variants key off <html class="dark"> (set in index.html). */
+@custom-variant dark (&:is(.dark *));
 @import '../index.css' layer(base);
 @import 'tailwindcss/utilities.css' layer(utilities);

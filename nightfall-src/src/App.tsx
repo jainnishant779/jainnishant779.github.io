@@ -8,6 +8,11 @@ const HomePage = React.lazy(() =>
   import('./pages/HomePage').then((m) => ({ default: m.HomePage }))
 );
 
+// Unlisted living style guide for the design system
+const KitPage = React.lazy(() =>
+  import('./pages/KitPage').then((m) => ({ default: m.KitPage }))
+);
+
 export function App() {
   return (
     <Suspense
@@ -29,6 +34,7 @@ export function App() {
     >
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/kit" element={<KitPage />} />
         <Route path="/os" element={<StandalonePage module="home" />} />
         <Route path="/about" element={<StandalonePage module="identity" />} />
         <Route path="/projects" element={<StandalonePage module="projects" />} />

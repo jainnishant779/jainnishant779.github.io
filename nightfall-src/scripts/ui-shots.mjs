@@ -30,6 +30,7 @@ const ROUTES = [
   { name: 'achievements', path: '/achievements' },
   { name: 'contact', path: '/contact' },
   { name: 'cv', path: '/cv' },
+  { name: 'kit', path: '/kit' },
 ];
 
 async function isUp() {

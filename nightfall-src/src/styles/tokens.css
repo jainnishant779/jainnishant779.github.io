@@ -69,6 +69,25 @@
   --color-text-1: var(--text-1);
   --color-text-2: var(--text-2);
   --color-text-3: var(--text-3);
+
+  /* shadcn semantic names -> Nightfall tokens (so vendor components inherit the cave palette) */
+  --color-background: var(--bg-0);
+  --color-foreground: var(--text-1);
+  --color-card: var(--bg-1);
+  --color-card-foreground: var(--text-1);
+  --color-popover: var(--bg-1);
+  --color-popover-foreground: var(--text-1);
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--bg-0);
+  --color-secondary: var(--bg-2);
+  --color-secondary-foreground: var(--text-1);
+  --color-muted: var(--bg-2);
+  --color-muted-foreground: var(--text-2);
+  --color-accent-foreground: var(--text-1);
+  --color-destructive: var(--danger);
+  --color-border: var(--line);
+  --color-input: var(--line-strong);
+  --color-ring: var(--accent);
 }
 
 @theme {

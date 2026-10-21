@@ -18,6 +18,7 @@ const routes = [
   'projects/poultry-health-ai',
   'projects/on-device-ai',
   'projects/facial-attendance',
+  'kit',
   'experience',
   'skills',
   'achievements',

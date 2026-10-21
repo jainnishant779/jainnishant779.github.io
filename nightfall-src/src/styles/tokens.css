@@ -1,0 +1,85 @@
+/* ============================================================
+ * Nightfall design tokens — see .claude/skills/nightfall-ui/references/tokens.md
+ * Legacy variables (--bg-deep, --accent, --border …) stay in src/index.css until their
+ * consumers are migrated; new work uses ONLY the tokens below via Tailwind utilities.
+ * ============================================================ */
+
+:root {
+  /* Surfaces */
+  --bg-0: #050607;
+  --bg-1: #0a0c0f;
+  --bg-2: #10141a;
+  --glass: rgba(14, 17, 21, 0.62);
+
+  /* Lines */
+  --line: rgba(255, 255, 255, 0.06);
+  --line-strong: rgba(255, 255, 255, 0.12);
+
+  /* Accent + screen */
+  --accent: #e8a23a;
+  --accent-soft: rgba(232, 162, 58, 0.14);
+  --screen: #8fdcff;
+  --screen-glow: rgba(80, 180, 255, 0.18);
+
+  /* Status */
+  --ok: #7fb38a;
+  --warn: #e8c23a;
+  --danger: #e5674f;
+
+  /* Text */
+  --text-1: #ece8de;
+  --text-2: #a9a497;
+  --text-3: #6f6b61;
+
+  /* Depth (shadow-panel / shadow-focal live in @theme below) */
+  --hl-top: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  /* Motion */
+  --dur-micro: 120ms;
+  --dur-hover: 220ms;
+  --dur-panel: 420ms;
+  --dur-camera: 800ms;
+  --ease-cave: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-camera: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* z-index */
+  --z-film: 0;
+  --z-screens: 10;
+  --z-hud: 50;
+  --z-overlay: 100;
+  --z-palette: 200;
+  --z-toast: 300;
+  --z-cursor: 400;
+}
+
+/* Expose tokens as Tailwind utilities (bg-bg-1, text-text-2, border-line, font-display, rounded-card …) */
+@theme inline {
+  --color-bg-0: var(--bg-0);
+  --color-bg-1: var(--bg-1);
+  --color-bg-2: var(--bg-2);
+  --color-glass: var(--glass);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-screen: var(--screen);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+  --color-text-1: var(--text-1);
+  --color-text-2: var(--text-2);
+  --color-text-3: var(--text-3);
+}
+
+@theme {
+  --shadow-panel: 0 20px 60px -20px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --shadow-focal: 0 0 0 1px rgba(232, 162, 58, 0.5), 0 0 24px rgba(232, 162, 58, 0.25);
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --radius-chip: 6px;
+  --radius-ctl: 10px;
+  --radius-card: 16px;
+}

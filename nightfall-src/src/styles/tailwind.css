@@ -1,0 +1,9 @@
+/* Tailwind v4 entry — theme + utilities only.
+ * Preflight is intentionally NOT imported yet: the legacy reset in src/index.css keeps rendering identical.
+ * index.css is pulled into @layer base so Tailwind utilities (p-4, h-48, text-text-1 …) beat its resets. */
+@layer theme, base, components, utilities;
+
+@import 'tailwindcss/theme.css' layer(theme);
+@import './tokens.css';
+@import '../index.css' layer(base);
+@import 'tailwindcss/utilities.css' layer(utilities);

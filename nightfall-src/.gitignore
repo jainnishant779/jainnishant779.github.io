@@ -5,3 +5,4 @@ dist/
 test-results/
 playwright-report/
 raw/
+tests/__shots__/ui/

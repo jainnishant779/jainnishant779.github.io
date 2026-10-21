@@ -25,6 +25,8 @@ const routes = [
   'achievements',
   'contact',
   'cv',
+  'architecture',
+  'map',
 ];
 
 for (const route of routes) {

@@ -74,8 +74,7 @@ test.describe('Content guard — no invented or out-of-scope content', () => {
     await page.waitForTimeout(500);
     let text = await bodyText(page);
 
-    // Standalone: key 6 (Systems Lab) navigates to /skills in this mode, so it is covered by the overlay run below.
-    for (const key of ['1', '2', '3', '4', '5', '7', '8', '9']) {
+    for (const key of ['1', '2', '3', '4', '5', '6', '7', '8', '9']) {
       await page.keyboard.press(key);
       await page.waitForTimeout(250);
       text += '\n' + (await bodyText(page));

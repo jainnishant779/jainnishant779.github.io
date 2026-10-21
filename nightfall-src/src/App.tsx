@@ -50,6 +50,8 @@ export function App() {
         <Route path="/achievements" element={<StandalonePage module="achievements" />} />
         <Route path="/contact" element={<StandalonePage module="contact" />} />
         <Route path="/cv" element={<StandalonePage module="dossier" />} />
+        <Route path="/architecture" element={<StandalonePage module="architecture" />} />
+        <Route path="/map" element={<StandalonePage module="map" />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>

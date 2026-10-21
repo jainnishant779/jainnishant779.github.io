@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { profile } from '../content/profile';
 import { projects } from '../content/projects';
 import { experiences } from '../content/experience';
@@ -12,21 +12,8 @@ interface OSHomeProps {
 }
 
 export const OSHome: React.FC<OSHomeProps> = ({ onSelectModule }) => {
-  const [ticker, setTicker] = useState(0);
   const cvUrl = getCVUrl();
-
-  // Subtle live telemetry pulse
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTicker((t) => (t + 1) % 100);
-    }, 2500);
-    return () => clearInterval(interval);
-  }, []);
-
-  const gpuLoad = 23 + (ticker % 4);
-  const cpuLoad = 14 + ((ticker * 2) % 5);
-  const memLoad = 38 + (ticker % 2);
-  const tempVal = 52 + ((ticker % 3) - 1);
+  const companyCount = new Set(experiences.map((e) => e.company)).size;
 
   const featuredProjects = projects.slice(0, 4);
 
@@ -35,7 +22,7 @@ export const OSHome: React.FC<OSHomeProps> = ({ onSelectModule }) => {
       <div className="os-module-header">
         <div className="os-module-title-group">
           <h2>NJ-OS // COMMAND CENTER</h2>
-          <p>ENGINEERING INTELLIGENCE & TELEMETRY</p>
+          <p>PROFILE OVERVIEW</p>
         </div>
       </div>
 
@@ -71,7 +58,7 @@ export const OSHome: React.FC<OSHomeProps> = ({ onSelectModule }) => {
               // PERSONAL PROFILE
             </div>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: '#7fb38a' }}>
-              ONLINE // VERIFIED DOSSIER
+              PROFILE // FROM CV
             </div>
           </div>
 
@@ -209,19 +196,6 @@ export const OSHome: React.FC<OSHomeProps> = ({ onSelectModule }) => {
                 >
                   VIEW CV (PDF) ↗
                 </a>
-
-                <a
-                  href="/nightfall/"
-                  className="os-btn os-btn-subtle"
-                  style={{
-                    borderColor: '#232a35',
-                    color: '#00e5ff',
-                    padding: '0.55rem 1.1rem',
-                    textDecoration: 'none',
-                  }}
-                >
-                  WATCH INTRO ▶
-                </a>
               </div>
             </div>
           </div>
@@ -238,23 +212,23 @@ export const OSHome: React.FC<OSHomeProps> = ({ onSelectModule }) => {
             }}
           >
             <div style={{ background: 'rgba(11, 16, 22, 0.75)', border: '1px solid rgba(232, 162, 58, 0.25)', padding: '0.65rem 0.85rem', borderRadius: '4px' }}>
-              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1.35rem', color: '#e8a23a', fontWeight: 700 }}>4+</div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: '#94a3b8' }}>YEARS EXP</div>
+              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1.35rem', color: '#e8a23a', fontWeight: 700 }}>2021–26</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: '#94a3b8' }}>B.TECH + M.TECH · IOT</div>
             </div>
 
             <div style={{ background: 'rgba(11, 16, 22, 0.75)', border: '1px solid rgba(0, 229, 255, 0.25)', padding: '0.65rem 0.85rem', borderRadius: '4px' }}>
-              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1.35rem', color: '#00e5ff', fontWeight: 700 }}>10+</div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: '#94a3b8' }}>PROJECTS DELIVERED</div>
+              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1.35rem', color: '#00e5ff', fontWeight: 700 }}>{companyCount}</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: '#94a3b8' }}>COMPANIES: COGNICITY · SYNQUIC</div>
             </div>
 
             <div style={{ background: 'rgba(11, 16, 22, 0.75)', border: '1px solid rgba(52, 211, 153, 0.25)', padding: '0.65rem 0.85rem', borderRadius: '4px' }}>
-              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1.35rem', color: '#34d399', fontWeight: 700 }}>3</div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: '#94a3b8' }}>CORE DOMAINS: AI · CV · EDGE</div>
+              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1.35rem', color: '#34d399', fontWeight: 700 }}>{projects.length}</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: '#94a3b8' }}>PROJECTS</div>
             </div>
 
             <div style={{ background: 'rgba(11, 16, 22, 0.75)', border: '1px solid rgba(232, 162, 58, 0.25)', padding: '0.65rem 0.85rem', borderRadius: '4px' }}>
               <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1.35rem', color: '#e8a23a', fontWeight: 700 }}>1</div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: '#94a3b8' }}>PATENT APP FILED</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: '#94a3b8' }}>PATENT APP FILED · NOT GRANTED</div>
             </div>
           </div>
         </div>
@@ -275,65 +249,26 @@ export const OSHome: React.FC<OSHomeProps> = ({ onSelectModule }) => {
         >
           <div>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: '#00e5ff', letterSpacing: '0.06em', marginBottom: '0.85rem' }}>
-              // LIVE SYSTEM STATUS
-            </div>
-
-            {/* 4 Circular Radial Gauges */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', textAlign: 'center', marginBottom: '1.25rem' }}>
-              <div>
-                <svg width="48" height="48" viewBox="0 0 36 36" style={{ transform: 'rotate(-90deg)', margin: '0 auto' }}>
-                  <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#1e293b" strokeWidth="3.2" />
-                  <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#00e5ff" strokeWidth="3.2" strokeDasharray={`${gpuLoad}, 100`} />
-                </svg>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', color: '#00e5ff', fontWeight: 700, marginTop: '0.2rem' }}>{gpuLoad}%</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: '#64748b' }}>GPU</div>
-              </div>
-
-              <div>
-                <svg width="48" height="48" viewBox="0 0 36 36" style={{ transform: 'rotate(-90deg)', margin: '0 auto' }}>
-                  <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#1e293b" strokeWidth="3.2" />
-                  <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#00e5ff" strokeWidth="3.2" strokeDasharray={`${cpuLoad}, 100`} />
-                </svg>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', color: '#00e5ff', fontWeight: 700, marginTop: '0.2rem' }}>{cpuLoad}%</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: '#64748b' }}>CPU</div>
-              </div>
-
-              <div>
-                <svg width="48" height="48" viewBox="0 0 36 36" style={{ transform: 'rotate(-90deg)', margin: '0 auto' }}>
-                  <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#1e293b" strokeWidth="3.2" />
-                  <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#e8a23a" strokeWidth="3.2" strokeDasharray={`${memLoad}, 100`} />
-                </svg>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', color: '#e8a23a', fontWeight: 700, marginTop: '0.2rem' }}>{memLoad}%</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: '#64748b' }}>MEMORY</div>
-              </div>
-
-              <div>
-                <svg width="48" height="48" viewBox="0 0 36 36" style={{ transform: 'rotate(-90deg)', margin: '0 auto' }}>
-                  <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#1e293b" strokeWidth="3.2" />
-                  <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#34d399" strokeWidth="3.2" strokeDasharray={`${tempVal}, 100`} />
-                </svg>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', color: '#34d399', fontWeight: 700, marginTop: '0.2rem' }}>{tempVal}°C</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: '#64748b' }}>TEMP</div>
-              </div>
+              // SELECTED WORK
             </div>
 
             {/* Current Focus List */}
             <div style={{ borderTop: '1px solid rgba(0, 229, 255, 0.15)', paddingTop: '0.85rem', marginBottom: '1rem' }}>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: '#94a3b8', marginBottom: '0.45rem' }}>
-                CURRENT FOCUS & PIPELINES:
+                PROJECTS & STATUS:
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', fontSize: '0.74rem', fontFamily: 'var(--font-mono)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: '#e2e8f0' }}>
                   <span>▸ On-Device AI Assistant</span>
-                  <span style={{ color: '#00e5ff' }}>Research & Dev</span>
+                  <span style={{ color: '#00e5ff' }}>Personal R&D</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: '#e2e8f0' }}>
                   <span>▸ EdgeDesk Fleet Access</span>
-                  <span style={{ color: '#e8a23a' }}>Patent Filed</span>
+                  <span style={{ color: '#e8a23a' }}>Patent app filed</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: '#e2e8f0' }}>
                   <span>▸ Poultry Health Monitoring</span>
-                  <span style={{ color: '#34d399' }}>Client Deployed</span>
+                  <span style={{ color: '#34d399' }}>Client project</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: '#e2e8f0' }}>
                   <span>▸ Crowd Analytics Stampede</span>
@@ -465,7 +400,7 @@ export const OSHome: React.FC<OSHomeProps> = ({ onSelectModule }) => {
                 cursor: 'pointer',
               }}
             >
-              VIEW ALL (6) →
+              VIEW ALL ({projects.length}) →
             </button>
           </div>
 

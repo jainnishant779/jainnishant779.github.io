@@ -1,79 +1,64 @@
 import React from 'react';
 import { Diagram, DiagramNode, DiagramLink } from './Diagram';
 
+// Personal R&D (not a released app). Stack: Android, Whisper, sherpa-onnx, llama.cpp, GGUF — all running on the device.
 const nodes: DiagramNode[] = [
   {
-    id: 'mic_input',
-    label: 'Microphone Stream',
-    sublabel: '16kHz Audio Stream',
+    id: 'speech',
+    label: 'Speech Input',
+    sublabel: 'Android device',
     x: 40,
-    y: 130,
-    width: 165,
-    height: 70,
-    description:
-      'Low-latency raw PCM audio streaming from mobile microphone, preprocessed through noise suppression and voice activity detection (VAD).',
-  },
-  {
-    id: 'whisper_onnx',
-    label: 'Whisper Offline STT',
-    sublabel: 'sherpa-onnx / INT8',
-    x: 250,
-    y: 130,
+    y: 150,
     width: 170,
     height: 70,
-    description:
-      'Quantized INT8 Whisper speech recognition model executing fully on-device via sherpa-onnx runtime with zero cloud dependencies or network calls.',
+    description: 'Speech captured on the Android device.',
   },
   {
-    id: 'token_broker',
-    label: 'Prompt Buffer',
-    sublabel: 'Zero-Cloud Context',
-    x: 465,
-    y: 130,
-    width: 165,
+    id: 'whisper',
+    label: 'Whisper STT',
+    sublabel: 'via sherpa-onnx',
+    x: 270,
+    y: 150,
+    width: 170,
     height: 70,
-    description:
-      'Local RAM context buffer assembling conversation history, system prompt constraints, and streaming user token inputs.',
+    description: 'Offline speech transcription with Whisper-based recognition running through sherpa-onnx — no cloud.',
   },
   {
-    id: 'llama_cpp',
-    label: 'llama.cpp Inference',
-    sublabel: 'GGUF 4-Bit Local LLM',
-    x: 675,
-    y: 130,
-    width: 175,
+    id: 'llm',
+    label: 'llama.cpp + GGUF',
+    sublabel: 'Local LLM inference',
+    x: 500,
+    y: 150,
+    width: 180,
     height: 70,
-    description:
-      '4-bit quantized open-weights LLM running natively on ARM CPU / NPU with optimized NEON SIMD kernels for rapid on-device text generation.',
+    description: 'A local language model in GGUF format, run with llama.cpp directly on the device.',
   },
   {
-    id: 'actuator',
-    label: 'On-Device Actuator',
-    sublabel: 'TTS & Local Task Trigger',
-    x: 465,
-    y: 260,
-    width: 195,
-    height: 65,
-    description:
-      'Executes local Android intents, alarms, note taking, and synthesized offline speech output with complete data privacy.',
+    id: 'output',
+    label: 'Text Response',
+    sublabel: 'On device',
+    x: 740,
+    y: 150,
+    width: 160,
+    height: 70,
+    description: 'The response is produced fully on the device, without cloud dependencies.',
   },
 ];
 
 const links: DiagramLink[] = [
-  { from: 'mic_input', to: 'whisper_onnx', label: '16kHz PCM' },
-  { from: 'whisper_onnx', to: 'token_broker', label: 'Transcribed Text' },
-  { from: 'token_broker', to: 'llama_cpp', label: 'Prompt Tokens' },
-  { from: 'llama_cpp', to: 'actuator', label: 'Token Stream', dashed: true },
+  { from: 'speech', to: 'whisper', label: 'Audio' },
+  { from: 'whisper', to: 'llm', label: 'Transcript' },
+  { from: 'llm', to: 'output', label: 'Tokens', dashed: true },
 ];
 
 export const OnDeviceAiDiagram: React.FC = () => {
   return (
     <Diagram
-      title="On-Device Offline STT & Local LLM Pipeline"
+      title="On-Device Assistant — Simplified Pipeline (personal R&D)"
       nodes={nodes}
       links={links}
       width={930}
-      height={360}
+      height={300}
     />
   );
 };

@@ -7,7 +7,7 @@ export const ExperienceArchive: React.FC = () => {
       <div className="os-module-header">
         <div className="os-module-title-group">
           <h2>03 // EXPERIENCE LOG</h2>
-          <p>ENGINEERING ROLES & PRODUCTION DEPLOYMENTS</p>
+          <p>ENGINEERING ROLES</p>
         </div>
       </div>
 

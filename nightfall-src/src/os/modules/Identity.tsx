@@ -1,5 +1,6 @@
 import React from 'react';
 import { profile, education } from '../../content/profile';
+import { projects } from '../../content/projects';
 import { getCVUrl } from '../../lib/assets';
 import { sound } from '../../lib/sound';
 import type { OSModuleId } from '../OSShell';
@@ -16,7 +17,7 @@ export const Identity: React.FC<IdentityProps> = ({ onNavigate }) => {
       <div className="os-module-header">
         <div className="os-module-title-group">
           <h2>01 // IDENTITY DOSSIER</h2>
-          <p>ENGINEER SPECIFICATION & VERIFIED CREDENTIALS</p>
+          <p>ENGINEER PROFILE & CREDENTIALS</p>
         </div>
         <div className="os-module-actions">
           <a
@@ -122,7 +123,7 @@ export const Identity: React.FC<IdentityProps> = ({ onNavigate }) => {
                   }}
                   style={{ borderColor: 'rgba(232, 162, 58, 0.5)', color: '#e8a23a' }}
                 >
-                  VIEW PROJECTS (6) →
+                  VIEW PROJECTS ({projects.length}) →
                 </button>
               )}
 
@@ -161,7 +162,7 @@ export const Identity: React.FC<IdentityProps> = ({ onNavigate }) => {
               Academic Foundation
             </h3>
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: '#34d399' }}>
-              VERIFIED RECORD
+              FROM CV
             </span>
           </div>
 

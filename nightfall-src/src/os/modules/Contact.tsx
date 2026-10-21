@@ -32,7 +32,7 @@ export const Contact: React.FC = () => {
       <div className="os-module-header">
         <div className="os-module-title-group">
           <h2>07 // TRANSMISSION PROTOCOL</h2>
-          <p>COMMUNICATION & SECURE CHANNELS</p>
+          <p>COMMUNICATION CHANNELS</p>
         </div>
       </div>
 
@@ -52,7 +52,7 @@ export const Contact: React.FC = () => {
                 id="contact-name"
                 type="text"
                 className="form-input"
-                placeholder="Dr. Bruce / Engineering Recruiter"
+                placeholder="Your name"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -92,7 +92,7 @@ export const Contact: React.FC = () => {
 
         <div className="contact-card">
           <h3 style={{ fontFamily: 'var(--font-heading)', color: 'var(--accent)', fontSize: '1.25rem' }}>
-            Verified Coordinates
+            Contact Details
           </h3>
 
           <div className="contact-channels">
@@ -141,7 +141,7 @@ export const Contact: React.FC = () => {
               <strong>LOCATION:</strong> {profile.location}
               <br />
               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                Timezone: IST (UTC +5:30) · Open to high-impact on-site, hybrid, and remote roles.
+                Timezone: IST (UTC +5:30)
               </span>
             </div>
           </div>

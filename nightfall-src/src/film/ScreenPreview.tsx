@@ -6,11 +6,10 @@ import { projects } from '../content/projects';
 import { experiences } from '../content/experience';
 import { achievements, certifications } from '../content/achievements';
 import { profile } from '../content/profile';
+import { skillGroups } from '../content/skills';
 import { getCVUrl } from '../lib/assets';
-import { useStore } from '../state/store';
 import { EdgeDeskDiagram } from '../os/diagrams/EdgeDeskDiagram';
 import { CrowdDiagram } from '../os/diagrams/CrowdDiagram';
-import { LoRaDiagram } from '../os/diagrams/LoRaDiagram';
 import { PoultryHealthDiagram } from '../os/diagrams/PoultryHealthDiagram';
 import { FacialAttendanceDiagram } from '../os/diagrams/FacialAttendanceDiagram';
 import { OnDeviceAiDiagram } from '../os/diagrams/OnDeviceAiDiagram';
@@ -23,79 +22,34 @@ interface ScreenDef {
   title: string;
   shortTitle: string;
   badge: string;
-  metrics: string;
   tech: string[];
   keyNum: string;
 }
 
-const SCREENS: ScreenDef[] = [
-  {
-    id: 'poultry-health-ai',
-    slug: 'poultry-health-ai',
-    module: 'projects',
-    title: 'AI-Powered Poultry Health Monitoring',
-    shortTitle: 'POULTRY HEALTH AI',
-    badge: 'CLIENT PROJECT',
-    metrics: '98.4% ANOMALY SCORE · JETSON NANO',
-    tech: ['Python', 'YOLO', 'OpenCV', 'Edge AI'],
-    keyNum: '1',
-  },
-  {
-    id: 'edgedesk',
-    slug: 'edgedesk',
-    module: 'projects',
-    title: 'EdgeDesk: Secure Multi-Device Remote Access Platform',
-    shortTitle: 'EDGEDESK REMOTE ACCESS',
-    badge: 'PATENT APPLICATION FILED',
-    metrics: '12 JETSON NODES · WSS / TLS 1.3',
-    tech: ['WebSocket', 'VNC', 'Jetson Nano', 'TLS 1.3'],
-    keyNum: '2',
-  },
-  {
-    id: 'facial-attendance',
-    slug: 'facial-attendance',
-    module: 'projects',
-    title: 'AI Facial Recognition Attendance System',
-    shortTitle: 'FACIAL RECOGNITION AI',
-    badge: 'PILOT DEPLOYMENT',
-    metrics: '99.2% ACCURACY · AWS EC2',
-    tech: ['Python', 'Flask', 'dlib', 'AWS EC2'],
-    keyNum: '3',
-  },
-  {
-    id: 'crowd-analytics',
-    slug: 'crowd-analytics',
-    module: 'projects',
-    title: 'Real-Time Crowd Analytics & Stampede Detection',
-    shortTitle: 'CROWD ANALYTICS & STAMPEDE',
-    badge: 'MAHAKUMBH FINALIST',
-    metrics: 'SUB-50MS LATENCY · YOLOv8 + CUDA',
-    tech: ['YOLOv8', 'ByteTrack', 'CUDA', 'OpenCV'],
-    keyNum: '4',
-  },
-  {
-    id: 'on-device-ai',
-    slug: 'on-device-ai',
-    module: 'projects',
-    title: 'On-Device AI Assistant (Offline Speech & Local LLM)',
-    shortTitle: 'ON-DEVICE AI ASSISTANT',
-    badge: 'PERSONAL R&D',
-    metrics: 'WHISPER + LLAMA.CPP GGUF 4-BIT',
-    tech: ['Android', 'Whisper', 'llama.cpp', 'sherpa-onnx'],
-    keyNum: '5',
-  },
-  {
-    id: 'lora-traffic-mesh',
-    slug: 'lora-traffic-mesh',
-    module: 'projects',
-    title: 'Adaptive LoRa Traffic Intersection Mesh',
-    shortTitle: 'LORA TRAFFIC MESH',
-    badge: 'HARDWARE PROTOTYPE',
-    metrics: 'SUB-GHZ MESH · ESP32 + FREERTOS',
-    tech: ['ESP32', 'LoRaWAN', 'FreeRTOS', 'C++'],
-    keyNum: '6',
-  },
+// Order and short labels of the desk-console buttons. Titles, badges and stacks come from src/content/projects.ts.
+const SCREEN_ORDER: { slug: string; shortTitle: string }[] = [
+  { slug: 'poultry-health-ai', shortTitle: 'POULTRY HEALTH AI' },
+  { slug: 'edgedesk', shortTitle: 'EDGEDESK REMOTE ACCESS' },
+  { slug: 'facial-attendance', shortTitle: 'FACIAL RECOGNITION AI' },
+  { slug: 'crowd-analytics', shortTitle: 'CROWD ANALYTICS & STAMPEDE' },
+  { slug: 'on-device-ai', shortTitle: 'ON-DEVICE AI ASSISTANT' },
 ];
+
+const SCREENS: ScreenDef[] = SCREEN_ORDER.flatMap(({ slug, shortTitle }, i) => {
+  const p = projects.find((proj) => proj.slug === slug);
+  if (!p) return [];
+  const screen: ScreenDef = {
+    id: p.slug,
+    slug: p.slug,
+    module: 'projects',
+    title: p.title,
+    shortTitle,
+    badge: p.badge,
+    tech: p.stack,
+    keyNum: String(i + 1),
+  };
+  return [screen];
+});
 
 // Exact physical monitor quads in 1600x900 coordinate space for f_0239.webp workstation (bezel-to-bezel 100% coverage)
 const LEFT_MONITOR_QUAD: Quad = [
@@ -141,22 +95,13 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
 
   const [selectedProjectSlug, setSelectedProjectSlug] = useState<string | null>(null);
   const [centerTab, setCenterTab] = useState<'home' | 'projects' | 'architecture' | 'contact'>('home');
-  const [leftTab, setLeftTab] = useState<'telemetry' | 'hardware' | 'network'>('telemetry');
+  const [leftTab, setLeftTab] = useState<'focus' | 'stack' | 'network'>('focus');
   const [rightTab, setRightTab] = useState<'quick' | 'experience' | 'honors'>('quick');
   const [projectCategory, setProjectCategory] = useState<string>('All');
   const [isZooming, setIsZooming] = useState(false);
-  const [tickerTick, setTickerTick] = useState(0);
 
   const cvUrl = getCVUrl();
-
-  // Subtle live telemetry pulse
-  useEffect(() => {
-    if (!visible) return;
-    const interval = setInterval(() => {
-      setTickerTick((t) => (t + 1) % 100);
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [visible]);
+  const companyCount = new Set(experiences.map((e) => e.company)).size;
 
   // Window resize listener
   useEffect(() => {
@@ -166,11 +111,6 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  const gpuLoad = 23 + (tickerTick % 4);
-  const cpuLoad = 14 + ((tickerTick * 2) % 5);
-  const memLoad = 38 + (tickerTick % 2);
-  const tempVal = 52 + ((tickerTick % 3) - 1);
 
   // Compute CSS matrix3d for LEFT MONITOR (src: 600 x 380)
   const leftTransform = useMemo(() => {
@@ -352,10 +292,10 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
             }}
           >
             <div style={{ fontSize: '0.68rem', color: '#00e5ff', fontWeight: 700, letterSpacing: '0.04em' }}>
-              ● MON-01 // TELEMETRY & HARDWARE
+              ● MON-01 // PROJECTS & STACK
             </div>
             <div style={{ display: 'flex', gap: '0.3rem' }}>
-              {(['telemetry', 'hardware', 'network'] as const).map((tab) => (
+              {(['focus', 'stack', 'network'] as const).map((tab) => (
                 <button
                   key={tab}
                   type="button"
@@ -382,76 +322,47 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
 
           {/* Left Screen Body */}
           <div style={{ flex: 1, padding: '0.65rem 0.85rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-            {leftTab === 'telemetry' && (
+            {leftTab === 'focus' && (
               <>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.4rem', textAlign: 'center' }}>
-                  <div style={{ background: 'rgba(11, 16, 24, 0.8)', border: '1px solid #1e293b', borderRadius: '3px', padding: '0.35rem' }}>
-                    <div style={{ fontSize: '1rem', color: '#00e5ff', fontWeight: 700 }}>{gpuLoad}%</div>
-                    <div style={{ fontSize: '0.58rem', color: '#64748b' }}>GPU CUDA</div>
-                  </div>
-                  <div style={{ background: 'rgba(11, 16, 24, 0.8)', border: '1px solid #1e293b', borderRadius: '3px', padding: '0.35rem' }}>
-                    <div style={{ fontSize: '1rem', color: '#00e5ff', fontWeight: 700 }}>{cpuLoad}%</div>
-                    <div style={{ fontSize: '0.58rem', color: '#64748b' }}>CPU ARM</div>
-                  </div>
-                  <div style={{ background: 'rgba(11, 16, 24, 0.8)', border: '1px solid #1e293b', borderRadius: '3px', padding: '0.35rem' }}>
-                    <div style={{ fontSize: '1rem', color: '#e8a23a', fontWeight: 700 }}>{memLoad}%</div>
-                    <div style={{ fontSize: '0.58rem', color: '#64748b' }}>RAM 8GB</div>
-                  </div>
-                  <div style={{ background: 'rgba(11, 16, 24, 0.8)', border: '1px solid #1e293b', borderRadius: '3px', padding: '0.35rem' }}>
-                    <div style={{ fontSize: '1rem', color: '#34d399', fontWeight: 700 }}>{tempVal}°C</div>
-                    <div style={{ fontSize: '0.58rem', color: '#64748b' }}>THERMAL</div>
-                  </div>
+                <div style={{ fontSize: '0.62rem', color: '#64748b' }}>PROJECTS &amp; STATUS:</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.66rem' }}>
+                  {SCREENS.map((s) => (
+                    <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', gap: '0.6rem', color: '#cbd5e1' }}>
+                      <span>▸ {s.shortTitle}</span>
+                      <span style={{ color: '#e8a23a', textAlign: 'right' }}>{s.badge}</span>
+                    </div>
+                  ))}
                 </div>
-
-                <div style={{ borderTop: '1px solid rgba(0, 229, 255, 0.15)', paddingTop: '0.45rem' }}>
-                  <div style={{ fontSize: '0.62rem', color: '#64748b', marginBottom: '0.3rem' }}>ACTIVE INFERENCE PIPELINES:</div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', fontSize: '0.68rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', color: '#cbd5e1' }}>
-                      <span>▸ EdgeDesk Fleet Daemon</span>
-                      <span style={{ color: '#00e5ff' }}>TLS 1.3 / OK</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', color: '#cbd5e1' }}>
-                      <span>▸ Crowd YOLOv8 Tracking</span>
-                      <span style={{ color: '#34d399' }}>41.8 ms / CUDA</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', color: '#cbd5e1' }}>
-                      <span>▸ Poultry Anomaly Detection</span>
-                      <span style={{ color: '#e8a23a' }}>30 FPS RTSP</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', color: '#cbd5e1' }}>
-                      <span>▸ On-Device Whisper & LLM</span>
-                      <span style={{ color: '#00e5ff' }}>GGUF 4-Bit</span>
-                    </div>
-                  </div>
-                </div>
-
                 <div style={{ borderTop: '1px solid rgba(0, 229, 255, 0.15)', paddingTop: '0.45rem', display: 'flex', justifyContent: 'space-between', fontSize: '0.62rem' }}>
                   <span style={{ color: '#64748b' }}>STATION: INDORE, MP, INDIA</span>
-                  <span style={{ color: '#34d399' }}>● SYSTEM ONLINE</span>
+                  <span style={{ color: '#94a3b8' }}>SIMULATED DISPLAY</span>
                 </div>
               </>
             )}
 
-            {leftTab === 'hardware' && (
-              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                <div style={{ width: '130px', height: '100px', borderRadius: '3px', overflow: 'hidden', border: '1px solid #334155', flexShrink: 0 }}>
-                  <img src="/nightfall/images/projects/jetson_hardware.jpg" alt="Jetson" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                </div>
-                <div style={{ flex: 1, fontSize: '0.68rem', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-                  <div style={{ color: '#e8a23a', fontWeight: 700 }}>NVIDIA JETSON COMPUTE</div>
-                  <div style={{ color: '#94a3b8' }}>• 6-Core ARM Cortex-A78AE</div>
-                  <div style={{ color: '#94a3b8' }}>• 1024-Core NVIDIA Ampere GPU</div>
-                  <div style={{ color: '#94a3b8' }}>• Ubuntu Linux (L4T) Runtime</div>
-                  <div style={{ color: '#34d399' }}>• Watchdog Systemd Daemons</div>
-                </div>
+            {leftTab === 'stack' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+                <div style={{ fontSize: '0.62rem', color: '#64748b' }}>SKILLS (FROM CV):</div>
+                {skillGroups.slice(0, 3).map((g) => (
+                  <div key={g.group}>
+                    <div style={{ color: '#e8a23a', fontWeight: 700, fontSize: '0.66rem', marginBottom: '0.25rem' }}>{g.group}</div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
+                      {g.skills.map((skill) => (
+                        <span key={skill} style={{ fontSize: '0.6rem', background: '#0e1726', border: '1px solid #1e293b', padding: '0.1rem 0.4rem', borderRadius: '2px', color: '#00e5ff' }}>
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
 
             {leftTab === 'network' && (
               <div style={{ padding: '0.5rem', fontSize: '0.68rem', textAlign: 'center', color: '#94a3b8' }}>
-                <div style={{ color: '#00e5ff', fontWeight: 700, marginBottom: '0.4rem' }}>ENCRYPTED EDGE TOPOLOGY</div>
+                <div style={{ color: '#00e5ff', fontWeight: 700, marginBottom: '0.4rem' }}>EDGEDESK — SIMPLIFIED TOPOLOGY</div>
                 <div style={{ background: '#070a0e', border: '1px solid #1e293b', padding: '0.5rem', borderRadius: '3px' }}>
-                  [ Client Web Browser ] ↔ [ TLS 1.3 WebSocket Broker ] ↔ [ Fleet NVIDIA Jetson Nano Nodes ]
+                  [ Dashboard ] ↔ [ Custom WebSocket Broker · TLS/WSS ] ↔ [ Jetson Nano devices ]
                 </div>
               </div>
             )}
@@ -627,17 +538,9 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
                 <div style={{ background: '#090d14', border: '1px solid #1e293b', borderRadius: '4px', padding: '0.85rem' }}>
                   {activeProject.slug === 'edgedesk' && <EdgeDeskDiagram />}
                   {activeProject.slug === 'crowd-analytics' && <CrowdDiagram />}
-                  {activeProject.slug === 'lora-traffic-mesh' && <LoRaDiagram />}
                   {activeProject.slug === 'poultry-health-ai' && <PoultryHealthDiagram />}
                   {activeProject.slug === 'facial-attendance' && <FacialAttendanceDiagram />}
                   {activeProject.slug === 'on-device-ai' && <OnDeviceAiDiagram />}
-                  {activeProject.slug === 'parkfnb' && (
-                    <div style={{ fontSize: '0.76rem', color: '#cbd5e1', lineHeight: 1.5 }}>
-                      {activeProject.description.map((d, i) => (
-                        <p key={i} style={{ marginBottom: '0.4rem' }}>▸ {d}</p>
-                      ))}
-                    </div>
-                  )}
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -647,7 +550,7 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
                     rel="noopener noreferrer"
                     style={{ fontSize: '0.72rem', color: '#e8a23a', textDecoration: 'none', border: '1px solid rgba(232, 162, 58, 0.4)', padding: '0.35rem 0.75rem', borderRadius: '3px' }}
                   >
-                    VIEW CODE (GITHUB) ↗
+                    GITHUB PROFILE ↗
                   </a>
                   <button
                     type="button"
@@ -699,20 +602,20 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
                   {/* 4 Metrics Row */}
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', marginTop: '1rem', borderTop: '1px solid #1e293b', paddingTop: '0.75rem' }}>
                     <div style={{ background: '#090d14', border: '1px solid #1e293b', padding: '0.35rem 0.5rem', borderRadius: '3px' }}>
-                      <div style={{ fontSize: '1.1rem', color: '#e8a23a', fontWeight: 700 }}>4+</div>
-                      <div style={{ fontSize: '0.58rem', color: '#94a3b8' }}>YEARS EXP</div>
+                      <div style={{ fontSize: '1.1rem', color: '#e8a23a', fontWeight: 700 }}>2021–26</div>
+                      <div style={{ fontSize: '0.58rem', color: '#94a3b8' }}>B.TECH + M.TECH · IOT</div>
                     </div>
                     <div style={{ background: '#090d14', border: '1px solid #1e293b', padding: '0.35rem 0.5rem', borderRadius: '3px' }}>
-                      <div style={{ fontSize: '1.1rem', color: '#00e5ff', fontWeight: 700 }}>10+</div>
+                      <div style={{ fontSize: '1.1rem', color: '#00e5ff', fontWeight: 700 }}>{companyCount}</div>
+                      <div style={{ fontSize: '0.58rem', color: '#94a3b8' }}>COMPANIES</div>
+                    </div>
+                    <div style={{ background: '#090d14', border: '1px solid #1e293b', padding: '0.35rem 0.5rem', borderRadius: '3px' }}>
+                      <div style={{ fontSize: '1.1rem', color: '#34d399', fontWeight: 700 }}>{projects.length}</div>
                       <div style={{ fontSize: '0.58rem', color: '#94a3b8' }}>PROJECTS</div>
                     </div>
                     <div style={{ background: '#090d14', border: '1px solid #1e293b', padding: '0.35rem 0.5rem', borderRadius: '3px' }}>
-                      <div style={{ fontSize: '1.1rem', color: '#34d399', fontWeight: 700 }}>3</div>
-                      <div style={{ fontSize: '0.58rem', color: '#94a3b8' }}>DOMAINS: AI·CV·EDGE</div>
-                    </div>
-                    <div style={{ background: '#090d14', border: '1px solid #1e293b', padding: '0.35rem 0.5rem', borderRadius: '3px' }}>
                       <div style={{ fontSize: '1.1rem', color: '#e8a23a', fontWeight: 700 }}>1</div>
-                      <div style={{ fontSize: '0.58rem', color: '#94a3b8' }}>PATENT APP</div>
+                      <div style={{ fontSize: '0.58rem', color: '#94a3b8' }}>PATENT APP (NOT GRANTED)</div>
                     </div>
                   </div>
                 </div>
@@ -723,7 +626,7 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ fontSize: '0.72rem', color: '#e8a23a', fontWeight: 700 }}>02 // PROJECT ARCHIVES</div>
                   <div style={{ display: 'flex', gap: '0.3rem' }}>
-                    {['All', 'AI/ML', 'Computer Vision', 'Edge AI', 'IoT'].map((cat) => (
+                    {['All', 'AI/ML', 'Computer Vision', 'Edge AI', 'Research'].map((cat) => (
                       <button
                         key={cat}
                         type="button"
@@ -756,7 +659,6 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
                         title: p.title,
                         shortTitle: p.title.split(':')[0],
                         badge: p.badge,
-                        metrics: p.stack.slice(0, 3).join(' · '),
                         tech: p.stack,
                         keyNum: '1',
                       })}
@@ -790,30 +692,31 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
               /* CONTACT TRANSMISSION VIEW */
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', maxWidth: '520px' }}>
                 <div style={{ fontSize: '0.74rem', color: '#e8a23a', fontWeight: 700 }}>
-                  07 // TRANSMISSION PROTOCOL
+                  07 // CONTACT
                 </div>
-                <input
-                  type="text"
-                  placeholder="CALLSIGN / NAME"
-                  style={{ background: '#0b1016', border: '1px solid #1e293b', color: '#f8fafc', padding: '0.45rem', fontSize: '0.72rem', borderRadius: '3px' }}
-                />
-                <input
-                  type="email"
-                  placeholder="COMM FREQ / EMAIL"
-                  style={{ background: '#0b1016', border: '1px solid #1e293b', color: '#f8fafc', padding: '0.45rem', fontSize: '0.72rem', borderRadius: '3px' }}
-                />
-                <textarea
-                  rows={3}
-                  placeholder="TRANSMISSION MESSAGE"
-                  style={{ background: '#0b1016', border: '1px solid #1e293b', color: '#f8fafc', padding: '0.45rem', fontSize: '0.72rem', borderRadius: '3px', resize: 'none' }}
-                />
-                <button
-                  type="button"
-                  onClick={() => sound.playAccessBeep()}
-                  style={{ background: '#e8a23a', color: '#070a0e', border: 'none', padding: '0.45rem', borderRadius: '3px', fontWeight: 700, fontSize: '0.74rem', cursor: 'pointer' }}
+                <a
+                  href={`mailto:${profile.email}`}
+                  style={{ background: '#e8a23a', color: '#070a0e', padding: '0.5rem 0.75rem', borderRadius: '3px', fontWeight: 700, fontSize: '0.78rem', textDecoration: 'none', textAlign: 'center' }}
                 >
-                  TRANSMIT MESSAGE ↵
-                </button>
+                  ✉ {profile.email}
+                </a>
+                <a
+                  href={profile.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ background: '#0b1016', border: '1px solid #1e293b', color: '#cbd5e1', padding: '0.45rem 0.75rem', borderRadius: '3px', fontSize: '0.74rem', textDecoration: 'none' }}
+                >
+                  GitHub — github.com/jainnishant779 ↗
+                </a>
+                <a
+                  href={profile.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ background: '#0b1016', border: '1px solid #1e293b', color: '#cbd5e1', padding: '0.45rem 0.75rem', borderRadius: '3px', fontSize: '0.74rem', textDecoration: 'none' }}
+                >
+                  LinkedIn — linkedin.com/in/nishujain02 ↗
+                </a>
+                <div style={{ fontSize: '0.66rem', color: '#64748b' }}>{profile.location}</div>
               </div>
             )}
           </div>
@@ -916,16 +819,12 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
                   >
                     💼 LinkedIn ↗
                   </a>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      sound.playAccessBeep();
-                      useStore.getState().setMode('suit-inspect');
-                    }}
-                    style={{ background: 'rgba(52, 211, 153, 0.15)', border: '1px solid #34d399', color: '#34d399', padding: '0.35rem 0.5rem', fontSize: '0.68rem', borderRadius: '3px', cursor: 'pointer', textAlign: 'center', fontWeight: 700 }}
+                  <a
+                    href={`mailto:${profile.email}`}
+                    style={{ background: '#0b1016', border: '1px solid #1e293b', color: '#cbd5e1', padding: '0.35rem 0.5rem', fontSize: '0.68rem', borderRadius: '3px', textDecoration: 'none', textAlign: 'center' }}
                   >
-                    🛡️ Suit Vault [3D]
-                  </button>
+                    ✉ Email ↗
+                  </a>
                 </div>
 
                 <div style={{ borderTop: '1px solid rgba(0, 229, 255, 0.15)', paddingTop: '0.45rem' }}>
@@ -1017,7 +916,7 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
         >
           <div style={{ fontSize: '0.60rem', color: '#00e5ff', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
             <span style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: '#00e5ff', boxShadow: '0 0 6px #00e5ff' }} />
-            TRIPLE-DISPLAY COMPUTER ACTIVE // MOUSE INPUT ENGAGED // CAVERN COMMUNICATING
+            TRIPLE-DISPLAY WORKSTATION // CLICK ANY SCREEN OR PROJECT BUTTON
           </div>
 
           <div
@@ -1055,29 +954,6 @@ export const ScreenPreview: React.FC<ScreenPreviewProps> = ({
                 [{s.keyNum}] {s.shortTitle}
               </button>
             ))}
-
-            <button
-              type="button"
-              onClick={() => {
-                sound.playAccessBeep();
-                useStore.getState().setMode('suit-inspect');
-              }}
-              style={{
-                padding: '0.2rem 0.55rem',
-                backgroundColor: 'rgba(127, 179, 138, 0.15)',
-                border: '1px solid #7fb38a',
-                color: '#7fb38a',
-                fontSize: '0.60rem',
-                fontWeight: 700,
-                borderRadius: '2px',
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-                whiteSpace: 'nowrap',
-              }}
-              title="Inspect 3D Warden Exoskeleton Suit Chamber"
-            >
-              🛡️ SUIT VAULT [3D]
-            </button>
 
             {selectedProjectSlug && (
               <button

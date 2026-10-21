@@ -1,9 +1,9 @@
 import React, { useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import { SuitDisplay } from '../_legacy3d/objects/SuitDisplay';
-import { SUIT_PLATFORM } from './layout';
-import { SuitHudCard } from '../ui/SuitHudCard';
+import { SuitDisplay } from './objects/SuitDisplay';
+import { SUIT_PLATFORM } from '../world/layout';
+import { SuitHudCard } from './SuitHudCard';
 import { sound } from '../lib/sound';
 import { prefersReducedMotion } from '../lib/reducedMotion';
 
@@ -147,7 +147,7 @@ export const SuitInspectView: React.FC<SuitInspectViewProps> = ({
             e.currentTarget.style.boxShadow = '0 0 15px rgba(232, 162, 58, 0.3)';
           }}
         >
-          ← RETURN TO WORKSTATION
+          â† RETURN TO WORKSTATION
         </button>
 
         {/* Tactical Status Pill */}
@@ -176,7 +176,7 @@ export const SuitInspectView: React.FC<SuitInspectViewProps> = ({
               boxShadow: '0 0 8px #7fb38a',
             }}
           />
-          CHAMBER 03 // WARDEN EXOSKELETON VAULT [DRAG TO ORBIT 360°]
+          CHAMBER 03 // WARDEN EXOSKELETON VAULT [DRAG TO ORBIT 360Â°]
         </div>
 
         <button
@@ -203,7 +203,7 @@ export const SuitInspectView: React.FC<SuitInspectViewProps> = ({
             e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 229, 255, 0.3)';
           }}
         >
-          ACCESS NJ-OS COMMAND CENTER ↗
+          ACCESS NJ-OS COMMAND CENTER â†—
         </button>
       </div>
 
@@ -229,7 +229,7 @@ export const SuitInspectView: React.FC<SuitInspectViewProps> = ({
           backdropFilter: 'blur(4px)',
         }}
       >
-        Left Click + Drag: Orbit Camera · Scroll Wheel: Zoom · Esc / Button: Return to Workstation
+        Left Click + Drag: Orbit Camera Â· Scroll Wheel: Zoom Â· Esc / Button: Return to Workstation
       </div>
     </div>
   );

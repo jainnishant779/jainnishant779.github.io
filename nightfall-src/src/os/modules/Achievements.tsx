@@ -31,7 +31,7 @@ export const Achievements: React.FC = () => {
             Sustainathon 2025
           </div>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.74rem', color: '#94a3b8', marginTop: '0.35rem' }}>
-            NATRAX Automotive Testing Center
+            NATRAX
           </div>
         </div>
 
@@ -53,7 +53,7 @@ export const Achievements: React.FC = () => {
             MPSEDC Mahakumbh 2025
           </div>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.74rem', color: '#94a3b8', marginTop: '0.35rem' }}>
-            Among 200+ Competitive Engineering Teams
+            Among 200+ teams
           </div>
         </div>
 
@@ -75,16 +75,16 @@ export const Achievements: React.FC = () => {
             EdgeDesk Multi-Device Platform
           </div>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.74rem', color: '#94a3b8', marginTop: '0.35rem' }}>
-            Multi-Device Edge Architecture (Application Filed)
+            Multi-device architecture — application filed, not granted
           </div>
         </div>
       </div>
 
-      {/* Grid of Verified Certifications & Engineering Highlights */}
+      {/* Grid of certifications & engineering highlights (all taken from the CV) */}
       <div className="achievements-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem' }}>
         <div className="achievement-panel" style={{ background: 'rgba(14, 20, 28, 0.85)', border: '1px solid #1e293b', borderRadius: '6px', padding: '1.25rem' }}>
           <h3 style={{ fontFamily: 'var(--font-heading)', color: '#e8a23a', fontSize: '1.1rem', marginBottom: '0.75rem' }}>
-            Verified Industry Certifications
+            Certifications & Training
           </h3>
           <ul className="achievements-list">
             {certifications.map((item, idx) => (
@@ -102,16 +102,16 @@ export const Achievements: React.FC = () => {
           </h3>
           <ul className="achievements-list">
             <li className="achievement-item">
-              <span className="achievement-title">Edge AI Client Delivery</span>
-              <span className="achievement-detail">Owned complete pipeline from data annotation to NVIDIA Jetson hardware deployment.</span>
+              <span className="achievement-title">Client AI/CV Delivery</span>
+              <span className="achievement-detail">Scoped AI/CV solutions with clients, then owned the data pipeline, model training, REST API integration and AWS deployment.</span>
             </li>
             <li className="achievement-item">
-              <span className="achievement-title">Production Computer Vision</span>
-              <span className="achievement-detail">Benchmarked YOLO models with precision/recall KPIs and deployed Nginx/Systemd services.</span>
+              <span className="achievement-title">Benchmarked Detection Systems</span>
+              <span className="achievement-detail">Benchmarked YOLO-based detection against client KPIs (mAP, precision, recall) before release; managed Systemd, Nginx and SSH-based deployments.</span>
             </li>
             <li className="achievement-item">
-              <span className="achievement-title">On-Device Local Inference R&D</span>
-              <span className="achievement-detail">Zero-cloud offline Whisper speech recognition & 4-bit local LLM inference on edge devices.</span>
+              <span className="achievement-title">On-Device AI (personal R&D)</span>
+              <span className="achievement-detail">Offline speech transcription (Whisper, sherpa-onnx) and local LLM inference (llama.cpp, GGUF) on Android — in progress, not a released app.</span>
             </li>
           </ul>
         </div>

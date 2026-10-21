@@ -5,7 +5,6 @@ import { useStore } from '../state/store';
 import { FilmPlayer } from '../film/FilmPlayer';
 import { HudOverlay } from '../ui/HudOverlay';
 import { OSShell, type OSModuleId } from '../os/OSShell';
-import { SuitInspectView } from '../world/SuitInspectView';
 import { prefersReducedMotion } from '../lib/reducedMotion';
 import { sound } from '../lib/sound';
 import { getCVUrl } from '../lib/assets';
@@ -17,8 +16,6 @@ export const HomePage: React.FC = () => {
   const [osSlug, setOsSlug] = useState<string | undefined>(undefined);
   const osOpen = useStore((state) => state.osOpen);
   const setOsOpen = useStore((state) => state.setOsOpen);
-  const mode = useStore((state) => state.mode);
-  const setMode = useStore((state) => state.setMode);
   const audioEnabled = useStore((state) => state.audioEnabled);
   const cvUrl = getCVUrl();
 
@@ -34,19 +31,17 @@ export const HomePage: React.FC = () => {
       setEngineSupported(false);
     }
 
-    // Scroll restoration & direct deep-link query parameter handling (?view=suit or ?view=os)
+    // Scroll restoration & direct deep-link query parameter handling (?view=os)
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual';
     }
     const params = new URLSearchParams(window.location.search);
-    if (params.get('view') === 'suit') {
-      setMode('suit-inspect');
-    } else if (params.get('view') === 'os') {
+    if (params.get('view') === 'os') {
       setOsOpen(true);
     } else {
       window.scrollTo(0, 0);
     }
-  }, [setMode, setOsOpen]);
+  }, [setOsOpen]);
 
   // Lenis Smooth Scroll Engine (matching roccia.in luxury momentum physics)
   useEffect(() => {
@@ -79,16 +74,11 @@ export const HomePage: React.FC = () => {
     };
   }, []);
 
-  // Keyboard shortcut: Escape to close OS overlay or exit suit inspection
+  // Keyboard shortcut: Escape closes the OS overlay
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        const state = useStore.getState();
-        if (state.osOpen) {
-          setOsOpen(false);
-        } else if (state.mode === 'suit-inspect') {
-          state.setMode('guided');
-        }
+      if (e.key === 'Escape' && useStore.getState().osOpen) {
+        setOsOpen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -283,14 +273,6 @@ export const HomePage: React.FC = () => {
             zIndex: 100,
             pointerEvents: 'none',
           }}
-        />
-      )}
-
-      {/* 3D Warden Exoskeleton Suit Vault Inspection Mode */}
-      {mode === 'suit-inspect' && (
-        <SuitInspectView
-          onReturnToWorkstation={() => setMode('guided')}
-          onOpenOS={handleOpenOS}
         />
       )}
 

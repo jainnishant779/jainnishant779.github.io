@@ -1,28 +1,27 @@
 import React from 'react';
 import { Diagram, DiagramNode, DiagramLink } from './Diagram';
 
+// Simplified pipeline. Stack and outcome come straight from the CV (YOLOv8, ByteTrack, OpenCV, Jetson Nano/CUDA, sub-50 ms).
 const nodes: DiagramNode[] = [
   {
     id: 'camera',
-    label: 'RTSP / Video Feed',
-    sublabel: 'Surveillance Stream',
+    label: 'Camera Feed',
+    sublabel: 'Video input',
     x: 40,
     y: 130,
     width: 150,
     height: 70,
-    description:
-      'High-frame-rate RTSP or USB camera streams capturing aerial/overhead crowd footage in public gathering locations and event choke points.',
+    description: 'Video input of a crowd scene.',
   },
   {
     id: 'opencv',
     label: 'OpenCV Capture',
-    sublabel: 'Frame Decoding',
+    sublabel: 'Frame handling',
     x: 230,
     y: 130,
     width: 150,
     height: 70,
-    description:
-      'Efficient thread-isolated frame grabbing, normalization, and hardware-accelerated video color-space conversion using OpenCV.',
+    description: 'OpenCV reads the video and prepares frames for the detector.',
   },
   {
     id: 'yolo',
@@ -32,56 +31,53 @@ const nodes: DiagramNode[] = [
     y: 130,
     width: 165,
     height: 70,
-    description:
-      'GPU-accelerated deep neural network bounding box detection tailored for human head/pedestrian classes, optimized for sub-50 ms edge inference latency.',
+    description: 'YOLOv8 person detection, GPU-accelerated (CUDA) on a Jetson Nano.',
   },
   {
     id: 'bytetrack',
-    label: 'ByteTrack Engine',
-    sublabel: 'Multi-Object Tracking',
+    label: 'ByteTrack',
+    sublabel: 'Multi-object tracking',
     x: 625,
     y: 130,
     width: 160,
     height: 70,
-    description:
-      'Association tracker matching low-confidence detections and maintaining persistent identity tracks across frame occlusions and crowd clumping.',
+    description: 'ByteTrack keeps a persistent track for each detected person across frames.',
   },
   {
     id: 'density_analysis',
     label: 'Density & Velocity',
-    sublabel: 'Spatial Vector Calc',
+    sublabel: 'Person counting',
     x: 520,
     y: 260,
     width: 170,
     height: 65,
-    description:
-      'Mathematical computation of regional crowd density per square metre, tracking directional entropy and velocity anomalies to identify turbulent flow.',
+    description: 'Real-time person counting, plus density and velocity analysis computed from the tracks.',
   },
   {
     id: 'alert',
     label: 'Stampede Alert',
-    sublabel: 'Early Warning Event',
+    sublabel: 'Density / velocity based',
     x: 740,
     y: 260,
     width: 155,
     height: 65,
     description:
-      'Threshold-triggered early-warning broadcast alerting control-room monitors when density surges or localized movement vectors indicate high risk.',
+      'Stampede alerts raised from density and velocity. The pipeline reaches sub-50 ms inference latency.',
   },
 ];
 
 const links: DiagramLink[] = [
-  { from: 'camera', to: 'opencv', label: 'Raw Frames' },
-  { from: 'opencv', to: 'yolo', label: 'Tensors' },
+  { from: 'camera', to: 'opencv', label: 'Frames' },
+  { from: 'opencv', to: 'yolo', label: 'Images' },
   { from: 'yolo', to: 'bytetrack', label: 'Detections' },
-  { from: 'bytetrack', to: 'density_analysis', label: 'Trajectories' },
-  { from: 'density_analysis', to: 'alert', label: 'Risk Threshold', dashed: true },
+  { from: 'bytetrack', to: 'density_analysis', label: 'Tracks' },
+  { from: 'density_analysis', to: 'alert', label: 'Alert', dashed: true },
 ];
 
 export const CrowdDiagram: React.FC = () => {
   return (
     <Diagram
-      title="Real-Time Crowd Analytics Architecture"
+      title="Crowd Analytics — Simplified Pipeline"
       nodes={nodes}
       links={links}
       width={940}

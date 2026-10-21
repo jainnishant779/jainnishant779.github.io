@@ -1,79 +1,65 @@
 import React from 'react';
 import { Diagram, DiagramNode, DiagramLink } from './Diagram';
 
+// The CV describes this project as an end-to-end ML lifecycle for a farm-operator client:
+// data collection, annotation, training, deployment — with Python, YOLO, OpenCV and object detection.
 const nodes: DiagramNode[] = [
   {
-    id: 'camera',
-    label: 'RTSP Farm Cameras',
-    sublabel: 'Overhead Coop Feeds',
+    id: 'collect',
+    label: 'Data Collection',
+    sublabel: 'Farm client data',
     x: 40,
-    y: 130,
-    width: 165,
+    y: 150,
+    width: 170,
     height: 70,
-    description:
-      'Continuous 30 FPS RTSP video streams captured from overhead industrial cameras mounted in real farm operator sheds.',
+    description: 'Collecting data for the farm-operator client.',
   },
   {
-    id: 'preprocessing',
-    label: 'Frame Preprocessor',
-    sublabel: 'CLAHE & Contrast',
-    x: 250,
-    y: 130,
-    width: 165,
+    id: 'annotate',
+    label: 'Annotation',
+    sublabel: 'Labelled dataset',
+    x: 270,
+    y: 150,
+    width: 170,
     height: 70,
-    description:
-      'Contrast-limited adaptive histogram equalization and frame normalization compensating for harsh sunlight, dust, and dim poultry coop lighting.',
+    description: 'Annotating the collected data to build a training dataset.',
   },
   {
-    id: 'yolo',
-    label: 'YOLO Detection',
-    sublabel: 'Flock Localization',
-    x: 460,
-    y: 130,
-    width: 165,
+    id: 'train',
+    label: 'YOLO Training',
+    sublabel: 'Object detection',
+    x: 500,
+    y: 150,
+    width: 170,
     height: 70,
-    description:
-      'Custom fine-tuned YOLO object detector trained on farm datasets to extract individual bird bounding boxes and spatial centroids in real time.',
+    description: 'Training a YOLO object-detection model on the annotated data.',
   },
   {
-    id: 'anomaly',
-    label: 'Behavioral Anomaly',
-    sublabel: 'Lethargy & Density Calc',
-    x: 670,
-    y: 130,
-    width: 180,
+    id: 'deploy',
+    label: 'Deployment',
+    sublabel: 'Python · OpenCV',
+    x: 730,
+    y: 150,
+    width: 170,
     height: 70,
-    description:
-      'Temporal movement tracker monitoring individual flock velocity vectors. Flags stationary birds, severe clustering, and abnormal postures (98.4% anomaly precision).',
-  },
-  {
-    id: 'alert_daemon',
-    label: 'Operator Telemetry',
-    sublabel: 'Real-Time Edge Alerts',
-    x: 460,
-    y: 260,
-    width: 190,
-    height: 65,
-    description:
-      'Edge-deployed alert daemon notifying the farm operator dashboard instantly when threshold anomalies exceed safety levels.',
+    description: 'Deploying the trained detector for the client, using Python and OpenCV.',
   },
 ];
 
 const links: DiagramLink[] = [
-  { from: 'camera', to: 'preprocessing', label: 'RTSP Stream' },
-  { from: 'preprocessing', to: 'yolo', label: 'Tensors' },
-  { from: 'yolo', to: 'anomaly', label: 'Detections' },
-  { from: 'anomaly', to: 'alert_daemon', label: 'Risk Threshold', dashed: true },
+  { from: 'collect', to: 'annotate', label: 'Raw data' },
+  { from: 'annotate', to: 'train', label: 'Labels' },
+  { from: 'train', to: 'deploy', label: 'Model' },
 ];
 
 export const PoultryHealthDiagram: React.FC = () => {
   return (
     <Diagram
-      title="AI-Powered Poultry Health Monitoring Pipeline"
+      title="Poultry Health Monitoring — ML Lifecycle (simplified)"
       nodes={nodes}
       links={links}
       width={930}
-      height={360}
+      height={300}
     />
   );
 };

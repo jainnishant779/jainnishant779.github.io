@@ -11,7 +11,6 @@ import { Architecture } from './modules/Architecture';
 import { CaveMap } from './modules/CaveMap';
 import { OSHome } from './OSHome';
 import { sound } from '../lib/sound';
-import { useStore } from '../state/store';
 
 export type OSModuleId =
   | 'home'
@@ -23,8 +22,7 @@ export type OSModuleId =
   | 'dossier'
   | 'contact'
   | 'architecture'
-  | 'map'
-  | 'suit';
+  | 'map';
 
 interface OSShellProps {
   mode?: 'standalone' | 'overlay';
@@ -44,7 +42,6 @@ const MODULES: { id: OSModuleId; num: string; label: string; icon: string; key: 
   { id: 'contact', num: '07', label: 'CONTACT', icon: '📡', key: '7' },
   { id: 'dossier', num: '08', label: 'CV DOSSIER', icon: '📄', key: '8' },
   { id: 'map', num: '09', label: 'CAVE MAP', icon: '🗺️', key: '9' },
-  { id: 'suit', num: '10', label: 'SUIT CHAMBER', icon: '🛡️', key: '0' },
 ];
 
 export const OSShell: React.FC<OSShellProps> = ({
@@ -91,16 +88,6 @@ export const OSShell: React.FC<OSShellProps> = ({
   const navigateTo = useCallback(
     (moduleId: OSModuleId, slug?: string) => {
       sound.playUiClick();
-      if (moduleId === 'suit') {
-        useStore.getState().setMode('suit-inspect');
-        if (onClose) {
-          onClose();
-        } else {
-          window.location.href = '/nightfall/?view=suit';
-        }
-        return;
-      }
-
       setActiveModule(moduleId);
       setSelectedProjectSlug(slug);
 
@@ -120,7 +107,7 @@ export const OSShell: React.FC<OSShellProps> = ({
         }
       }
     },
-    [mode, onNavigateRoute, onClose]
+    [mode, onNavigateRoute]
   );
 
   // Keyboard navigation
@@ -192,7 +179,7 @@ export const OSShell: React.FC<OSShellProps> = ({
 
           <div className="os-status-badge">
             <span className="os-status-dot" aria-hidden="true" />
-            <span>FACILITY SECURE</span>
+            <span>SIMULATED INTERFACE</span>
           </div>
         </div>
 
@@ -255,7 +242,7 @@ export const OSShell: React.FC<OSShellProps> = ({
                 NISHANT JAIN
               </div>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: '#e8a23a' }}>
-                BATCOMPUTER OS
+                NJ-OS
               </div>
             </div>
           </div>
@@ -315,7 +302,7 @@ export const OSShell: React.FC<OSShellProps> = ({
             </div>
 
             <div className="os-shortcut-legend">
-              <span className="os-key">1-9, 0</span>
+              <span className="os-key">1-9</span>
               <span>Quick switch</span>
             </div>
             <div className="os-shortcut-legend">
@@ -354,14 +341,6 @@ export const OSShell: React.FC<OSShellProps> = ({
           {activeModule === 'map' && (
             <CaveMap
               onReturnToCave={onClose ? onClose : () => { window.location.href = '/nightfall/'; }}
-              onOpenSuitChamber={() => {
-                useStore.getState().setMode('suit-inspect');
-                if (onClose) {
-                  onClose();
-                } else {
-                  window.location.href = '/nightfall/?view=suit';
-                }
-              }}
             />
           )}
         </main>

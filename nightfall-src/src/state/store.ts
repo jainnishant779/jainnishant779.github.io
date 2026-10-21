@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 
+// 'suit-inspect' is only referenced by the archived 3D code in src/_legacy3d (the suit feature was removed from the live UI).
 export type AppMode = 'guided' | 'free' | 'os-overlay' | 'suit-inspect';
 
 export interface AppState {

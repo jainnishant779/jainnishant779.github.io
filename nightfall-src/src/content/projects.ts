@@ -1,5 +1,9 @@
 import type { Project } from './types';
 
+/**
+ * Source of truth: Nishant's CV (cv_extracted.txt). Do not add projects, metrics or links that are not in the CV.
+ * All code is private; the only public link is the GitHub profile.
+ */
 export const projects: Project[] = [
   {
     slug: 'edgedesk',
@@ -7,7 +11,7 @@ export const projects: Project[] = [
     subtitle: 'Remote Access Platform',
     category: 'Edge AI',
     badge: 'Patent Application Filed — Not Granted',
-    stack: ['Python', 'WebSocket', 'VNC', 'Jetson Nano', 'Linux', 'TLS/WSS'],
+    stack: ['Python', 'WebSocket', 'VNC', 'Jetson Nano', 'TLS/WSS'],
     description: [
       'VPN-style secure remote desktop for encrypted screen access and file transfer across a fleet of Jetson Nano edge devices; patent application filed for the multi-device architecture.',
       'Custom WebSocket broker with encrypted file transfer and cross-device drag-and-drop, managing multiple devices from one dashboard with reboot-safe Linux services.',
@@ -30,11 +34,11 @@ export const projects: Project[] = [
   },
   {
     slug: 'poultry-health-ai',
-    title: 'AI-Powered Poultry Health Monitoring System',
-    subtitle: 'Flock Detection & Monitoring',
+    title: 'AI-Powered Poultry Health Monitoring',
+    subtitle: 'Client project · ML lifecycle',
     category: 'Computer Vision',
-    badge: 'Client Production Deployment',
-    stack: ['Python', 'YOLO', 'OpenCV', 'Edge AI', 'Agriculture'],
+    badge: 'Client Project',
+    stack: ['Python', 'YOLO', 'OpenCV', 'Object Detection'],
     description: [
       'Owned the ML lifecycle end-to-end — data collection, annotation, training, and deployment — for a real farm-operator client.',
     ],
@@ -46,7 +50,7 @@ export const projects: Project[] = [
     title: 'On-Device AI Assistant (Offline Speech & Local LLM)',
     subtitle: 'Offline STT + LLM',
     category: 'Research',
-    badge: 'Personal R&D Prototype',
+    badge: 'Personal R&D — In Progress, Not a Released App',
     stack: ['Android', 'Whisper', 'sherpa-onnx', 'llama.cpp', 'GGUF'],
     description: [
       'Offline speech transcription and local language-model inference running fully on an Android device without cloud dependencies.',
@@ -55,42 +59,16 @@ export const projects: Project[] = [
     imageCaption: 'Illustrative artwork — not a product screenshot.',
   },
   {
-    slug: 'parkfnb',
-    title: 'ParkFNB: Intelligent Parking Management & Analytics',
-    subtitle: 'Intelligent Parking',
-    category: 'IoT',
-    badge: 'IoT & Computer Vision Prototype',
-    stack: ['Node.js', 'CCTV', 'Web App', 'Computer Vision', 'IoT'],
-    description: [
-      'Automated parking occupancy detection and vehicle entry/exit tracking using fixed CCTV RTSP camera feeds and lightweight inference.',
-      'Real-time occupancy status dashboard, slot reservation telemetry, and historical turnover analytics for commercial parking facilities.',
-    ],
-    image: '/nightfall/images/projects/parkfnb.jpg',
-    imageCaption: 'Illustrative artwork — not a product screenshot.',
-  },
-  {
     slug: 'facial-attendance',
     title: 'AI-Accelerated Facial Recognition Attendance System',
     subtitle: 'Facial Recognition Platform',
     category: 'AI/ML',
-    badge: 'AWS EC2 Pilot Deployment',
+    badge: 'Pilot Deployment',
     stack: ['Python', 'Flask', 'dlib', 'MySQL', 'AWS EC2'],
     description: [
       'Full-stack attendance system deployed on AWS EC2, reducing manual attendance-taking time by ~90% for a 3-course pilot through automated facial recognition.',
     ],
     image: '/nightfall/images/projects/facial-attendance.jpg',
     imageCaption: 'Illustrative artwork — not a product screenshot.',
-  },
-  {
-    slug: 'lora-traffic-mesh',
-    title: 'Adaptive LoRa Traffic Intersection Mesh',
-    subtitle: 'Decentralized Traffic Mesh',
-    category: 'IoT',
-    badge: 'Hardware Prototype — ESP32 & Sub-GHz LoRa',
-    stack: ['ESP32', 'LoRaWAN', 'FreeRTOS', 'C++', 'UART / SPI', 'Ad-Hoc Gossip'],
-    description: [
-      'Decentralized multi-node traffic intersection mesh dynamically coordinating signal green times via sub-GHz LoRa gossip protocol without internet connectivity.',
-      'Formulated an ad-hoc peer-to-peer coordination protocol where each intersection controller broadcasts queue density with randomized slotted ALOHA channel backoff and autonomous fail-safe fallback to fixed timing.',
-    ],
   },
 ];

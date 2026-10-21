@@ -8,7 +8,7 @@ interface ProjectsProps {
   onClearSelection?: () => void;
 }
 
-const CATEGORIES = ['All', 'AI/ML', 'Computer Vision', 'Edge AI', 'IoT', 'Research'] as const;
+const CATEGORIES = ['All', 'AI/ML', 'Computer Vision', 'Edge AI', 'Research'] as const;
 
 export const Projects: React.FC<ProjectsProps> = ({
   selectedSlug,

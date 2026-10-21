@@ -17,7 +17,7 @@ function getFilmHint(progress: number): string {
   if (progress < 0.50) return 'TRANSIT CORRIDOR // ADVANCING DOWN CATWALK';
   if (progress < 0.78) return 'SUBTERRANEAN CAVERN // CATWALK PASSAGE & WATERFALL';
   if (progress < 0.90) return 'APPROACHING COMMAND WORKSTATION PLATFORM';
-  return 'TRIPLE-MONITOR WORKSTATION // BATCOMPUTER ONLINE [E]';
+  return 'TRIPLE-MONITOR WORKSTATION // NJ-OS [E]';
 }
 
 export const HudOverlay: React.FC<HudOverlayProps> = ({
@@ -156,28 +156,6 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({
             }}
           >
             QUICK PORTFOLIO [OS] →
-          </button>
-
-          <button
-            onClick={() => {
-              if (audioEnabled) sound.playAccessBeep();
-              useStore.getState().setMode('suit-inspect');
-            }}
-            className="suit-vault-hud-btn"
-            title="Inspect 3D Warden Exoskeleton Suit Chamber"
-            style={{
-              background: 'rgba(127, 179, 138, 0.15)',
-              border: '1px solid #7fb38a',
-              color: '#7fb38a',
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '0.78rem',
-              padding: '0.4rem 0.85rem',
-              borderRadius: '3px',
-              cursor: 'pointer',
-              fontWeight: 600,
-            }}
-          >
-            🛡️ SUIT VAULT [3D]
           </button>
 
           <a

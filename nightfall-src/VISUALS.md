@@ -47,6 +47,21 @@ EXCLUDE: people, characters, text, letters, numbers, signage, logos, bat symbols
 cartoon style, plastic look, oversaturated neon, heavy lens flare, motion blur.
 ```
 
+## 3b. Review of the first generation round (checked by looking at the files, not from the generator's report)
+
+| Keyframe | Specs | Verdict |
+|---|---|---|
+| K1 gate closed | 1920×1080 ✔ | **Good. Keep.** |
+| K2 gate open | 1920×1080 ✔ | **Rejected for video use.** It is a different camera and a different door design (K1: X-braced leaves + central hub, door ≈55% of the frame; K2: side hubs, opening ≈20% of the frame). A first/last-frame clip K1→K2 would melt. Redo as an **edit of K1** (section 4, K2) |
+| K4 catwalk + waterfall + stairs | 1920×1080 ✔ | **Very good. Keep.** |
+| K5 workstation wide | 1920×1080 ✔ | **Rejected.** It has 5 monitors and a different backdrop; K6 has 3 monitors. A push-in K5→K6 would morph. Redo as a **wider version of K6** (section 4, K5) |
+| K6 workstation close-up | 1920×1080 ✔ | **Good. Keep.** 3 flat blank monitors, 4 sharp corners each, left/right ones in perspective |
+
+Lessons: (1) a generator asked to "keep the same camera" often invents a new shot, so **use the image-EDIT feature** with the previous image attached, not a fresh generation;
+(2) **count the monitors**: the site puts live panels on exactly THREE monitors (left, centre, right), so every workstation keyframe must show exactly three;
+(3) **chain clips with real frames**: extract the true last frame of each finished clip and use it as the first frame of the next clip, so the join is seamless:
+`ffmpeg -sseof -0.1 -i raw/clips/C1.mp4 -update 1 -q:v 1 raw/keyframes/C1_last.png`
+
 ## 4. KEYFRAMES (stills) → save to `nightfall-src/raw/keyframes/`
 
 Generate one at a time. For each, attach the references listed and paste WORLD BIBLE + the shot text.
@@ -64,16 +79,17 @@ trickles down the rock on the far right with a railing in the right foreground. 
 Exactly 16:9, 1920x1080 or larger. Sharp, high detail.
 ```
 
-### K2.png — gate fully open (SAME camera as K1)
-References: K1.png.
+### K2.png — gate fully open (SAME camera as K1) — USE IMAGE EDITING
+Use the generator's **edit** mode on `K1.png` (upload K1 as the image to edit). Do NOT start a fresh generation.
 ```
-[WORLD BIBLE]
-Attached image is the exact same shot. Keep camera position, lens, framing, rock, pipes, lights, railing and waterfall
-IDENTICAL, pixel-aligned. Change ONLY the door: both leaves have slid fully sideways into the wall frame, the circular hub
-split in two, hydraulic pistons extended. Through the open doorway: a short steel-lined passage, then a vast dark cavern with
-warm amber lights far away and faint mist. Warm light spills out across the wet deck with reflections; thicker steam at the
-door base. No vehicle, no people. Exactly 16:9, 1920x1080 or larger.
+Edit this exact image. Keep everything unchanged: camera position, framing, rock walls, pipes and valve wheel on the left,
+waterfall and railing on the right, the door frame, wall lights, floor, hazard stripes. Change ONLY the door: both heavy
+leaves have slid sideways into the wall recesses on each side, the circular locking hub is split in two halves (one on each
+leaf edge), the hydraulic pistons are extended. Through the now-open doorway, show a short steel-lined passage and beyond it a
+vast dark cavern with a few distant warm amber lights and faint mist. Warm light spills out across the wet deck with
+reflections; thicker steam at the door base. No vehicle, no people, no text. Output exactly 16:9, 1920x1080 or larger.
 ```
+Acceptance test: put K1 and K2 side by side: everything except the door must be identical.
 
 ### K4.png — catwalk, waterfall, stairs (the "cavern reveal")
 References: the current `raw/keyframes/K4.png` (keep its composition — it is the best frame you have) + K1.png for materials.
@@ -86,8 +102,18 @@ staircase leading up to a raised command platform with a faint glow of monitors.
 No vehicle, no people, no text on any screen. Exactly 16:9, 1920x1080 or larger.
 ```
 
-### K5.png — top of the stairs, workstation ahead (CLEAN PLATE, wide)
-References: K4.png (same cavern), K1.png (materials).
+### K5.png — top of the stairs, workstation ahead (CLEAN PLATE, wide) — BUILD IT FROM K6
+Use the generator's **edit / outpaint** mode on `K6.png`, so the monitors, desk and backdrop are identical to the final frame.
+Attach `K4.png` only as a lighting reference. The result must have EXACTLY THREE monitors (left, centre, right), like K6.
+```
+Edit this exact image. Move the camera straight back about 2.5 meters so the whole workstation fits comfortably in frame:
+the same three blank monitors (left, centre, right) on the same desk with the same keyboard and switch panels, now with
+visible floor in front of the desk and more of the rock cave and steel framework around it. Keep the same monitors, same desk,
+same backdrop, same lighting and grade; every screen stays completely blank, uniformly dark navy with a faint cyan glow, four
+sharp corners each, nothing on them. No extra monitors, no server racks, no chair, no people, no text.
+Output exactly 16:9, 1920x1080 or larger.
+```
+Older prompt (only if image editing is not available; it produced a 5-monitor set last time, so say "exactly three monitors"):
 ```
 [WORLD BIBLE]
 The camera stands on the raised command platform 3 meters from a heavy industrial computer desk, centred. Dark worn metal
@@ -120,7 +146,7 @@ Paste WORLD BIBLE first, then the clip text. If only image-to-video is available
 
 | File | First frame | Last frame | Move |
 |---|---|---|---|
-| `C1.mp4` | K1 | K2 | Locked-off: the gate opens |
+| `C1.mp4` | K1 | K2 (edited from K1) | Locked-off: the gate opens. If Veo melts it, use K1 as the first frame only and let the prompt open the door |
 | `C2.mp4` | K2 | K4 | Forward dolly through the doorway onto the catwalk |
 | `C3.mp4` | K4 | K5 | Forward along the catwalk and up the stairs onto the platform |
 | `C4.mp4` | K5 | K6 | Slow push-in to the main monitor |

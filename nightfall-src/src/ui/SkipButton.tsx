@@ -1,33 +1,17 @@
 import React from 'react';
+import { SkipForward } from 'lucide-react';
 
 interface SkipButtonProps {
   onSkip: () => void;
 }
 
-export const SkipButton: React.FC<SkipButtonProps> = ({ onSkip }) => {
-  return (
-    <button
-      onClick={onSkip}
-      className="skip-intro-btn"
-      style={{
-        position: 'fixed',
-        bottom: '3.6rem',
-        right: '1.5rem',
-        zIndex: 50,
-        background: 'rgba(14, 17, 20, 0.85)',
-        border: '1px solid rgba(232, 162, 58, 0.4)',
-        color: '#e8a23a',
-        fontFamily: "'JetBrains Mono', monospace",
-        fontSize: '0.75rem',
-        padding: '0.45rem 0.85rem',
-        borderRadius: '3px',
-        cursor: 'pointer',
-        pointerEvents: 'auto',
-        backdropFilter: 'blur(4px)',
-        transition: 'all 0.2s ease',
-      }}
-    >
-      SKIP INTRO ⏭
-    </button>
-  );
-};
+export const SkipButton: React.FC<SkipButtonProps> = ({ onSkip }) => (
+  <button
+    type="button"
+    onClick={onSkip}
+    className="skip-intro-btn pointer-events-auto fixed right-5 bottom-14 z-50 inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-ctl border border-accent/40 bg-bg-0/85 px-3 font-mono text-[0.75rem] text-accent transition-colors duration-[220ms] hover:bg-accent-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+  >
+    SKIP INTRO
+    <SkipForward className="size-3.5" aria-hidden />
+  </button>
+);

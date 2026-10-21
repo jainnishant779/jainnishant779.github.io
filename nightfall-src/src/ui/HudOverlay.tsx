@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Volume2, VolumeX } from 'lucide-react';
 import { useStore } from '../state/store';
 import { getCVUrl } from '../lib/assets';
 import { sound } from '../lib/sound';
+import { cn } from '@/lib/utils';
+import { ShimmerButton } from '@/components/ui/shimmer-button';
 import { SkipButton } from './SkipButton';
 
 interface HudOverlayProps {
@@ -20,297 +23,119 @@ function getFilmHint(progress: number, gateEnd: number): string {
   return 'TRIPLE-MONITOR WORKSTATION // NJ-OS [E]';
 }
 
-export const HudOverlay: React.FC<HudOverlayProps> = ({
-  onOpenOS,
-  onSkipIntro,
-  onAccessFacility,
-}) => {
+// Solid (not blurred) chips: a backdrop blur over the scrubbing film canvas costs frames.
+const chip =
+  'pointer-events-auto inline-flex min-h-9 items-center gap-1.5 rounded-ctl border px-3 font-mono text-[0.76rem] font-semibold no-underline transition-colors duration-[220ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent';
+
+export const HudOverlay: React.FC<HudOverlayProps> = ({ onOpenOS, onSkipIntro, onAccessFacility }) => {
   const progress = useStore((state) => state.progress);
   const audioEnabled = useStore((state) => state.audioEnabled);
   const setAudioEnabled = useStore((state) => state.setAudioEnabled);
+  const gateEnd = useStore((state) => state.gateEnd);
   const cvUrl = getCVUrl();
 
   const showAccessButton = progress < 0.06;
-  const gateEnd = useStore((state) => state.gateEnd);
   const activeHint = getFilmHint(progress, gateEnd);
+  const percent = Math.round(progress * 100);
 
   const handleToggleAudio = () => {
-    const nextState = !audioEnabled;
     sound.initContext();
     sound.playUiClick();
-    setAudioEnabled(nextState);
+    setAudioEnabled(!audioEnabled);
   };
 
   return (
-    <div
-      className="hud-overlay"
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        pointerEvents: 'none',
-        zIndex: 40,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        padding: '1.25rem',
-        boxSizing: 'border-box',
-        userSelect: 'none',
-      }}
-    >
-      {/* Top HUD Bar */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          pointerEvents: 'auto',
-          flexWrap: 'wrap',
-          gap: '0.75rem',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div
-            style={{
-              width: '28px',
-              height: '28px',
-              borderRadius: '3px',
-              border: '1.5px solid #e8a23a',
-              backgroundColor: 'rgba(232, 162, 58, 0.15)',
-              color: '#e8a23a',
-              fontFamily: "'Space Grotesk', serif",
-              fontWeight: 800,
-              fontSize: '1.1rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 0 10px rgba(232, 162, 58, 0.35)',
-              flexShrink: 0,
-            }}
-          >
+    <div className="hud-overlay pointer-events-none fixed inset-0 z-40 flex flex-col justify-between p-4 select-none sm:p-5">
+      {/* Legibility scrims: the film is bright at the top (lamps) and the bottom (wet floor) */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/60 to-transparent" aria-hidden />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/75 to-transparent" aria-hidden />
+
+      <div className="relative flex flex-wrap items-center justify-between gap-3">
+        <div className="pointer-events-auto flex items-center gap-3">
+          <div className="flex size-7 shrink-0 items-center justify-center rounded-chip border-[1.5px] border-accent bg-accent-soft font-display text-[1.1rem] font-extrabold text-accent shadow-[0_0_10px_rgba(232,162,58,0.35)]">
             N
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
-            <div
-              style={{
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                color: '#e6e2d8',
-                letterSpacing: '0.05em',
-              }}
-            >
-              THE ENGINEER'S CAVE
-            </div>
-            <div
-              style={{
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: '0.7rem',
-                color: '#e8a23a',
-              }}
-            >
-              NISHANT JAIN // AI/ML · EDGE AI · COMPUTER VISION
-            </div>
+          <div className="flex flex-col gap-0.5 font-mono">
+            <div className="text-[0.85rem] font-bold tracking-[0.05em] text-text-1">THE ENGINEER&apos;S CAVE</div>
+            <div className="text-[0.7rem] text-accent">NISHANT JAIN // AI/ML · EDGE AI · COMPUTER VISION</div>
           </div>
         </div>
 
-        {/* Permanent Quick Navigation Shortcuts & Audio Toggle */}
-        <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div className="flex flex-wrap items-center gap-2">
           <button
+            type="button"
             onClick={handleToggleAudio}
-            className="audio-toggle-btn"
+            className={cn(
+              chip,
+              'audio-toggle-btn cursor-pointer',
+              audioEnabled ? 'border-accent bg-accent-soft text-accent' : 'border-line-strong bg-bg-0/85 text-text-2 hover:text-text-1',
+            )}
             title={audioEnabled ? 'Mute audio' : 'Enable facility audio effects'}
-            style={{
-              background: audioEnabled ? 'rgba(232, 162, 58, 0.15)' : 'rgba(14, 17, 20, 0.85)',
-              border: `1px solid ${audioEnabled ? '#e8a23a' : '#2a3038'}`,
-              color: audioEnabled ? '#e8a23a' : '#9e9a8e',
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '0.76rem',
-              padding: '0.4rem 0.65rem',
-              borderRadius: '3px',
-              cursor: 'pointer',
-              fontWeight: 600,
-            }}
           >
-            {audioEnabled ? '🔊 AUDIO ON' : '🔇 AUDIO OFF'}
+            {audioEnabled ? <Volume2 className="size-4" aria-hidden /> : <VolumeX className="size-4" aria-hidden />}
+            {audioEnabled ? 'AUDIO ON' : 'AUDIO OFF'}
           </button>
 
           <button
+            type="button"
             onClick={() => {
               if (audioEnabled) sound.playBootHum();
               onOpenOS();
             }}
-            className="quick-portfolio-btn"
+            className={cn(chip, 'quick-portfolio-btn cursor-pointer border-accent bg-bg-0/90 text-accent hover:bg-accent hover:text-bg-0')}
             title="Open Quick Portfolio / NJ-OS Command Center"
-            style={{
-              background: 'rgba(232, 162, 58, 0.15)',
-              border: '1px solid #e8a23a',
-              color: '#e8a23a',
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '0.78rem',
-              padding: '0.4rem 0.85rem',
-              borderRadius: '3px',
-              cursor: 'pointer',
-              fontWeight: 600,
-            }}
           >
             QUICK PORTFOLIO [OS] →
           </button>
 
-          <a
-            href={cvUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              background: 'rgba(14, 17, 20, 0.85)',
-              border: '1px solid #2a3038',
-              color: '#e6e2d8',
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '0.78rem',
-              padding: '0.4rem 0.75rem',
-              borderRadius: '3px',
-              textDecoration: 'none',
-            }}
-          >
+          <a href={cvUrl} target="_blank" rel="noopener noreferrer" className={cn(chip, 'border-line-strong bg-bg-0/85 text-text-1 hover:border-accent/50')}>
             CV ↗
           </a>
 
-          <Link
-            to="/contact"
-            style={{
-              background: 'rgba(14, 17, 20, 0.85)',
-              border: '1px solid #2a3038',
-              color: '#9e9a8e',
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '0.78rem',
-              padding: '0.4rem 0.75rem',
-              borderRadius: '3px',
-              textDecoration: 'none',
-            }}
-          >
+          <Link to="/contact" className={cn(chip, 'border-line-strong bg-bg-0/85 text-text-2 hover:border-accent/50 hover:text-text-1')}>
             CONTACT
           </Link>
         </div>
       </div>
 
-      {/* Center Dynamic Interaction Prompt / Access Facility Button */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          pointerEvents: showAccessButton ? 'auto' : 'none',
-        }}
-      >
+      {/* Gate prompt */}
+      <div className={cn('relative flex items-center justify-center', showAccessButton ? 'pointer-events-auto' : 'pointer-events-none')}>
         {showAccessButton && (
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '0.65rem',
-            }}
-          >
-            <div
-              style={{
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: '0.72rem',
-                color: '#e8a23a',
-                letterSpacing: '0.12em',
-                background: 'rgba(7, 8, 10, 0.88)',
-                padding: '0.25rem 0.75rem',
-                borderRadius: '3px',
-                border: '1px solid rgba(232, 162, 58, 0.45)',
-                boxShadow: '0 0 15px rgba(232, 162, 58, 0.25)',
-              }}
-            >
-              // SUBTERRANEAN HEADQUARTERS BLAST DOOR
+          <div className="flex flex-col items-center gap-2.5">
+            <div className="rounded-chip border border-accent/45 bg-bg-0/90 px-3 py-1 font-mono text-[0.72rem] tracking-[0.12em] text-accent shadow-[0_0_15px_rgba(232,162,58,0.25)]">
+              {'// SUBTERRANEAN HEADQUARTERS BLAST DOOR'}
             </div>
-            <button
+            <ShimmerButton
+              type="button"
               onClick={onAccessFacility}
-              className="access-facility-btn"
-              style={{
-                background: 'rgba(7, 8, 10, 0.94)',
-                border: '2px solid #e8a23a',
-                color: '#e8a23a',
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: '0.94rem',
-                fontWeight: 700,
-                letterSpacing: '0.08em',
-                padding: '0.85rem 2.4rem',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                boxShadow: '0 0 30px rgba(232, 162, 58, 0.45)',
-                transition: 'all 0.2s ease',
-              }}
+              borderRadius="6px"
+              background="rgba(5, 6, 7, 0.94)"
+              shimmerDuration="2.8s"
+              className="access-facility-btn min-h-12 cursor-pointer border-2 border-accent px-8 py-3 font-mono text-[0.94rem] font-bold tracking-[0.08em] text-accent shadow-[0_0_30px_rgba(232,162,58,0.45)]"
             >
               ACCESS THE FACILITY ▾
-            </button>
-            <div
-              style={{
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: '0.68rem',
-                color: '#9e9a8e',
-                letterSpacing: '0.06em',
-                textShadow: '0 1px 3px rgba(0,0,0,0.8)',
-              }}
-            >
+            </ShimmerButton>
+            <div className="font-mono text-[0.68rem] tracking-[0.06em] text-text-2 [text-shadow:0_1px_3px_rgba(0,0,0,0.9)]">
               CLICK TO UNLOCK OR SCROLL DOWN
             </div>
           </div>
         )}
       </div>
 
-      {/* Bottom HUD Bar & Progress */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0.5rem',
-          pointerEvents: 'auto',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: '0.72rem',
-            color: '#9e9a8e',
-          }}
-        >
-          <span>{activeHint}</span>
-          <span style={{ color: '#e8a23a' }}>
-            {`${Math.round(progress * 100)}% FACILITY DEPTH`}
-          </span>
+      {/* Bottom bar: what the camera is doing + depth */}
+      <div className="pointer-events-auto relative flex flex-col gap-2">
+        <div className="flex items-center justify-between gap-4 font-mono text-[0.72rem] text-text-2 [text-shadow:0_1px_3px_rgba(0,0,0,0.9)]">
+          <span className="min-w-0 truncate">{activeHint}</span>
+          <span className="shrink-0 text-accent">{`${percent}% FACILITY DEPTH`}</span>
         </div>
-
-        {/* Thin amber progress line */}
-        <div
-          style={{
-            width: '100%',
-            height: '2px',
-            background: 'rgba(30, 34, 40, 0.8)',
-            position: 'relative',
-            borderRadius: '1px',
-            overflow: 'hidden',
-          }}
-        >
+        <div className="relative h-0.5 w-full overflow-hidden rounded-full bg-white/10">
           <div
-            style={{
-              width: `${Math.round(progress * 100)}%`,
-              height: '100%',
-              background: '#e8a23a',
-              transition: 'width 0.1s linear',
-            }}
+            className="absolute inset-0 origin-left bg-accent transition-transform duration-100 ease-linear"
+            style={{ transform: `scaleX(${percent / 100})` }}
           />
         </div>
       </div>
 
-      {/* Skip button for intro phase */}
       {progress < 0.85 && <SkipButton onSkip={onSkipIntro} />}
     </div>
   );

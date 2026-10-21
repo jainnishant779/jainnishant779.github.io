@@ -45,7 +45,6 @@ export const FilmPlayer: React.FC<FilmPlayerProps> = ({ onOpenOS }) => {
 
   const nativeDims = manifest ? (isMobile ? manifest.mobile : manifest.desktop) : { width: 1600, height: 900 };
   const nativeW = nativeDims.width;
-  const nativeH = nativeDims.height;
   const hold = manifest?.holdEnd ?? 0;
 
   // Where the gate finishes opening, as a scroll progress (used by "ACCESS THE FACILITY" and the HUD hints)
@@ -181,7 +180,7 @@ export const FilmPlayer: React.FC<FilmPlayerProps> = ({ onOpenOS }) => {
       const vw = window.innerWidth;
       const vh = window.innerHeight;
       const center = manifest.screens?.center ?? manifest.screenQuad;
-      const quad = getCoverQuadInViewport(center, nativeW, nativeH, vw, vh);
+      const quad = getCoverQuadInViewport(center, manifest.desktop.width, manifest.desktop.height, vw, vh);
       const xs = quad.map((p) => p[0]);
       const ys = quad.map((p) => p[1]);
       const minX = Math.min(...xs);
@@ -193,7 +192,7 @@ export const FilmPlayer: React.FC<FilmPlayerProps> = ({ onOpenOS }) => {
       window.clearTimeout(zoomTimer.current);
       zoomTimer.current = window.setTimeout(() => onOpenOS(module, slug), ZOOM_MS - 60);
     },
-    [manifest, nativeW, nativeH, onOpenOS],
+    [manifest, onOpenOS],
   );
 
   // When the OS closes, zoom back out of the monitor.
@@ -248,8 +247,10 @@ export const FilmPlayer: React.FC<FilmPlayerProps> = ({ onOpenOS }) => {
             visible={terminalVisible}
             rawQuad={manifest.screenQuad}
             screens={manifest.screens}
-            nativeWidth={nativeW}
-            nativeHeight={nativeH}
+            // The monitor quads are measured on the 1600x900 desktop frames; the mobile frames have the same aspect ratio,
+            // so cover-fit geometry must use the desktop size or the panels drift off their monitors on phones.
+            nativeWidth={manifest.desktop.width}
+            nativeHeight={manifest.desktop.height}
             onOpenOS={handleOpenOS}
           />
         )}

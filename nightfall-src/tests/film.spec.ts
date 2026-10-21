@@ -12,8 +12,38 @@ test.describe('Photorealistic Scroll Film Engine & Perspective Quad', () => {
     expect(manifest.desktop.height).toBe(900);
     expect(manifest.mobile.width).toBe(960);
     expect(manifest.mobile.height).toBe(540);
-    expect(manifest.segments.length).toBeGreaterThanOrEqual(4);
+    expect(manifest.segments.length).toBeGreaterThanOrEqual(3); // one per storyboard clip (gate, catwalk, workstation)
+    for (const seg of manifest.segments) {
+      expect(seg.start).toBeGreaterThanOrEqual(0);
+      expect(seg.end).toBeLessThan(manifest.count);
+      expect(seg.end).toBeGreaterThan(seg.start);
+    }
+    expect(manifest.holdEnd).toBeGreaterThanOrEqual(0);
+    expect(manifest.holdEnd).toBeLessThan(0.2);
     expect(manifest.screenQuad.length).toBe(4);
+
+    // Exactly `count` frames exist: the last one is there, and there is no stale frame after it
+    const last = String(manifest.count - 1).padStart(4, '0');
+    const beyond = String(manifest.count).padStart(4, '0');
+    expect((await request.get(`film/desktop/f_${last}.webp`)).status()).toBe(200);
+    expect((await request.get(`film/mobile/f_${last}.webp`)).status()).toBe(200);
+    expect((await request.get(`film/desktop/f_${beyond}.webp`)).headers()['content-type'] ?? '').not.toContain('webp');
+
+    // Calibrated monitors (public/film/screens.json): three quads of four corners, inside the frame
+    const screensRes = await request.get('film/screens.json');
+    expect(screensRes.status()).toBe(200);
+    const screens = await screensRes.json();
+    for (const key of ['left', 'center', 'right']) {
+      expect(screens[key]).toHaveLength(4);
+      for (const [x, y] of screens[key]) {
+        expect(x).toBeGreaterThanOrEqual(0);
+        expect(x).toBeLessThanOrEqual(manifest.desktop.width);
+        expect(y).toBeGreaterThanOrEqual(0);
+        expect(y).toBeLessThanOrEqual(manifest.desktop.height);
+      }
+    }
+    expect(screens.left[0][0]).toBeLessThan(screens.center[0][0]);
+    expect(screens.center[0][0]).toBeLessThan(screens.right[0][0]);
 
     // Initial desktop frame returns 200 OK
     const frame0Res = await request.get('film/desktop/f_0000.webp');

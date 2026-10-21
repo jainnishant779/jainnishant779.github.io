@@ -1,0 +1,9 @@
+{
+  "holdEnd": 0.06,
+  "delogo": { "cx": 0.906, "cy": 0.833, "size": 0.043 },
+  "clips": [
+    { "file": "C1.mp4", "fps": 9 },
+    { "file": "C3.mp4", "start": 0, "end": 5.2, "fadeIn": 1.0 },
+    { "file": "C4.mp4", "fadeIn": 1.0 }
+  ]
+}

@@ -40,11 +40,20 @@ export const FilmPlayer: React.FC<FilmPlayerProps> = ({ onOpenOS }) => {
   const [zoom, setZoom] = useState<{ tx: number; ty: number; s: number } | null>(null);
   const targetProgressRef = useRef(0);
   const setStoreProgress = useStore((state) => state.setProgress);
+  const setGateEnd = useStore((state) => state.setGateEnd);
   const osOpen = useStore((state) => state.osOpen);
 
   const nativeDims = manifest ? (isMobile ? manifest.mobile : manifest.desktop) : { width: 1600, height: 900 };
   const nativeW = nativeDims.width;
   const nativeH = nativeDims.height;
+  const hold = manifest?.holdEnd ?? 0;
+
+  // Where the gate finishes opening, as a scroll progress (used by "ACCESS THE FACILITY" and the HUD hints)
+  useEffect(() => {
+    if (!manifest || manifest.count < 2) return;
+    const gate = manifest.segments?.[0];
+    if (gate) setGateEnd(Math.min(0.9, (gate.end / (manifest.count - 1)) * (1 - hold)));
+  }, [manifest, hold, setGateEnd]);
 
   // Scroll position -> target progress (the render loop eases toward it)
   useEffect(() => {
@@ -102,7 +111,9 @@ export const FilmPlayer: React.FC<FilmPlayerProps> = ({ onOpenOS }) => {
         setStoreProgress(step / 100);
       }
 
-      const position = current * (totalFrames - 1);
+      // The last `hold` of the scroll keeps the final frame still, so the live OS panels stay aligned on it.
+      const filmProgress = hold > 0 ? Math.min(1, current / (1 - hold)) : current;
+      const position = filmProgress * (totalFrames - 1);
       const base = Math.min(totalFrames - 1, Math.max(0, Math.floor(position)));
       const frac = reduced || base >= totalFrames - 1 ? 0 : position - base;
       const bucket = Math.round(frac * BLEND_STEPS);
@@ -112,7 +123,7 @@ export const FilmPlayer: React.FC<FilmPlayerProps> = ({ onOpenOS }) => {
         lastPrefetchBase = base;
       }
 
-      const visible = base >= totalFrames - 40 || current >= 0.8;
+      const visible = hold > 0 ? current >= 1 - hold - 0.001 : base >= totalFrames - 40 || current >= 0.8;
       if (visible !== lastVisible) {
         lastVisible = visible;
         setTerminalVisible(visible);
@@ -155,7 +166,7 @@ export const FilmPlayer: React.FC<FilmPlayerProps> = ({ onOpenOS }) => {
       cancelAnimationFrame(raf);
       mq.removeEventListener('change', onMotionChange);
     };
-  }, [ready, totalFrames, nativeW, getFrame, getFrameExact, prefetch, setStoreProgress]);
+  }, [ready, totalFrames, nativeW, hold, getFrame, getFrameExact, prefetch, setStoreProgress]);
 
   // Zoom the camera into the central monitor, then open the OS once the move is nearly done.
   const zoomTimer = useRef<number | undefined>(undefined);

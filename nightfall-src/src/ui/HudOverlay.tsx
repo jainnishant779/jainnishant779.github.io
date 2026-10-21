@@ -11,9 +11,9 @@ interface HudOverlayProps {
   onAccessFacility: () => void;
 }
 
-function getFilmHint(progress: number): string {
+function getFilmHint(progress: number, gateEnd: number): string {
   if (progress < 0.05) return 'FACILITY VAULT ENTRANCE // SECURITY BLAST DOOR LOCKED';
-  if (progress < 0.20) return 'HYDRAULIC GATES UNLATCHING // BREACHING INTERIOR CAVERN';
+  if (progress < gateEnd) return 'HYDRAULIC GATES UNLATCHING // BREACHING INTERIOR CAVERN';
   if (progress < 0.50) return 'TRANSIT CORRIDOR // ADVANCING DOWN CATWALK';
   if (progress < 0.78) return 'SUBTERRANEAN CAVERN // CATWALK PASSAGE & WATERFALL';
   if (progress < 0.90) return 'APPROACHING COMMAND WORKSTATION PLATFORM';
@@ -31,7 +31,8 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({
   const cvUrl = getCVUrl();
 
   const showAccessButton = progress < 0.06;
-  const activeHint = getFilmHint(progress);
+  const gateEnd = useStore((state) => state.gateEnd);
+  const activeHint = getFilmHint(progress, gateEnd);
 
   const handleToggleAudio = () => {
     const nextState = !audioEnabled;

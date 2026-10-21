@@ -14,6 +14,10 @@ export interface AppState {
   progress: number;
   setProgress: (p: number) => void;
 
+  // Scroll progress at which the gate is fully open (derived from the film manifest)
+  gateEnd: number;
+  setGateEnd: (p: number) => void;
+
   // OS overlay
   osOpen: boolean;
   setOsOpen: (open: boolean) => void;
@@ -47,6 +51,9 @@ export const useStore = create<AppState>((set) => ({
 
   progress: 0,
   setProgress: (progress) => set({ progress }),
+
+  gateEnd: 0.2,
+  setGateEnd: (gateEnd) => set({ gateEnd }),
 
   osOpen: false,
   setOsOpen: (osOpen) => set({ osOpen }),

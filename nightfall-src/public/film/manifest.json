@@ -1,5 +1,5 @@
 {
-  "count": 240,
+  "count": 206,
   "fps": 12,
   "desktop": {
     "width": 1600,
@@ -13,26 +13,22 @@
   },
   "segments": [
     {
-      "id": "gate",
+      "id": "C1",
       "start": 0,
-      "end": 48
+      "end": 71
     },
     {
-      "id": "walk",
-      "start": 48,
-      "end": 144
+      "id": "C3",
+      "start": 60,
+      "end": 121
     },
     {
-      "id": "approach",
-      "start": 144,
-      "end": 192
-    },
-    {
-      "id": "terminal",
-      "start": 192,
-      "end": 239
+      "id": "C4",
+      "start": 110,
+      "end": 205
     }
   ],
+  "holdEnd": 0.06,
   "screenQuad": [
     [
       492,

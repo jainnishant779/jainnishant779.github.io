@@ -29,6 +29,8 @@ export interface FilmManifest {
   };
   segments: FilmSegment[];
   screenQuad: Quad;
+  /** Fraction of the scroll, at the end, that holds the final frame still (the live OS panels sit on it). */
+  holdEnd?: number;
   /** Filled from public/film/screens.json when it exists (see the /calibrate page). */
   screens?: ScreenQuads;
 }

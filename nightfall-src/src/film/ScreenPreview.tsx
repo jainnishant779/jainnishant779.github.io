@@ -73,6 +73,18 @@ const RIGHT_MONITOR_QUAD: Quad = [
   [1116, 730],
 ];
 
+/** Width in CSS px at which each panel is laid out before being warped onto its monitor. */
+const CENTER_DESIGN_W = 820;
+const SIDE_DESIGN_W = 580;
+
+/** Panel size for a monitor quad: the given width, with the height that matches the monitor's real aspect ratio. */
+function designSize(quad: Quad, baseWidth: number): { w: number; h: number } {
+  const len = (a: number[], b: number[]) => Math.hypot(b[0] - a[0], b[1] - a[1]);
+  const width = (len(quad[0], quad[1]) + len(quad[3], quad[2])) / 2;
+  const height = (len(quad[0], quad[3]) + len(quad[1], quad[2])) / 2;
+  return { w: baseWidth, h: Math.round(baseWidth * (height / width)) };
+}
+
 interface ScreenPreviewProps {
   visible: boolean;
   rawQuad: Quad;
@@ -115,44 +127,43 @@ const ScreenPreviewInner: React.FC<ScreenPreviewProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Compute CSS matrix3d for LEFT MONITOR (src: 600 x 380)
-  const leftTransform = useMemo(() => {
-    const quadInViewport = getCoverQuadInViewport(
-      screens?.left ?? LEFT_MONITOR_QUAD,
-      nativeWidth,
-      nativeHeight,
-      viewport.w,
-      viewport.h
-    );
-    return getQuadMatrix3d(600, 388, quadInViewport);
-  }, [screens, nativeWidth, nativeHeight, viewport]);
+  // Monitor quads in frame pixels. Each panel's design size follows its monitor's real aspect ratio, so text is not stretched.
+  const leftQuad = screens?.left ?? LEFT_MONITOR_QUAD;
+  const centerQuad: Quad =
+    screens?.center ?? (rawQuad && rawQuad.length === 4 && rawQuad[0][0] > 0 ? rawQuad : CENTER_MONITOR_QUAD);
+  const rightQuad = screens?.right ?? RIGHT_MONITOR_QUAD;
 
-  // Compute CSS matrix3d for CENTER MONITOR (src: 880 x 620)
-  const centerTransform = useMemo(() => {
-    const quadToUse: Quad =
-      screens?.center ??
-      (rawQuad && rawQuad.length === 4 && rawQuad[0][0] > 0 ? rawQuad : CENTER_MONITOR_QUAD);
-    const quadInViewport = getCoverQuadInViewport(
-      quadToUse,
-      nativeWidth,
-      nativeHeight,
-      viewport.w,
-      viewport.h
-    );
-    return getQuadMatrix3d(880, 620, quadInViewport);
-  }, [screens, rawQuad, nativeWidth, nativeHeight, viewport]);
+  const leftSize = useMemo(() => designSize(leftQuad, SIDE_DESIGN_W), [leftQuad]);
+  const centerSize = useMemo(() => designSize(centerQuad, CENTER_DESIGN_W), [centerQuad]);
+  const rightSize = useMemo(() => designSize(rightQuad, SIDE_DESIGN_W), [rightQuad]);
 
-  // Compute CSS matrix3d for RIGHT MONITOR (src: 600 x 388)
-  const rightTransform = useMemo(() => {
-    const quadInViewport = getCoverQuadInViewport(
-      screens?.right ?? RIGHT_MONITOR_QUAD,
-      nativeWidth,
-      nativeHeight,
-      viewport.w,
-      viewport.h
-    );
-    return getQuadMatrix3d(600, 388, quadInViewport);
-  }, [screens, nativeWidth, nativeHeight, viewport]);
+  const leftTransform = useMemo(
+    () =>
+      getQuadMatrix3d(
+        leftSize.w,
+        leftSize.h,
+        getCoverQuadInViewport(leftQuad, nativeWidth, nativeHeight, viewport.w, viewport.h),
+      ),
+    [leftQuad, leftSize, nativeWidth, nativeHeight, viewport],
+  );
+  const centerTransform = useMemo(
+    () =>
+      getQuadMatrix3d(
+        centerSize.w,
+        centerSize.h,
+        getCoverQuadInViewport(centerQuad, nativeWidth, nativeHeight, viewport.w, viewport.h),
+      ),
+    [centerQuad, centerSize, nativeWidth, nativeHeight, viewport],
+  );
+  const rightTransform = useMemo(
+    () =>
+      getQuadMatrix3d(
+        rightSize.w,
+        rightSize.h,
+        getCoverQuadInViewport(rightQuad, nativeWidth, nativeHeight, viewport.w, viewport.h),
+      ),
+    [rightQuad, rightSize, nativeWidth, nativeHeight, viewport],
+  );
 
   // Active project data for in-place dossier
   const activeProject = useMemo(() => {
@@ -253,8 +264,8 @@ const ScreenPreviewInner: React.FC<ScreenPreviewProps> = ({
             position: 'absolute',
             top: 0,
             left: 0,
-            width: 600,
-            height: 388,
+            width: leftSize.w,
+            height: leftSize.h,
             transformOrigin: '0 0',
             transform: leftTransform,
             backgroundColor: '#070b12',
@@ -370,8 +381,8 @@ const ScreenPreviewInner: React.FC<ScreenPreviewProps> = ({
             position: 'absolute',
             top: 0,
             left: 0,
-            width: 880,
-            height: 620,
+            width: centerSize.w,
+            height: centerSize.h,
             transformOrigin: '0 0',
             transform: centerTransform,
             backgroundColor: '#070b12',
@@ -722,8 +733,8 @@ const ScreenPreviewInner: React.FC<ScreenPreviewProps> = ({
             position: 'absolute',
             top: 0,
             left: 0,
-            width: 600,
-            height: 388,
+            width: rightSize.w,
+            height: rightSize.h,
             transformOrigin: '0 0',
             transform: rightTransform,
             backgroundColor: '#070b12',

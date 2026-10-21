@@ -107,13 +107,14 @@ export const HomePage: React.FC = () => {
     setOsOpen(true);
   }, [setOsOpen]);
 
-  // Access facility handler: unlatches the massive blast door and scrolls to threshold (0.20)
+  // Access facility handler: unlatches the massive blast door and scrolls to where the gate is fully open
   const handleAccessFacility = useCallback(() => {
     sound.initContext();
     sound.playAccessBeep();
     setTimeout(() => sound.playMechanicalClunk(), 120);
     setTimeout(() => sound.playPneumaticHiss(), 380);
     useStore.getState().setAudioEnabled(true);
+    const gateEnd = useStore.getState().gateEnd;
 
     const doc = document.documentElement;
     const scrollHeight = Math.max(doc.scrollHeight, document.body.scrollHeight) - window.innerHeight;
@@ -122,7 +123,7 @@ export const HomePage: React.FC = () => {
       setFadeScreen(true);
       setTimeout(() => {
         window.scrollTo({
-          top: scrollHeight * 0.20,
+          top: scrollHeight * gateEnd,
           behavior: 'auto',
         });
         setTimeout(() => {
@@ -132,10 +133,10 @@ export const HomePage: React.FC = () => {
     } else {
       const lenis = (window as any).__lenis;
       if (lenis) {
-        lenis.scrollTo(scrollHeight * 0.20, { duration: 2.2 });
+        lenis.scrollTo(scrollHeight * gateEnd, { duration: 2.2 });
       } else {
         window.scrollTo({
-          top: scrollHeight * 0.20,
+          top: scrollHeight * gateEnd,
           behavior: 'smooth',
         });
       }

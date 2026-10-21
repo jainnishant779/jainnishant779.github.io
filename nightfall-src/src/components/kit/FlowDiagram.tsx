@@ -21,7 +21,7 @@ export function FlowDiagram({ flow, compact = false, className }: FlowDiagramPro
     <div className={cn('flex flex-col gap-3', className)} data-testid="flow-diagram">
       <div
         ref={container}
-        className={cn('relative grid gap-x-3 gap-y-6', compact ? 'p-2' : 'p-4')}
+        className={cn('relative grid gap-y-6', compact ? 'gap-x-4 p-2' : 'gap-x-9 p-4')}
         style={{ gridTemplateColumns: `repeat(${flow.cols}, minmax(0, 1fr))` }}
         role="group"
         aria-label={flow.title}

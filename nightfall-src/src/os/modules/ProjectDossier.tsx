@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
+import { FlowDiagram } from '@/components/kit/FlowDiagram';
+import { getFlow } from '@/content/diagrams';
 import { Project } from '../../content/types';
-import { EdgeDeskDiagram } from '../diagrams/EdgeDeskDiagram';
-import { CrowdDiagram } from '../diagrams/CrowdDiagram';
-import { PoultryHealthDiagram } from '../diagrams/PoultryHealthDiagram';
-import { FacialAttendanceDiagram } from '../diagrams/FacialAttendanceDiagram';
-import { OnDeviceAiDiagram } from '../diagrams/OnDeviceAiDiagram';
 import { sound } from '../../lib/sound';
 
 interface ProjectDossierProps {
@@ -211,11 +208,7 @@ export const ProjectDossier: React.FC<ProjectDossierProps> = ({ project, onBack 
             Built from the project description. Click any block to read what it does.
           </p>
 
-          {project.slug === 'edgedesk' && <EdgeDeskDiagram />}
-          {project.slug === 'crowd-analytics' && <CrowdDiagram />}
-          {project.slug === 'poultry-health-ai' && <PoultryHealthDiagram />}
-          {project.slug === 'facial-attendance' && <FacialAttendanceDiagram />}
-          {project.slug === 'on-device-ai' && <OnDeviceAiDiagram />}
+          {getFlow(project.slug) && <FlowDiagram key={project.slug} flow={getFlow(project.slug)!} />}
         </div>
       )}
     </div>

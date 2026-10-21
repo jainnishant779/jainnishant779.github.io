@@ -123,7 +123,9 @@ export const FilmPlayer: React.FC<FilmPlayerProps> = ({ onOpenOS }) => {
         lastPrefetchBase = base;
       }
 
-      const visible = hold > 0 ? current >= 1 - hold - 0.001 : base >= totalFrames - 40 || current >= 0.8;
+      // The panels are placed on the final frame, so they only appear once that exact frame is on the canvas
+      // (a fast jump to the end can otherwise show them over a half-decoded earlier frame).
+      const visible = hold > 0 ? current >= 1 - hold - 0.001 && drawn.base === totalFrames - 1 : base >= totalFrames - 40 || current >= 0.8;
       if (visible !== lastVisible) {
         lastVisible = visible;
         setTerminalVisible(visible);

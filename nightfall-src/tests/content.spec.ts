@@ -110,10 +110,14 @@ test.describe('Content guard — no invented or out-of-scope content', () => {
     await expect(quad).toBeVisible({ timeout: 15000 });
     text += '\n' + (await quad.innerText());
 
-    for (const tab of ['STACK', 'NETWORK']) {
-      await page.locator(`.workstation-left-screen button:has-text("${tab}")`).first().click();
-      text += '\n' + (await page.locator('.workstation-left-screen').innerText());
+    // Left monitor is a terminal: every command answers from the content, so run them all.
+    const term = page.locator('.workstation-left-screen input[aria-label="Terminal input"]');
+    for (const cmd of ['help', 'whoami', 'neofetch', 'about', 'projects', 'open 1', 'skills', 'experience', 'achievements', 'contact', 'cv', 'ls', 'sudo hire nishant', 'nonsense']) {
+      await term.fill(cmd);
+      await term.press('Enter');
+      await page.waitForTimeout(60);
     }
+    text += '\n' + (await page.locator('.workstation-left-screen').innerText());
     for (const tab of ['EXPERIENCE', 'HONORS']) {
       await page.locator(`.workstation-right-screen button:has-text("${tab}")`).first().click();
       text += '\n' + (await page.locator('.workstation-right-screen').innerText());

@@ -112,7 +112,7 @@ test.describe('Photorealistic Scroll Film Engine & Perspective Quad', () => {
     const quadContainer = page.locator('.film-screen-quad-container');
     await expect(quadContainer).toBeVisible({ timeout: 10000 });
     await expect(quadContainer).toContainText('NISHANT JAIN');
-    await expect(quadContainer).toContainText('NJ-OS');
+    await expect(quadContainer).toContainText('ACCESS COMPUTER WORKSTATION');
 
     // Click CTA to trigger zoom and launch OS
     const ctaBtn = page.locator('.workstation-access-btn');

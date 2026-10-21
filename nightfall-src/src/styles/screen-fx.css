@@ -1,0 +1,52 @@
+/* On-monitor screen effects: scanlines, vignette, glass reflection, power-on flicker.
+ * Decoration only (pointer-events: none) so the live HTML on the monitors stays crisp and clickable. */
+.screen-scanlines {
+  /* No mix-blend-mode here: blending a warped layer against the film canvas costs ~1 dropped frame in 6. */
+  background: repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 3px);
+}
+
+.screen-rim-main {
+  box-shadow: 0 0 35px rgba(232, 162, 58, 0.35), inset 0 0 45px rgba(0, 0, 0, 0.9);
+}
+
+.screen-rim-side {
+  box-shadow: 0 0 25px rgba(80, 180, 255, 0.25), inset 0 0 35px rgba(0, 0, 0, 0.9);
+}
+
+.screen-vignette {
+  background: radial-gradient(ellipse at center, transparent 58%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+.screen-glass {
+  background: linear-gradient(115deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0) 38%);
+}
+
+@keyframes screen-power-on {
+  0% { opacity: 0; filter: brightness(3) contrast(1.6); transform: scaleY(0.03); }
+  14% { opacity: 1; transform: scaleY(1); }
+  22% { filter: brightness(2.2); }
+  34% { filter: brightness(0.7); }
+  48% { filter: brightness(1.5); }
+  100% { filter: brightness(1); }
+}
+
+.screen-power-on {
+  animation: screen-power-on 720ms ease-out both;
+  transform-origin: center;
+}
+
+@keyframes screen-caret {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+.screen-caret {
+  animation: screen-caret 1s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .screen-power-on,
+  .screen-caret {
+    animation: none;
+  }
+}

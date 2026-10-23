@@ -498,10 +498,20 @@
           <span class="w-1.5 h-1.5 rounded-full bg-accent nav-dot hidden" aria-hidden="true"></span>
           <span>Contact</span>
         </a>
+        <a href="/nightfall/" class="nav-item text-accent hover:text-white flex items-center gap-1.5 font-mono-tech font-bold tracking-wide" title="Launch Batcave / Nightfall Experience">
+          <span>🦇 Batcave</span>
+        </a>
       </nav>
 
-      <!-- Right Controls: Recruiter Brief, SFX Toggle, ⌘K Terminal, & Let's Connect CTA -->
+      <!-- Right Controls: Batcave CTA, Recruiter Brief, SFX Toggle, ⌘K Terminal, & Let's Connect CTA -->
       <div class="flex items-center gap-2 sm:gap-2.5">
+        <!-- Batcave / Nightfall Cinematic Experience Direct Button -->
+        <a href="/nightfall/" class="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full bg-cyan-950/80 border border-cyan-400 text-[11px] font-mono-tech text-cyan-300 hover:bg-cyan-900/90 hover:text-white hover:border-accent transition-all shadow-[0_0_18px_rgba(0,229,240,0.4)] group" title="Enter The Subterranean Batcave / Nightfall Experience">
+          <span class="w-1.5 h-1.5 rounded-full bg-accent animate-ping" aria-hidden="true"></span>
+          <span class="font-bold tracking-wider text-accent group-hover:text-white">🦇 BATCAVE</span>
+          <span class="text-xs text-accent group-hover:translate-x-0.5 transition-transform" aria-hidden="true">→</span>
+        </a>
+
         <!-- Mild Sugar Japanese Style Preview Link -->
         <a href="mildsugar-preview.html" class="hidden xl:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/40 text-[11px] font-mono-tech text-amber-300 hover:border-amber-400 hover:text-white transition-all shadow-[0_0_12px_rgba(254,168,49,0.2)]" title="Preview Mild Sugar Design Version">
           <span>✨ Mild Sugar Style</span>
@@ -539,6 +549,15 @@
 
     <!-- Mobile Navigation Drawer -->
     <div id="mobile-drawer" class="hidden max-w-md ml-auto mt-3 studio-glass rounded-2xl p-5 border border-cyan-400/30 space-y-4" role="region" aria-label="Mobile Navigation">
+      <!-- Batcave Direct Launch for Mobile -->
+      <a href="/nightfall/" onclick="toggleMobileMenu()" class="p-3 rounded-xl bg-cyan-950/90 border-2 border-cyan-400 text-accent font-mono-tech text-xs font-bold flex items-center justify-between shadow-[0_0_16px_rgba(0,229,240,0.35)] hover:bg-cyan-900/90 transition-all">
+        <span class="flex items-center gap-2.5">
+          <span class="text-base">🦇</span>
+          <span>ENTER BATCAVE HQ [NIGHTFALL]</span>
+        </span>
+        <span class="text-sm">→</span>
+      </a>
+
       <div class="grid grid-cols-2 gap-2 font-mono-tech text-xs">
         <a href="#home" onclick="toggleMobileMenu()" class="p-2.5 rounded-lg bg-white/5 hover:text-accent">• Home</a>
         <a href="#projects" onclick="toggleMobileMenu()" class="p-2.5 rounded-lg bg-white/5 hover:text-accent">• Projects</a>
@@ -613,6 +632,13 @@
 
           <!-- Magnetic CTA Buttons Row -->
           <div class="hero-reveal flex flex-wrap items-center gap-2 sm:gap-2.5 pt-0.5">
+            <!-- 🦇 Prominent Enter Batcave CTA -->
+            <a href="/nightfall/" class="magnetic-btn px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-[12.5px] font-mono-tech font-bold text-black bg-gradient-to-r from-cyan-400 via-teal-300 to-cyan-300 hover:from-white hover:to-cyan-200 border border-cyan-300 inline-flex items-center gap-2 transition-all shadow-[0_0_24px_rgba(0,229,240,0.55)] transform hover:-translate-y-0.5 group" title="Enter The Subterranean Batcave / Nightfall Cinematic Experience">
+              <span class="text-sm">🦇</span>
+              <span class="tracking-wide">ENTER BATCAVE</span>
+              <span class="text-sm font-bold group-hover:translate-x-1 transition-transform" aria-hidden="true">→</span>
+            </a>
+
             <a href="#projects" class="magnetic-btn btn-portal px-4.5 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-[12.5px] inline-flex items-center gap-2">
               <span>Explore 5 Systems</span>
               <span class="text-sm leading-none" aria-hidden="true">→</span>
@@ -1896,6 +1922,7 @@
           <button onclick="runQuickCmd('benchmark')" class="px-2 py-0.5 rounded bg-white/5 border border-cyan-400/30 text-accent hover:bg-cyan-950/50">benchmark</button>
           <button onclick="runQuickCmd('patent')" class="px-2 py-0.5 rounded bg-white/5 border border-cyan-400/30 text-accent hover:bg-cyan-950/50">patent</button>
           <button onclick="runQuickCmd('fleet')" class="px-2 py-0.5 rounded bg-white/5 border border-cyan-400/30 text-accent hover:bg-cyan-950/50">fleet</button>
+          <button onclick="runQuickCmd('batcave')" class="px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-400 text-accent font-bold hover:bg-cyan-900/70">🦇 batcave</button>
           <button onclick="runQuickCmd('overdrive')" class="px-2 py-0.5 rounded bg-white/5 border border-cyan-400/30 text-accent hover:bg-cyan-950/50">overdrive</button>
           <button onclick="runQuickCmd('matrix')" class="px-2 py-0.5 rounded bg-white/5 border border-cyan-400/30 text-accent hover:bg-cyan-950/50">matrix</button>
           <button onclick="runQuickCmd('clear')" class="px-2 py-0.5 rounded bg-white/5 border border-white/20 text-gray-400 hover:bg-white/10">clear</button>
@@ -1908,7 +1935,7 @@
         <span class="text-accent font-bold select-none">nishant@edge-jetson:~$</span>
         <input id="terminal-input" type="text" autocomplete="off" spellcheck="false"
           class="flex-1 bg-transparent border-none outline-none text-white font-mono-tech text-xs placeholder-gray-500"
-          placeholder="type 'help', 'fleet', 'overdrive', or 'matrix'..." />
+          placeholder="type 'batcave', 'help', 'fleet', or 'matrix'..." />
         <span class="terminal-caret text-accent font-bold select-none">█</span>
       </div>
     </div>
@@ -1921,6 +1948,14 @@
   <div id="cursor-dot" aria-hidden="true"></div>
   <div id="cursor-ring" aria-hidden="true"></div>
   <canvas id="cursor-sparks-canvas" aria-hidden="true"></canvas>
+
+  <!-- Floating Batcave Quick Access Button -->
+  <a href="/nightfall/" class="fixed bottom-6 left-6 z-40 hidden md:inline-flex items-center gap-2.5 px-4 py-2.5 rounded-full studio-glass border border-cyan-400/60 bg-[#04080a]/95 text-xs font-mono-tech text-accent hover:border-accent hover:text-white hover:scale-105 transition-all shadow-[0_0_24px_rgba(0,229,240,0.35)] group" title="Enter The Subterranean Batcave / Nightfall Experience">
+    <span class="w-2 h-2 rounded-full bg-accent animate-ping" aria-hidden="true"></span>
+    <span class="text-base">🦇</span>
+    <span class="font-bold tracking-wider">ENTER BATCAVE</span>
+    <span class="text-xs text-accent group-hover:translate-x-1 transition-transform" aria-hidden="true">→</span>
+  </a>
 
   <!-- Toast Notification -->
   <div id="toast" class="fixed bottom-6 right-6 z-50 hidden studio-glass px-4 py-3 rounded-xl border border-cyan-400 text-accent font-mono-tech text-xs shadow-2xl" role="status" aria-live="polite">
@@ -3810,6 +3845,7 @@ HONORS & ACHIEVEMENTS
         case 'help':
           appendTermLog(`
             <div class="text-gray-300 space-y-1 pl-2 border-l border-cyan-400/30 text-[11px]">
+              <div><strong class="text-accent">batcave</strong> — Launch 3D Subterranean Batcave / Nightfall Experience (or /nightfall/)</div>
               <div><strong class="text-accent">recruiter</strong> — Open 60-Second Executive Technical Brief &amp; ATS pitch</div>
               <div><strong class="text-accent">resume</strong> — View &amp; print verified ATS canonical resume</div>
               <div><strong class="text-accent">skills</strong> — View full edge AI, computer vision &amp; embedded stack</div>
@@ -3823,6 +3859,20 @@ HONORS & ACHIEVEMENTS
               <div><strong class="text-accent">clear</strong> — Clear terminal screen buffer</div>
             </div>
           `);
+          break;
+
+        case 'batcave':
+        case 'nightfall':
+        case 'cave':
+          appendTermLog(`
+            <div class="text-accent space-y-1 text-[11px] bg-black/60 p-2.5 rounded border border-cyan-400/40">
+              <div class="font-bold flex items-center gap-2"><span>🦇</span><span>BIOMETRIC HANDSHAKE CONFIRMED // ACCESS GRANTED</span></div>
+              <div class="text-gray-300">Opening Subterranean Vault &amp; NJ-OS Command Center...</div>
+            </div>
+          `);
+          setTimeout(() => {
+            window.location.href = '/nightfall/';
+          }, 800);
           break;
 
         case 'skills':

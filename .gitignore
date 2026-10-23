@@ -5,3 +5,10 @@ test_screenshots/
 Thumbs.db
 nightfall-src/node_modules/
 nightfall-src/dist/
+
+# Large media & scratch
+*.mp4
+*.zip
+.claude/
+scratch/
+nightfall-src/audit_shots/

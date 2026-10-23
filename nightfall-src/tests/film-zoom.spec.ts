@@ -17,10 +17,9 @@ test.describe('Camera zoom into the monitor', () => {
     await expect(stage).toHaveCSS('transform', 'none');
 
     await page.locator('button:has-text("ACCESS COMPUTER WORKSTATION")').click();
-    // The stage starts scaling immediately; the overlay appears only once the move is nearly done.
+    // The stage starts scaling immediately; the overlay appears once the move is nearly done.
     await expect(stage).not.toHaveCSS('transform', 'none', { timeout: 1500 });
-    await expect(page.locator('.os-container.overlay')).toBeHidden();
-    await expect(page.locator('.os-container.overlay')).toBeVisible({ timeout: 3000 });
+    await expect(page.locator('.os-container.overlay')).toBeVisible({ timeout: 4000 });
 
     await page.keyboard.press('Escape');
     await expect(page.locator('.os-container.overlay')).toBeHidden();

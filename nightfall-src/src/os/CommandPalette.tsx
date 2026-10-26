@@ -1,4 +1,4 @@
-import { Copy, ExternalLink, FileText, Github, Linkedin, LogOut, type LucideIcon } from 'lucide-react';
+import { BookOpen, Copy, ExternalLink, FileText, Github, Linkedin, LogOut, type LucideIcon } from 'lucide-react';
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut } from '@/components/ui/command';
 import { profile } from '@/content/profile';
 import { projects } from '@/content/projects';
@@ -67,6 +67,10 @@ export function CommandPalette({ open, onOpenChange, modules, onNavigate, onClos
 
         <CommandSeparator />
         <CommandGroup heading="Actions">
+          <CommandItem value="read the story editorial vox edition" onSelect={run(() => { window.location.href = '/nightfall/story'; })}>
+            <BookOpen aria-hidden />
+            Read the story
+          </CommandItem>
           <CommandItem value="download cv pdf resume" onSelect={run(() => openLink(getCVUrl()))}>
             <ExternalLink aria-hidden />
             Open CV (PDF)

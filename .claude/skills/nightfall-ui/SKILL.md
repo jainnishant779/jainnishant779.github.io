@@ -81,3 +81,12 @@ Create `src/components/kit/<Name>.tsx` → add it to the `/kit` page (`src/pages
 ## Recipe: add a vendor component
 Follow "Install commands" and "Vendor adaptation notes" in `references/components.md` (the shadcn CLI writes a wrong `cn`
 import and may skip peer deps). Free components only; never paste paid Skiper UI / Animmaster code.
+
+## /story Editorial Edition Palette & Scoping
+The `/story` route hosts an editorial VOX-style portfolio page (GSAP ScrollTrigger + Motion, interactive flashlight beam, puppet string collaboration section). Its palette and design tokens are strictly scoped to `.story` to prevent leaking into the subterranean cave or NJ-OS:
+- `--ed-bg: #0b0a09` (near-black background)
+- `--ed-ivory: #ece6d8`, `--ed-ivory-2: #b9b2a3` (editorial warm text)
+- `--ed-yellow: #f2c230`, `--ed-red: #e2482f`, `--ed-blue: #5a7dff` (accents)
+- `--ed-paper: #eae8e2`, `--ed-ink: #0d0d0d` (Hire Me collaboration section)
+- Display typography: *Anton* (condensed display headers) & *Instrument Serif* (italic editorial quotes/captions).
+- The cave film, HUD, and NJ-OS tokens remain untouched.

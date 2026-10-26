@@ -45,6 +45,7 @@ const ROUTES = [
   'achievements',
   'contact',
   'cv',
+  'story',
   'projects/edgedesk',
   'projects/crowd-analytics',
   'projects/poultry-health-ai',

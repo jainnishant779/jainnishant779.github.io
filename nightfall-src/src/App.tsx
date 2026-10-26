@@ -18,6 +18,11 @@ const CalibratePage = React.lazy(() =>
   import('./pages/CalibratePage').then((m) => ({ default: m.CalibratePage }))
 );
 
+// Editorial VOX-style story edition
+const StoryPage = React.lazy(() =>
+  import('./story/StoryPage').then((m) => ({ default: m.StoryPage }))
+);
+
 export function App() {
   return (
     <Suspense
@@ -39,6 +44,7 @@ export function App() {
     >
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/story" element={<StoryPage />} />
         <Route path="/kit" element={<KitPage />} />
         <Route path="/calibrate" element={<CalibratePage />} />
         <Route path="/os" element={<StandalonePage module="home" />} />

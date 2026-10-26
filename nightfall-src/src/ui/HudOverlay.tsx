@@ -92,6 +92,14 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({ onOpenOS, onSkipIntro, o
             CV ↗
           </a>
 
+          <Link
+            to="/story"
+            className={cn(chip, 'border-accent/50 bg-bg-0/85 text-accent hover:border-accent hover:text-text-1')}
+            title="Read the VOX-style editorial story edition"
+          >
+            STORY ↗
+          </Link>
+
           <Link to="/contact" className={cn(chip, 'border-line-strong bg-bg-0/85 text-text-2 hover:border-accent/50 hover:text-text-1')}>
             CONTACT
           </Link>

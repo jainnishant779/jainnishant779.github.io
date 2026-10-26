@@ -196,6 +196,25 @@ export const OSHome: React.FC<OSHomeProps> = ({ onSelectModule }) => {
                 >
                   VIEW CV (PDF) ↗
                 </a>
+
+                <a
+                  href="/nightfall/story"
+                  className="os-btn os-btn-outline"
+                  onClick={() => sound.playUiClick()}
+                  style={{
+                    borderColor: 'rgba(232, 162, 58, 0.5)',
+                    backgroundColor: 'rgba(232, 162, 58, 0.08)',
+                    color: '#e8a23a',
+                    padding: '0.55rem 1.1rem',
+                    textDecoration: 'none',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                  }}
+                  title="Read the VOX-style editorial story edition"
+                >
+                  STORY EDITION ↗
+                </a>
               </div>
             </div>
           </div>

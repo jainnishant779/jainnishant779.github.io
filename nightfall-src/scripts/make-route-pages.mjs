@@ -27,6 +27,7 @@ const routes = [
   'cv',
   'architecture',
   'map',
+  'story',
 ];
 
 for (const route of routes) {

@@ -53,6 +53,18 @@
   --z-cursor: 400;
 }
 
+/* Scoped tokens for the /story editorial (VOX-style) edition */
+.story {
+  --ed-bg: #0b0a09;
+  --ed-ivory: #ece6d8;
+  --ed-ivory-2: #b9b2a3;
+  --ed-yellow: #f2c230;
+  --ed-red: #e2482f;
+  --ed-blue: #5a7dff;
+  --ed-paper: #eae8e2;
+  --ed-ink: #0d0d0d;
+}
+
 /* Expose tokens as Tailwind utilities (bg-bg-1, text-text-2, border-line, font-display, rounded-card …) */
 @theme inline {
   --color-bg-0: var(--bg-0);
@@ -71,6 +83,16 @@
   --color-text-1: var(--text-1);
   --color-text-2: var(--text-2);
   --color-text-3: var(--text-3);
+
+  /* Story editorial tokens */
+  --color-ed-bg: var(--ed-bg);
+  --color-ed-ivory: var(--ed-ivory);
+  --color-ed-ivory-2: var(--ed-ivory-2);
+  --color-ed-yellow: var(--ed-yellow);
+  --color-ed-red: var(--ed-red);
+  --color-ed-blue: var(--ed-blue);
+  --color-ed-paper: var(--ed-paper);
+  --color-ed-ink: var(--ed-ink);
 
   /* shadcn semantic names -> Nightfall tokens (so vendor components inherit the cave palette) */
   --color-background: var(--bg-0);
@@ -142,6 +164,8 @@
   --font-display: 'Space Grotesk', sans-serif;
   --font-body: 'Inter', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+  --font-anton: 'Anton', sans-serif;
+  --font-serif: 'Instrument Serif', Georgia, serif;
 
   --radius-chip: 6px;
   --radius-ctl: 10px;
